@@ -11,7 +11,7 @@ import { Role, Prisma } from '@prisma/client';
 const updateQuoteSchema = z.object({
   quoteNumber: z.string().min(1).max(50).optional(),
   customerName: z.string().min(1).max(255).optional(),
-  customerEmail: z.string().email().nullable().optional(),
+  customerEmail: z.string().email().nullable().optional().or(z.literal('')),
   customerPhone: z.string().max(50).nullable().optional(),
   address: z.string().min(1).optional(),
   houseTypeId: z.string().nullable().optional(),
@@ -152,6 +152,7 @@ export async function PATCH(
       where: { id: params.id },
       data: {
         ...data,
+        customerEmail: data.customerEmail === '' ? null : data.customerEmail,
         houseTypeMultiplier,
         subtotal,
         vatAmount,

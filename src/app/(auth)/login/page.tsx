@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { Sparkles } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -39,22 +40,22 @@ export default function LoginPage() {
   };
 
   return (
-    <Card>
-      <CardHeader className="text-center">
-        <div className="mb-4 flex justify-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-hero flex items-center justify-center">
-            <span className="text-white font-bold text-3xl">C</span>
+    <Card className="w-full max-w-md animate-slideUp" hover={false}>
+      <CardHeader className="text-center pb-6">
+        <div className="mb-6 flex justify-center">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-lg shadow-violet-500/30">
+            <Sparkles className="w-8 h-8 text-white" />
           </div>
         </div>
-        <CardTitle className="text-2xl">Welcome back</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-2xl font-bold text-text-primary">Welcome back</CardTitle>
+        <CardDescription className="text-text-muted mt-2">
           Sign in to your CloudQuote account
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-5">
           {error && (
-            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
               {error}
             </div>
           )}
@@ -75,7 +76,7 @@ export default function LoginPage() {
             required
           />
         </CardContent>
-        <CardFooter>
+        <CardFooter className="pt-2">
           <Button
             type="submit"
             className="w-full"
@@ -87,8 +88,8 @@ export default function LoginPage() {
         </CardFooter>
       </form>
       <div className="px-6 pb-6 text-center">
-        <p className="text-xs text-text-secondary">
-          Default credentials: admin@yourcompany.com / changeme123
+        <p className="text-xs text-text-muted">
+          Default: admin@yourcompany.com / changeme123
         </p>
       </div>
     </Card>
