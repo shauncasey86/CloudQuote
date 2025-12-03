@@ -4,18 +4,20 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'glass' | 'elevated';
+  variant?: 'default' | 'glass';
+  hover?: boolean;
 }
 
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant = 'glass', children, ...props }, ref) => {
+  ({ className, variant = 'default', hover = true, children, ...props }, ref) => {
     return (
       <div
         ref={ref}
         className={cn(
-          'rounded-2xl p-6',
+          'rounded-card p-6',
+          variant === 'default' && 'card',
           variant === 'glass' && 'glass-card',
-          variant === 'elevated' && 'bg-bg-elevated border border-border-glass',
+          !hover && 'hover:transform-none hover:shadow-card', // Disable hover if specified
           className
         )}
         {...props}
@@ -48,7 +50,7 @@ export const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      'text-xl font-semibold leading-none tracking-tight',
+      'text-2xl font-bold leading-none tracking-tight',
       className
     )}
     {...props}

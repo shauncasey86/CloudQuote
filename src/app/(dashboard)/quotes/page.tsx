@@ -56,7 +56,7 @@ export default async function QuotesPage({ searchParams }: Props) {
     <div className="space-y-6">
       <QuotesHeader />
 
-      <Card>
+      <Card className="animate-fadeUp-delay-2" hover={false}>
         <CardContent className="p-0">
           <QuotesTable quotes={quotes} />
           {total > 0 && (

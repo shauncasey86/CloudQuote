@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { Search, Filter, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { QuoteStatus } from '@prisma/client';
@@ -55,36 +56,39 @@ export function QuotesHeader() {
   }, [searchValue, handleSearchChange]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 animate-fadeUp">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-display font-bold text-gradient">
+          <h1 className="text-4xl font-bold text-gradient-nebula mb-2">
             Quotes
           </h1>
-          <p className="text-text-secondary mt-1">
+          <p className="text-text-secondary text-base">
             Manage and create kitchen installation quotes
           </p>
         </div>
-        <Link href="/quotes/new">
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            New Quote
-          </Button>
-        </Link>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <Link href="/quotes/new">
+            <Button variant="primary" size="lg">
+              <Plus className="w-5 h-5 mr-2" />
+              New Quote
+            </Button>
+          </Link>
+        </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-4 animate-fadeUp-delay-1">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-secondary" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-secondary" />
           <input
             type="text"
             placeholder="Search by quote number, customer name, or address..."
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            className="input pl-10 w-full"
+            className="input pl-12 w-full"
           />
         </div>
-        <div className="sm:w-48">
+        <div className="sm:w-56">
           <select
             value={status}
             onChange={(e) => handleStatusChange(e.target.value)}
