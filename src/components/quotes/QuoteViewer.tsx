@@ -286,8 +286,7 @@ export function QuoteViewer({
                   <div>
                     <p className="text-sm text-text-secondary">House Type</p>
                     <p className="font-medium">
-                      {quote.houseType.name} (
-                      {Number(quote.houseTypeMultiplier)}x multiplier)
+                      {quote.houseType.name} (Allowance: £{Number(quote.houseType.allowance).toFixed(2)})
                     </p>
                   </div>
                 </div>

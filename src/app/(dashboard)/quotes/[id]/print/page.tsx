@@ -427,7 +427,7 @@ export default async function QuotePrintPage({
             <p style={{ whiteSpace: 'pre-line' }}>{quote.address}</p>
             {quote.houseType && (
               <p style={{ marginTop: '8px', fontSize: '12px', color: '#71717a' }}>
-                House Type: {quote.houseType.name} ({Number(quote.houseTypeMultiplier)}x)
+                House Type: {quote.houseType.name} (Allowance: £{Number(quote.houseType.allowance).toFixed(2)})
               </p>
             )}
           </div>

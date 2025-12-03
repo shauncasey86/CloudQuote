@@ -95,7 +95,7 @@ export default async function QuotesPage({ searchParams }: Props) {
     subtotal: Number(quote.subtotal),
     vatAmount: Number(quote.vatAmount),
     vatRate: Number(quote.vatRate),
-    houseTypeMultiplier: Number(quote.houseTypeMultiplier),
+    houseTypeAllowance: Number(quote.houseTypeAllowance),
   }));
 
   // Calculate total value

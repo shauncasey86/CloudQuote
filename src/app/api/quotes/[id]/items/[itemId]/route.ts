@@ -55,9 +55,7 @@ export async function PATCH(
     // Calculate new line total if quantity or unitPrice changed
     const quantity = data.quantity ?? Number(existingItem.quantity);
     const unitPrice = data.unitPrice ?? Number(existingItem.unitPrice);
-    const houseTypeMultiplier = Number(quote.houseTypeMultiplier);
-    const adjustedUnitPrice = unitPrice * houseTypeMultiplier;
-    const lineTotal = adjustedUnitPrice * quantity;
+    const lineTotal = unitPrice * quantity;
 
     // Update the item
     const updatedItem = await prisma.quoteItem.update({
@@ -90,7 +88,6 @@ export async function PATCH(
         amount: Number(cost.amount),
         taxable: cost.taxable,
       })),
-      houseTypeMultiplier,
       vatRate: Number(quote.vatRate),
     });
 
@@ -184,7 +181,6 @@ export async function DELETE(
         amount: Number(cost.amount),
         taxable: cost.taxable,
       })),
-      houseTypeMultiplier: Number(quote.houseTypeMultiplier),
       vatRate: Number(quote.vatRate),
     });
 

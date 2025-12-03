@@ -49,7 +49,7 @@ export async function POST(
         customerPhone: originalQuote.customerPhone,
         address: originalQuote.address,
         houseTypeId: originalQuote.houseTypeId,
-        houseTypeMultiplier: originalQuote.houseTypeMultiplier,
+        houseTypeAllowance: originalQuote.houseTypeAllowance,
         subtotal: originalQuote.subtotal,
         vatRate: originalQuote.vatRate,
         vatAmount: originalQuote.vatAmount,

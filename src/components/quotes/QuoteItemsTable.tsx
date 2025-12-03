@@ -35,7 +35,6 @@ interface QuoteItemsTableProps {
   onUpdateQuantity: (itemId: string, quantity: number) => void;
   onRemoveItem: (itemId: string) => void;
   isLoading?: boolean;
-  houseTypeMultiplier?: number;
 }
 
 export function QuoteItemsTable({

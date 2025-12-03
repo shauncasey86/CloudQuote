@@ -109,51 +109,32 @@ export async function PATCH(
       }
     }
 
-    // Get new house type multiplier if changed
-    let houseTypeMultiplier = existingQuote.houseTypeMultiplier;
+    // Get new house type allowance if changed
+    let houseTypeAllowance = existingQuote.houseTypeAllowance;
     if (data.houseTypeId !== undefined) {
       if (data.houseTypeId) {
         const houseType = await prisma.houseType.findUnique({
           where: { id: data.houseTypeId },
         });
         if (houseType) {
-          houseTypeMultiplier = houseType.multiplier;
+          houseTypeAllowance = houseType.allowance;
         }
       } else {
-        houseTypeMultiplier = new Prisma.Decimal(1.0);
+        houseTypeAllowance = new Prisma.Decimal(0);
       }
     }
 
-    // Recalculate totals if house type changed
-    let subtotal = existingQuote.subtotal;
-    let vatAmount = existingQuote.vatAmount;
-    let total = existingQuote.total;
-
-    if (houseTypeMultiplier !== existingQuote.houseTypeMultiplier) {
-      const calculatedTotals = calculateQuoteTotal({
-        items: existingQuote.items.map((item) => ({
-          quantity: Number(item.quantity),
-          unitPrice: Number(item.unitPrice),
-          priceUnit: item.priceUnit,
-        })),
-        additionalCosts: existingQuote.additionalCosts.map((cost) => ({
-          amount: Number(cost.amount),
-          taxable: cost.taxable,
-        })),
-        houseTypeMultiplier: Number(houseTypeMultiplier),
-        vatRate: Number(existingQuote.vatRate),
-      });
-      subtotal = new Prisma.Decimal(calculatedTotals.subtotal);
-      vatAmount = new Prisma.Decimal(calculatedTotals.vatAmount);
-      total = new Prisma.Decimal(calculatedTotals.total);
-    }
+    // Use totals from request or keep existing
+    let subtotal = data.subtotal !== undefined ? new Prisma.Decimal(data.subtotal) : existingQuote.subtotal;
+    let vatAmount = data.vatAmount !== undefined ? new Prisma.Decimal(data.vatAmount) : existingQuote.vatAmount;
+    let total = data.total !== undefined ? new Prisma.Decimal(data.total) : existingQuote.total;
 
     const quote = await prisma.quote.update({
       where: { id: params.id },
       data: {
         ...data,
         customerEmail: data.customerEmail === '' ? null : data.customerEmail,
-        houseTypeMultiplier,
+        houseTypeAllowance,
         subtotal,
         vatAmount,
         total,
