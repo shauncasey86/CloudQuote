@@ -15,6 +15,9 @@ const updateQuoteSchema = z.object({
   customerPhone: z.string().max(50).nullable().optional(),
   address: z.string().min(1).optional(),
   houseTypeId: z.string().nullable().optional(),
+  frontal: z.string().nullable().optional(),
+  handle: z.string().nullable().optional(),
+  worktop: z.string().nullable().optional(),
   notes: z.string().nullable().optional(),
   internalNotes: z.string().nullable().optional(),
   validUntil: z.string().datetime().nullable().optional(),
@@ -124,20 +127,12 @@ export async function PATCH(
       }
     }
 
-    // Use totals from request or keep existing
-    let subtotal = data.subtotal !== undefined ? new Prisma.Decimal(data.subtotal) : existingQuote.subtotal;
-    let vatAmount = data.vatAmount !== undefined ? new Prisma.Decimal(data.vatAmount) : existingQuote.vatAmount;
-    let total = data.total !== undefined ? new Prisma.Decimal(data.total) : existingQuote.total;
-
     const quote = await prisma.quote.update({
       where: { id: params.id },
       data: {
         ...data,
         customerEmail: data.customerEmail === '' ? null : data.customerEmail,
         houseTypeAllowance,
-        subtotal,
-        vatAmount,
-        total,
         validUntil: data.validUntil ? new Date(data.validUntil) : undefined,
         updatedById: session.user.id,
       },
