@@ -24,20 +24,22 @@ export default async function NewQuotePage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-display font-bold text-gradient">
+      <div className="animate-fadeUp">
+        <h1 className="text-4xl font-bold text-gradient-nebula mb-2">
           New Quote
         </h1>
-        <p className="text-text-secondary mt-1">
+        <p className="text-text-secondary text-base">
           Create a new kitchen installation quote
         </p>
       </div>
 
-      <QuoteEditor
-        products={products}
-        categories={categories}
-        houseTypes={houseTypes}
-      />
+      <div className="animate-fadeUp-delay-1">
+        <QuoteEditor
+          products={products}
+          categories={categories}
+          houseTypes={houseTypes}
+        />
+      </div>
     </div>
   );
 }
