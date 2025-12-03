@@ -1,0 +1,331 @@
+'use client';
+
+import React from 'react';
+import { useRouter } from 'next/navigation';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { CustomerInfoSection, type CustomerInfoFormData } from './QuoteForm';
+import { ProductSelector } from './ProductSelector';
+import { QuoteItemsTable } from './QuoteItemsTable';
+import { AdditionalCosts } from './AdditionalCosts';
+import { QuoteSummary } from './QuoteSummary';
+import { useAutosave } from '@/hooks/useAutosave';
+import { calculateQuoteTotal } from '@/lib/pricing';
+import { Product, ProductCategory, HouseType, QuoteStatus } from '@prisma/client';
+import { toast } from '@/lib/toast';
+
+interface QuoteEditorProps {
+  quoteId?: string;
+  initialData?: any;
+  products: (Product & { category: ProductCategory })[];
+  categories: ProductCategory[];
+  houseTypes: HouseType[];
+}
+
+interface QuoteState {
+  customerInfo: CustomerInfoFormData;
+  items: any[];
+  additionalCosts: any[];
+  status: QuoteStatus;
+}
+
+export function QuoteEditor({
+  quoteId,
+  initialData,
+  products,
+  categories,
+  houseTypes,
+}: QuoteEditorProps) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  // Initialize state from initial data or defaults
+  const [quoteState, setQuoteState] = React.useState<QuoteState>({
+    customerInfo: initialData?.customerInfo || {
+      quoteNumber: '',
+      customerName: '',
+      customerEmail: '',
+      customerPhone: '',
+      address: '',
+      houseTypeId: '',
+      notes: '',
+      internalNotes: '',
+    },
+    items: initialData?.items || [],
+    additionalCosts: initialData?.additionalCosts || [],
+    status: initialData?.status || QuoteStatus.DRAFT,
+  });
+
+  // Get house type multiplier
+  const selectedHouseType = houseTypes.find(
+    (ht) => ht.id === quoteState.customerInfo.houseTypeId
+  );
+  const houseTypeMultiplier = selectedHouseType
+    ? Number(selectedHouseType.multiplier)
+    : 1.0;
+
+  // Calculate totals
+  const totals = React.useMemo(() => {
+    return calculateQuoteTotal({
+      items: quoteState.items.map((item) => ({
+        quantity: Number(item.quantity),
+        unitPrice: Number(item.unitPrice),
+        priceUnit: item.priceUnit,
+      })),
+      additionalCosts: quoteState.additionalCosts.map((cost) => ({
+        amount: Number(cost.amount),
+        taxable: cost.taxable,
+      })),
+      houseTypeMultiplier,
+      vatRate: 20,
+    });
+  }, [quoteState.items, quoteState.additionalCosts, houseTypeMultiplier]);
+
+  // Mutations
+  const createQuoteMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await fetch('/api/quotes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error('Failed to create quote');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast.success('Quote created successfully');
+      router.push(`/quotes/${data.data.id}`);
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to create quote');
+    },
+  });
+
+  const updateQuoteMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await fetch(`/api/quotes/${quoteId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error('Failed to update quote');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quote', quoteId] });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to update quote');
+    },
+  });
+
+  // Autosave functionality
+  const autosaveData = React.useMemo(
+    () => ({
+      ...quoteState.customerInfo,
+      items: quoteState.items,
+      additionalCosts: quoteState.additionalCosts,
+    }),
+    [quoteState]
+  );
+
+  const { status: autosaveStatus } = useAutosave({
+    data: autosaveData,
+    onSave: async (data) => {
+      if (quoteId) {
+        await updateQuoteMutation.mutateAsync(data);
+      }
+    },
+    enabled: !!quoteId && quoteState.status === QuoteStatus.DRAFT,
+    delay: 2000,
+  });
+
+  // Handlers
+  const handleCustomerInfoSubmit = (data: CustomerInfoFormData) => {
+    setQuoteState((prev) => ({
+      ...prev,
+      customerInfo: data,
+    }));
+  };
+
+  const handleAddProduct = async (product: Product, quantity: number) => {
+    const newItem = {
+      id: `temp-${Date.now()}`,
+      productId: product.id,
+      productName: product.name,
+      productSku: product.sku,
+      quantity,
+      priceUnit: product.priceUnit,
+      unitPrice: Number(product.basePrice),
+      lineTotal: Number(product.basePrice) * quantity * houseTypeMultiplier,
+      notes: '',
+      sortOrder: quoteState.items.length,
+    };
+
+    setQuoteState((prev) => ({
+      ...prev,
+      items: [...prev.items, newItem],
+    }));
+
+    toast.success(`Added ${product.name} to quote`);
+  };
+
+  const handleUpdateQuantity = (itemId: string, quantity: number) => {
+    setQuoteState((prev) => ({
+      ...prev,
+      items: prev.items.map((item) =>
+        item.id === itemId
+          ? {
+              ...item,
+              quantity,
+              lineTotal: Number(item.unitPrice) * quantity * houseTypeMultiplier,
+            }
+          : item
+      ),
+    }));
+  };
+
+  const handleRemoveItem = (itemId: string) => {
+    setQuoteState((prev) => ({
+      ...prev,
+      items: prev.items.filter((item) => item.id !== itemId),
+    }));
+    toast.success('Item removed from quote');
+  };
+
+  const handleAddCost = (cost: any) => {
+    const newCost = {
+      id: `temp-${Date.now()}`,
+      ...cost,
+      sortOrder: quoteState.additionalCosts.length,
+    };
+
+    setQuoteState((prev) => ({
+      ...prev,
+      additionalCosts: [...prev.additionalCosts, newCost],
+    }));
+  };
+
+  const handleUpdateCost = (id: string, updates: any) => {
+    setQuoteState((prev) => ({
+      ...prev,
+      additionalCosts: prev.additionalCosts.map((cost) =>
+        cost.id === id ? { ...cost, ...updates } : cost
+      ),
+    }));
+  };
+
+  const handleRemoveCost = (id: string) => {
+    setQuoteState((prev) => ({
+      ...prev,
+      additionalCosts: prev.additionalCosts.filter((cost) => cost.id !== id),
+    }));
+  };
+
+  const handleSave = async () => {
+    if (!quoteId) {
+      // Create new quote
+      await createQuoteMutation.mutateAsync({
+        ...quoteState.customerInfo,
+        houseTypeMultiplier,
+        ...totals,
+        items: quoteState.items,
+        additionalCosts: quoteState.additionalCosts,
+      });
+    } else {
+      // Update existing quote
+      await updateQuoteMutation.mutateAsync({
+        ...quoteState.customerInfo,
+        houseTypeMultiplier,
+        ...totals,
+      });
+      toast.success('Quote saved successfully');
+    }
+  };
+
+  const handleFinalize = async () => {
+    setQuoteState((prev) => ({ ...prev, status: QuoteStatus.FINALIZED }));
+    await handleSave();
+    toast.success('Quote finalized');
+  };
+
+  const handleSend = async () => {
+    if (!quoteId) {
+      toast.error('Please save the quote first');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/quotes/${quoteId}/send`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) throw new Error('Failed to send quote');
+
+      setQuoteState((prev) => ({ ...prev, status: QuoteStatus.SENT }));
+      toast.success('Quote sent successfully');
+      queryClient.invalidateQueries({ queryKey: ['quote', quoteId] });
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to send quote');
+    }
+  };
+
+  const handleDownloadPDF = () => {
+    if (!quoteId) {
+      toast.error('Please save the quote first');
+      return;
+    }
+
+    window.open(`/api/quotes/${quoteId}/pdf`, '_blank');
+  };
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Main Content */}
+      <div className="lg:col-span-2 space-y-6">
+        <CustomerInfoSection
+          defaultValues={quoteState.customerInfo}
+          houseTypes={houseTypes}
+          onSubmit={handleCustomerInfoSubmit}
+        />
+
+        <ProductSelector
+          products={products}
+          categories={categories}
+          onAddProduct={handleAddProduct}
+        />
+
+        <QuoteItemsTable
+          items={quoteState.items}
+          onUpdateQuantity={handleUpdateQuantity}
+          onRemoveItem={handleRemoveItem}
+          houseTypeMultiplier={houseTypeMultiplier}
+        />
+
+        <AdditionalCosts
+          costs={quoteState.additionalCosts}
+          onAddCost={handleAddCost}
+          onUpdateCost={handleUpdateCost}
+          onRemoveCost={handleRemoveCost}
+        />
+      </div>
+
+      {/* Sidebar */}
+      <div className="lg:col-span-1">
+        <QuoteSummary
+          subtotal={totals.subtotal}
+          vatRate={20}
+          vatAmount={totals.vatAmount}
+          total={totals.total}
+          status={quoteState.status}
+          itemsCount={quoteState.items.length}
+          onSave={handleSave}
+          onFinalize={handleFinalize}
+          onSend={handleSend}
+          onDownloadPDF={handleDownloadPDF}
+          isSaving={createQuoteMutation.isPending || updateQuoteMutation.isPending}
+          autoSaveStatus={autosaveStatus}
+        />
+      </div>
+    </div>
+  );
+}

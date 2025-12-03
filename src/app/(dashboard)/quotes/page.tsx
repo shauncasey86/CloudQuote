@@ -1,39 +1,69 @@
 import { requireAuth } from '@/lib/auth-utils';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
+import { prisma } from '@/lib/db';
+import { Card, CardContent } from '@/components/ui/Card';
+import { QuotesHeader } from '@/components/quotes/QuotesHeader';
+import { QuotesTable } from '@/components/quotes/QuotesTable';
+import { Pagination } from '@/components/ui/Pagination';
 
-export default async function QuotesPage() {
+interface Props {
+  searchParams: {
+    page?: string;
+    search?: string;
+    status?: string;
+  };
+}
+
+export default async function QuotesPage({ searchParams }: Props) {
   await requireAuth();
+
+  const page = parseInt(searchParams.page || '1');
+  const limit = 20;
+  const skip = (page - 1) * limit;
+
+  // Build where clause for filtering
+  const where: any = {
+    status: { not: 'ARCHIVED' },
+  };
+
+  if (searchParams.status) {
+    where.status = searchParams.status;
+  }
+
+  if (searchParams.search) {
+    where.OR = [
+      { quoteNumber: { contains: searchParams.search, mode: 'insensitive' } },
+      { customerName: { contains: searchParams.search, mode: 'insensitive' } },
+      { address: { contains: searchParams.search, mode: 'insensitive' } },
+    ];
+  }
+
+  // Fetch quotes with pagination
+  const [quotes, total] = await Promise.all([
+    prisma.quote.findMany({
+      where,
+      include: {
+        createdBy: { select: { name: true } },
+        _count: { select: { items: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: limit,
+    }),
+    prisma.quote.count({ where }),
+  ]);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-display font-bold text-gradient">
-            Quotes
-          </h1>
-          <p className="text-text-secondary mt-1">
-            Manage and create kitchen installation quotes
-          </p>
-        </div>
-        <Link href="/quotes/new">
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            New Quote
-          </Button>
-        </Link>
-      </div>
+      <QuotesHeader />
 
       <Card>
-        <CardHeader>
-          <CardTitle>Recent Quotes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-text-secondary text-center py-8">
-            Quote list will be implemented here with full quote management features.
-          </p>
+        <CardContent className="p-0">
+          <QuotesTable quotes={quotes} />
+          {total > 0 && (
+            <div className="px-6 pb-6">
+              <Pagination page={page} total={total} limit={limit} />
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
