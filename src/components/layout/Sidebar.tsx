@@ -12,8 +12,8 @@ import {
   FileText,
   Package,
   Settings,
-  LayoutDashboard,
   Users,
+  Sparkles,
 } from 'lucide-react';
 
 interface NavItem {
@@ -54,53 +54,74 @@ export const Sidebar: React.FC = () => {
   const isAdmin = session?.user?.role === Role.ADMIN;
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 glass-effect border-r border-border-glass flex flex-col z-40">
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-bg-canvas border-r border-border-glass flex flex-col z-40">
       {/* Logo */}
-      <div className="p-6 border-b border-border-glass">
-        <Link href="/quotes" className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-hero flex items-center justify-center">
-            <span className="text-white font-bold text-xl">C</span>
+      <div className="p-6">
+        <Link href="/quotes" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-md group-hover:shadow-lg group-hover:shadow-violet-500/20 transition-all">
+            <Sparkles className="w-5 h-5 text-white" />
           </div>
-          <span className="font-display font-bold text-xl text-gradient">
-            CloudQuote
-          </span>
+          <div>
+            <span className="font-bold text-lg text-gradient block leading-tight">
+              CloudQuote
+            </span>
+            <span className="text-xs text-text-muted">Kitchen Quoting</span>
+          </div>
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
-        {navItems.map((item) => {
-          // Hide admin-only items from non-admins
-          if (item.adminOnly && !isAdmin) {
-            return null;
-          }
+      <nav className="flex-1 px-3 py-4">
+        <div className="text-xs font-semibold text-text-muted uppercase tracking-wider px-4 mb-3">
+          Menu
+        </div>
+        <div className="space-y-1">
+          {navItems.map((item) => {
+            // Hide admin-only items from non-admins
+            if (item.adminOnly && !isAdmin) {
+              return null;
+            }
 
-          const Icon = item.icon;
-          const isActive = pathname.startsWith(item.href);
+            const Icon = item.icon;
+            const isActive = pathname === item.href ||
+              (item.href !== '/settings' && pathname.startsWith(item.href));
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                'flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200',
-                isActive
-                  ? 'bg-gradient-hero text-white shadow-lg shadow-purple-500/30'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-bg-glass'
-              )}
-            >
-              <Icon className="w-5 h-5" />
-              <span className="font-medium">{item.label}</span>
-            </Link>
-          );
-        })}
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'nav-item group',
+                  isActive && 'active'
+                )}
+              >
+                <Icon className={cn(
+                  "w-5 h-5 transition-colors",
+                  isActive ? "text-white" : "text-text-muted group-hover:text-text-primary"
+                )} />
+                <span className="font-medium">{item.label}</span>
+                {isActive && (
+                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white/80" />
+                )}
+              </Link>
+            );
+          })}
+        </div>
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-border-glass">
-        <div className="text-xs text-text-secondary text-center space-y-1">
-          <div>CloudQuote v0.0.1</div>
-          <div>Created by Shaun Casey</div>
+      <div className="p-4 mx-3 mb-3 rounded-xl bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 border border-violet-500/20">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
+            <Sparkles className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <div className="text-sm font-semibold text-text-primary">CloudQuote</div>
+            <div className="text-xs text-text-muted">v1.0.0</div>
+          </div>
+        </div>
+        <div className="text-xs text-text-muted">
+          Kitchen Installation Quoting
         </div>
       </div>
     </aside>

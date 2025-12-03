@@ -14,7 +14,7 @@ import {
   Send,
   Copy,
   Archive,
-  FileText,
+  Printer,
   ArrowLeft,
   Mail,
   Phone,
@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { QuoteStatus } from '@prisma/client';
 import { toast } from '@/lib/toast';
+import { Modal } from '@/components/ui/Modal';
 
 interface QuoteViewerProps {
   quote: any;
@@ -41,6 +42,13 @@ export function QuoteViewer({
   isEditMode = false,
 }: QuoteViewerProps) {
   const router = useRouter();
+  const [showComingSoon, setShowComingSoon] = React.useState(false);
+  const [comingSoonFeature, setComingSoonFeature] = React.useState('');
+
+  const handleComingSoon = (feature: string) => {
+    setComingSoonFeature(feature);
+    setShowComingSoon(true);
+  };
 
   // If in edit mode, show the editor
   if (isEditMode && products && categories && houseTypes) {
@@ -168,26 +176,51 @@ export function QuoteViewer({
               </Button>
             </Link>
           )}
+          <Button onClick={() => window.print()}>
+            <Printer className="w-4 h-4 mr-2" />
+            Print
+          </Button>
+          <Button variant="secondary" onClick={() => handleComingSoon('Download PDF')}>
+            <Download className="w-4 h-4 mr-2" />
+            Download PDF
+          </Button>
           {(quote.status === 'FINALIZED' || quote.status === 'SENT') && (
-            <Button onClick={handleSendEmail}>
+            <Button variant="ghost" onClick={() => handleComingSoon('Email Quote')}>
               <Send className="w-4 h-4 mr-2" />
               {quote.status === 'SENT' ? 'Resend Email' : 'Send Email'}
             </Button>
           )}
-          <Button variant="secondary" onClick={handleDownloadPDF}>
-            <Download className="w-4 h-4 mr-2" />
-            Download PDF
-          </Button>
           <Button variant="ghost" onClick={handleDuplicate}>
             <Copy className="w-4 h-4 mr-2" />
             Duplicate
           </Button>
-          <Button variant="ghost" onClick={() => window.print()}>
-            <FileText className="w-4 h-4 mr-2" />
-            Print
-          </Button>
         </div>
       </div>
+
+      {/* Coming Soon Modal */}
+      <Modal
+        isOpen={showComingSoon}
+        onClose={() => setShowComingSoon(false)}
+        title="Feature Coming Soon"
+      >
+        <div className="text-center py-4">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-violet-500 to-pink-500 flex items-center justify-center">
+            <Download className="w-8 h-8 text-white" />
+          </div>
+          <p className="text-text-secondary mb-4">
+            {comingSoonFeature} functionality is coming soon!
+          </p>
+          <p className="text-sm text-text-secondary">
+            For now, please use the Print function to create a physical copy or save as PDF via your browser's print dialog.
+          </p>
+          <Button
+            className="mt-6"
+            onClick={() => setShowComingSoon(false)}
+          >
+            Got it
+          </Button>
+        </div>
+      </Modal>
 
       {/* Print Header - Only visible when printing */}
       <div className="hidden print-only print-header">
@@ -349,7 +382,7 @@ export function QuoteViewer({
           )}
 
           {quote.internalNotes && (
-            <Card className="bg-amber-500/5 border-amber-500/20">
+            <Card className="bg-amber-500/5 border-amber-500/20 print-hide">
               <CardHeader>
                 <CardTitle className="text-amber-400">
                   Internal Notes

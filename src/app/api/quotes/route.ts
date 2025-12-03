@@ -10,13 +10,14 @@ import { Prisma } from '@prisma/client';
 const createQuoteSchema = z.object({
   quoteNumber: z.string().min(1).max(50),
   customerName: z.string().min(1).max(255),
-  customerEmail: z.string().email().optional().nullable(),
+  customerEmail: z.string().email().optional().nullable().or(z.literal('')),
   customerPhone: z.string().max(50).optional().nullable(),
   address: z.string().min(1),
   houseTypeId: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
   internalNotes: z.string().optional().nullable(),
   validUntil: z.string().datetime().optional().nullable(),
+  status: z.enum(['DRAFT', 'FINALIZED', 'SENT', 'SAVED', 'ARCHIVED']).optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -112,7 +113,9 @@ export async function POST(request: NextRequest) {
     const quote = await prisma.quote.create({
       data: {
         ...data,
+        customerEmail: data.customerEmail || null,
         houseTypeMultiplier,
+        status: data.status || 'DRAFT',
         validUntil: data.validUntil ? new Date(data.validUntil) : null,
         createdById: session.user.id,
       },

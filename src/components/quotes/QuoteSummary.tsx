@@ -4,10 +4,11 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { Modal } from '@/components/ui/Modal';
 import {
   Save,
   Send,
-  FileText,
+  Printer,
   Download,
   CheckCircle,
   Clock,
@@ -43,6 +44,13 @@ export function QuoteSummary({
   isSaving,
   autoSaveStatus,
 }: QuoteSummaryProps) {
+  const [showComingSoon, setShowComingSoon] = React.useState(false);
+  const [comingSoonFeature, setComingSoonFeature] = React.useState('');
+
+  const handleComingSoon = (feature: string) => {
+    setComingSoonFeature(feature);
+    setShowComingSoon(true);
+  };
   const statusVariants: Record<QuoteStatus, 'default' | 'warning' | 'success' | 'info' | 'danger'> = {
     DRAFT: 'default',
     FINALIZED: 'warning',
@@ -149,36 +157,57 @@ export function QuoteSummary({
               <>
                 <Button
                   className="w-full"
-                  onClick={onSend}
-                  disabled={itemsCount === 0}
+                  onClick={() => window.print()}
                 >
-                  <Send className="w-4 h-4 mr-2" />
-                  {status === 'SENT' ? 'Resend Email' : 'Send to Customer'}
+                  <Printer className="w-4 h-4 mr-2" />
+                  Print Quote
                 </Button>
                 <Button
                   variant="secondary"
                   className="w-full"
-                  onClick={onDownloadPDF}
+                  onClick={() => handleComingSoon('Download PDF')}
                 >
                   <Download className="w-4 h-4 mr-2" />
                   Download PDF
                 </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => handleComingSoon('Email Quote')}
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  {status === 'SENT' ? 'Resend Email' : 'Send to Customer'}
+                </Button>
               </>
-            )}
-
-            {status !== 'DRAFT' && (
-              <Button
-                variant="ghost"
-                className="w-full"
-                onClick={() => window.print()}
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                Print Quote
-              </Button>
             )}
           </div>
         </CardContent>
       </Card>
+
+      {/* Coming Soon Modal */}
+      <Modal
+        isOpen={showComingSoon}
+        onClose={() => setShowComingSoon(false)}
+        title="Feature Coming Soon"
+      >
+        <div className="text-center py-4">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-violet-500 to-pink-500 flex items-center justify-center">
+            <Download className="w-8 h-8 text-white" />
+          </div>
+          <p className="text-text-secondary mb-4">
+            {comingSoonFeature} functionality is coming soon!
+          </p>
+          <p className="text-sm text-text-secondary">
+            For now, please use the Print function to create a physical copy or save as PDF via your browser's print dialog.
+          </p>
+          <Button
+            className="mt-6"
+            onClick={() => setShowComingSoon(false)}
+          >
+            Got it
+          </Button>
+        </div>
+      </Modal>
 
       {/* Help Text */}
       <Card className="bg-bg-glass/50">

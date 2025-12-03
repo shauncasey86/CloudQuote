@@ -14,10 +14,9 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          'rounded-card p-6',
           variant === 'default' && 'card',
           variant === 'glass' && 'glass-card',
-          !hover && 'hover:transform-none hover:shadow-card', // Disable hover if specified
+          !hover && '[&]:hover:transform-none [&]:hover:shadow-[var(--shadow-md)]',
           className
         )}
         {...props}
