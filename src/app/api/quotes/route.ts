@@ -39,7 +39,7 @@ const createQuoteSchema = z.object({
   notes: z.string().optional().nullable(),
   internalNotes: z.string().optional().nullable(),
   validUntil: z.string().datetime().optional().nullable(),
-  status: z.enum(['DRAFT', 'FINALIZED', 'SENT', 'SAVED', 'ARCHIVED']).optional(),
+  status: z.enum(['DRAFT', 'FINALIZED', 'PRINTED', 'SENT', 'SAVED', 'ARCHIVED']).optional(),
   items: z.array(quoteItemSchema).optional(),
   additionalCosts: z.array(additionalCostSchema).optional(),
   subtotal: z.number().optional(),

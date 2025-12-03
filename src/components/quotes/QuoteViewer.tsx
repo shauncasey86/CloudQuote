@@ -100,6 +100,7 @@ export function QuoteViewer({
   const statusVariants: Record<QuoteStatus, 'default' | 'warning' | 'success' | 'info' | 'danger'> = {
     DRAFT: 'default',
     FINALIZED: 'warning',
+    PRINTED: 'info',
     SENT: 'success',
     SAVED: 'info',
     ARCHIVED: 'danger',
