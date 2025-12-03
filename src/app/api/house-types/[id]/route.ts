@@ -9,7 +9,7 @@ import { Role } from '@prisma/client';
 
 const updateHouseTypeSchema = z.object({
   name: z.string().min(1).max(255).optional(),
-  multiplier: z.number().positive().optional(),
+  allowance: z.number().min(0).optional(),
   active: z.boolean().optional(),
   sortOrder: z.number().int().optional(),
 });

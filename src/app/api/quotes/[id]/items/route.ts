@@ -67,10 +67,8 @@ export async function POST(
       }
     }
 
-    // Calculate line total
-    const houseTypeMultiplier = Number(quote.houseTypeMultiplier);
-    const adjustedUnitPrice = data.unitPrice * houseTypeMultiplier;
-    const lineTotal = adjustedUnitPrice * data.quantity;
+    // Calculate line total (no multiplier - allowance items already have £0 price)
+    const lineTotal = data.unitPrice * data.quantity;
 
     // Get next sort order
     const maxSortOrder = quote.items.reduce(
@@ -111,7 +109,6 @@ export async function POST(
         amount: Number(cost.amount),
         taxable: cost.taxable,
       })),
-      houseTypeMultiplier,
       vatRate: Number(quote.vatRate),
     });
 

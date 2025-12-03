@@ -58,13 +58,13 @@ export function QuoteEditor({
     status: initialData?.status || QuoteStatus.DRAFT,
   });
 
-  // Get house type multiplier
+  // Get house type allowance
   const selectedHouseType = houseTypes.find(
     (ht) => ht.id === quoteState.customerInfo.houseTypeId
   );
-  const houseTypeMultiplier = selectedHouseType
-    ? Number(selectedHouseType.multiplier)
-    : 1.0;
+  const houseTypeAllowance = selectedHouseType
+    ? Number((selectedHouseType as any).allowance)
+    : 0;
 
   // Calculate totals
   const totals = React.useMemo(() => {
@@ -78,10 +78,9 @@ export function QuoteEditor({
         amount: Number(cost.amount),
         taxable: cost.taxable,
       })),
-      houseTypeMultiplier,
       vatRate: 20,
     });
-  }, [quoteState.items, quoteState.additionalCosts, houseTypeMultiplier]);
+  }, [quoteState.items, quoteState.additionalCosts]);
 
   // Mutations
   const createQuoteMutation = useMutation({
@@ -231,7 +230,7 @@ export function QuoteEditor({
       // Create new quote
       await createQuoteMutation.mutateAsync({
         ...quoteState.customerInfo,
-        houseTypeMultiplier,
+        houseTypeAllowance,
         ...totals,
         items: quoteState.items,
         additionalCosts: quoteState.additionalCosts,
@@ -240,7 +239,7 @@ export function QuoteEditor({
       // Update existing quote
       await updateQuoteMutation.mutateAsync({
         ...quoteState.customerInfo,
-        houseTypeMultiplier,
+        houseTypeAllowance,
         ...totals,
       });
       toast.success('Quote saved successfully');
@@ -255,7 +254,7 @@ export function QuoteEditor({
       // Create new quote with finalized status
       await createQuoteMutation.mutateAsync({
         ...finalizedState.customerInfo,
-        houseTypeMultiplier,
+        houseTypeAllowance,
         ...totals,
         items: finalizedState.items,
         additionalCosts: finalizedState.additionalCosts,
@@ -265,7 +264,7 @@ export function QuoteEditor({
       // Update existing quote with finalized status
       await updateQuoteMutation.mutateAsync({
         ...finalizedState.customerInfo,
-        houseTypeMultiplier,
+        houseTypeAllowance,
         ...totals,
         status: QuoteStatus.FINALIZED,
       });

@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
         where,
         include: {
           createdBy: { select: { id: true, name: true, email: true } },
-          houseType: { select: { id: true, name: true, multiplier: true } },
+          houseType: { select: { id: true, name: true, allowance: true } },
           _count: { select: { items: true, additionalCosts: true } },
         },
         orderBy: { createdAt: 'desc' },
@@ -123,14 +123,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get house type multiplier if specified
-    let houseTypeMultiplier = 1.0;
+    // Get house type allowance if specified
+    let houseTypeAllowance = 0;
     if (data.houseTypeId) {
       const houseType = await prisma.houseType.findUnique({
         where: { id: data.houseTypeId },
       });
       if (houseType) {
-        houseTypeMultiplier = Number(houseType.multiplier);
+        houseTypeAllowance = Number(houseType.allowance);
       }
     }
 
@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
       data: {
         ...quoteData,
         customerEmail: quoteData.customerEmail || null,
-        houseTypeMultiplier,
+        houseTypeAllowance,
         status: quoteData.status || 'DRAFT',
         subtotal: subtotal || 0,
         vatAmount: vatAmount || 0,

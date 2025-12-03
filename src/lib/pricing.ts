@@ -14,7 +14,7 @@ interface AdditionalCost {
 interface PriceCalculation {
   items: QuoteItem[];
   additionalCosts: AdditionalCost[];
-  houseTypeMultiplier: number;
+  houseTypeMultiplier?: number; // Deprecated - kept for compatibility, not used
   vatRate: number;
 }
 
@@ -25,10 +25,9 @@ interface QuoteTotals {
 }
 
 export function calculateQuoteTotal(input: PriceCalculation): QuoteTotals {
-  // Calculate line item totals with house type multiplier
+  // Calculate line item totals (no multiplier - allowance items are already £0)
   const itemsSubtotal = input.items.reduce((sum, item) => {
-    const adjustedPrice = item.unitPrice * input.houseTypeMultiplier;
-    return sum + adjustedPrice * item.quantity;
+    return sum + item.unitPrice * item.quantity;
   }, 0);
 
   // Separate taxable and non-taxable additional costs
