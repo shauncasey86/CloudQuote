@@ -9,6 +9,11 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { HouseType } from '@prisma/client';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
+// Selection options
+const FRONTAL_OPTIONS = ['White Gloss', 'Walnut'];
+const HANDLE_OPTIONS = ['Tapered D', 'Classic D'];
+const WORKTOP_OPTIONS = ['Black', 'Oak'];
+
 const customerInfoSchema = z.object({
   quoteNumber: z.string().min(1, 'Quote number is required'),
   customerName: z.string().min(1, 'Customer name is required'),
@@ -16,6 +21,9 @@ const customerInfoSchema = z.object({
   customerPhone: z.string().optional(),
   address: z.string().min(1, 'Address is required'),
   houseTypeId: z.string().optional(),
+  frontal: z.string().optional(),
+  handle: z.string().optional(),
+  worktop: z.string().optional(),
   notes: z.string().optional(),
   internalNotes: z.string().optional(),
 });
@@ -52,6 +60,9 @@ export function CustomerInfoSection({
       customerPhone: defaultValues?.customerPhone || '',
       address: defaultValues?.address || '',
       houseTypeId: defaultValues?.houseTypeId || '',
+      frontal: defaultValues?.frontal || '',
+      handle: defaultValues?.handle || '',
+      worktop: defaultValues?.worktop || '',
       notes: defaultValues?.notes || '',
       internalNotes: defaultValues?.internalNotes || '',
     },
@@ -110,6 +121,55 @@ export function CustomerInfoSection({
                     {houseTypes.map((type) => (
                       <option key={type.id} value={type.id}>
                         {type.name} (£{Number((type as any).allowance || 0).toFixed(2)})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Selection Dropdowns */}
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="text-xs text-text-muted mb-1 block">Frontal</label>
+                  <select
+                    {...register('frontal')}
+                    onBlur={handleFieldBlur}
+                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
+                  >
+                    <option value="">Select...</option>
+                    {FRONTAL_OPTIONS.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-text-muted mb-1 block">Handle</label>
+                  <select
+                    {...register('handle')}
+                    onBlur={handleFieldBlur}
+                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
+                  >
+                    <option value="">Select...</option>
+                    {HANDLE_OPTIONS.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-text-muted mb-1 block">Worktop</label>
+                  <select
+                    {...register('worktop')}
+                    onBlur={handleFieldBlur}
+                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
+                  >
+                    <option value="">Select...</option>
+                    {WORKTOP_OPTIONS.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
                       </option>
                     ))}
                   </select>
@@ -211,6 +271,49 @@ export function CustomerInfoSection({
               {houseTypes.map((type) => (
                 <option key={type.id} value={type.id}>
                   {type.name} (£{Number((type as any).allowance || 0).toFixed(2)})
+                </option>
+              ))}
+            </Select>
+          </div>
+
+          {/* Selection Dropdowns */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Select
+              label="Frontal"
+              {...register('frontal')}
+              error={errors.frontal?.message}
+              onBlur={handleFieldBlur}
+            >
+              <option value="">Select frontal</option>
+              {FRONTAL_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </Select>
+            <Select
+              label="Handle"
+              {...register('handle')}
+              error={errors.handle?.message}
+              onBlur={handleFieldBlur}
+            >
+              <option value="">Select handle</option>
+              {HANDLE_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </Select>
+            <Select
+              label="Worktop"
+              {...register('worktop')}
+              error={errors.worktop?.message}
+              onBlur={handleFieldBlur}
+            >
+              <option value="">Select worktop</option>
+              {WORKTOP_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
                 </option>
               ))}
             </Select>

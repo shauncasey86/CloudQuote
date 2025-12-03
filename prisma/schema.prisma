@@ -131,6 +131,11 @@ model Quote {
   customerPhone        String?
   address              String
 
+  // Selections
+  frontal              String?           // White Gloss, Walnut, etc.
+  handle               String?           // Tapered D, Classic D, etc.
+  worktop              String?           // Black, Oak, etc.
+
   // Pricing Context
   houseTypeId          String?
   houseTypeAllowance   Decimal         @default(0) @db.Decimal(10, 2) // Snapshot of allowance at quote time
