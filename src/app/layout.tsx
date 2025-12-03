@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import '@/styles/globals.css';
 import { ReactQueryProvider } from '@/components/providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: 'CloudQuote - Kitchen Quoting System',
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <ReactQueryProvider>{children}</ReactQueryProvider>
+          <Toaster position="top-right" richColors />
         </ThemeProvider>
       </body>
     </html>
