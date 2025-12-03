@@ -58,6 +58,10 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className }) =
       label: 'Finalized',
       className: 'badge-finalized',
     },
+    PRINTED: {
+      label: 'Printed',
+      className: 'badge-printed',
+    },
     SENT: {
       label: 'Sent',
       className: 'badge-sent',
