@@ -98,8 +98,9 @@ export const Sidebar: React.FC = () => {
 
       {/* Footer */}
       <div className="p-4 border-t border-border-glass">
-        <div className="text-xs text-text-secondary text-center">
-          CloudQuote v1.0.0
+        <div className="text-xs text-text-secondary text-center space-y-1">
+          <div>CloudQuote v0.0.1</div>
+          <div>Created by Shaun Casey</div>
         </div>
       </div>
     </aside>

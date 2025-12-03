@@ -163,7 +163,6 @@ export function UserFormModal({
             error={errors.email}
             required
             placeholder="e.g., john.smith@company.com"
-            disabled={!!user} // Disable email editing for existing users
           />
 
           {/* Password */}

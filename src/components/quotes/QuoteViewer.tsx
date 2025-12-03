@@ -135,7 +135,7 @@ export function QuoteViewer({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between print-hide">
         <div className="flex items-start gap-4">
           <Link href="/quotes">
             <Button variant="ghost" size="icon">
@@ -186,6 +186,18 @@ export function QuoteViewer({
             <FileText className="w-4 h-4 mr-2" />
             Print
           </Button>
+        </div>
+      </div>
+
+      {/* Print Header - Only visible when printing */}
+      <div className="hidden print-only print-header">
+        <div>
+          <h1 className="text-3xl font-bold">CloudQuote</h1>
+          <p className="text-sm">Kitchen Installation Quotation</p>
+        </div>
+        <div className="text-right">
+          <p className="text-2xl font-bold">Quote {quote.quoteNumber}</p>
+          <p className="text-sm">{format(new Date(quote.createdAt), 'dd MMMM yyyy')}</p>
         </div>
       </div>
 

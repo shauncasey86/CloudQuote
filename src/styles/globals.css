@@ -378,31 +378,75 @@
 
 /* Print styles */
 @media print {
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+
   body {
-    @apply bg-white text-black;
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+    line-height: 1.4;
   }
 
   /* Remove backgrounds and effects */
-  .glass-card,
-  [class*="bg-bg-"],
-  [class*="backdrop-blur"] {
-    @apply bg-white border-gray-300 shadow-none;
-    backdrop-filter: none;
+  * {
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    border-color: #000 !important;
   }
 
   /* Hide navigation, buttons, and interactive elements */
-  .no-print,
+  aside,
   nav,
   button,
   [role="button"],
-  .print-hide {
-    @apply hidden !important;
+  .no-print,
+  .print-hide,
+  header,
+  .animate-fadeUp,
+  .animate-fadeUp-delay-1,
+  .animate-fadeUp-delay-2,
+  .animate-fadeUp-delay-3 {
+    display: none !important;
+  }
+
+  /* Show print content */
+  .print-only {
+    display: block !important;
   }
 
   /* Optimize colors for print */
-  .text-gradient {
-    @apply text-purple-600;
-    -webkit-text-fill-color: initial;
+  .text-gradient,
+  .text-gradient-nebula,
+  .text-gradient-aurora,
+  .text-gradient-success {
+    color: #6B21A8 !important;
+    -webkit-text-fill-color: initial !important;
+    background: none !important;
+  }
+
+  /* Typography for print */
+  h1 {
+    font-size: 24pt;
+    font-weight: bold;
+    margin-bottom: 12pt;
+  }
+
+  h2 {
+    font-size: 18pt;
+    font-weight: bold;
+    margin-top: 16pt;
+    margin-bottom: 8pt;
+  }
+
+  h3 {
+    font-size: 14pt;
+    font-weight: bold;
+    margin-top: 12pt;
+    margin-bottom: 6pt;
   }
 
   /* Ensure proper page breaks */
@@ -416,23 +460,111 @@
 
   /* Table adjustments */
   table {
-    @apply border-collapse;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 12pt 0;
   }
 
-  th, td {
-    @apply border border-gray-300 px-2 py-1;
+  thead {
+    display: table-header-group;
+  }
+
+  th {
+    background: #f3f4f6 !important;
+    border: 1pt solid #000 !important;
+    padding: 8pt 6pt;
+    text-align: left;
+    font-weight: bold;
+  }
+
+  td {
+    border: 1pt solid #000 !important;
+    padding: 6pt;
+  }
+
+  tr {
+    page-break-inside: avoid;
   }
 
   /* Card adjustments */
+  .card,
+  .glass-card,
   [class*="Card"] {
-    @apply border border-gray-300 mb-4;
-    box-shadow: none;
+    background: white !important;
+    border: 1pt solid #000 !important;
+    border-radius: 0 !important;
+    margin-bottom: 12pt;
+    padding: 12pt;
+    page-break-inside: avoid;
   }
 
   /* Badge adjustments */
-  [class*="Badge"],
-  .badge {
-    @apply border border-gray-400 text-black bg-gray-100;
+  .badge,
+  [class*="Badge"] {
+    border: 1pt solid #000 !important;
+    background: white !important;
+    color: black !important;
+    padding: 2pt 6pt;
+    border-radius: 3pt;
+  }
+
+  /* Content spacing */
+  .space-y-6 > * + * {
+    margin-top: 12pt;
+  }
+
+  .space-y-4 > * + * {
+    margin-top: 8pt;
+  }
+
+  /* Icons - hide in print */
+  svg {
+    display: none !important;
+  }
+
+  /* Print-specific layout */
+  .print-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24pt;
+    padding-bottom: 12pt;
+    border-bottom: 2pt solid #000;
+  }
+
+  .print-section {
+    margin-bottom: 16pt;
+    page-break-inside: avoid;
+  }
+
+  .print-section-title {
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 8pt;
+    padding-bottom: 4pt;
+    border-bottom: 1pt solid #000;
+  }
+
+  /* Grid layout for print */
+  .grid {
+    display: block !important;
+  }
+
+  .lg\:col-span-2,
+  .lg\:col-span-1 {
+    width: 100% !important;
+  }
+
+  /* Money/pricing emphasis */
+  .font-mono {
+    font-family: 'Courier New', monospace;
+  }
+
+  /* Footer for each page */
+  @page {
+    @bottom-right {
+      content: counter(page) " of " counter(pages);
+    }
   }
 }
 

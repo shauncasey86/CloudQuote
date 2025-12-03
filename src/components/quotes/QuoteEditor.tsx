@@ -243,9 +243,29 @@ export function QuoteEditor({
   };
 
   const handleFinalize = async () => {
-    setQuoteState((prev) => ({ ...prev, status: QuoteStatus.FINALIZED }));
-    await handleSave();
-    toast.success('Quote finalized');
+    const finalizedState = { ...quoteState, status: QuoteStatus.FINALIZED };
+    setQuoteState(finalizedState);
+
+    if (!quoteId) {
+      // Create new quote with finalized status
+      await createQuoteMutation.mutateAsync({
+        ...finalizedState.customerInfo,
+        houseTypeMultiplier,
+        ...totals,
+        items: finalizedState.items,
+        additionalCosts: finalizedState.additionalCosts,
+        status: QuoteStatus.FINALIZED,
+      });
+    } else {
+      // Update existing quote with finalized status
+      await updateQuoteMutation.mutateAsync({
+        ...finalizedState.customerInfo,
+        houseTypeMultiplier,
+        ...totals,
+        status: QuoteStatus.FINALIZED,
+      });
+      toast.success('Quote finalized');
+    }
   };
 
   const handleSend = async () => {

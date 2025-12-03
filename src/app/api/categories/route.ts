@@ -19,7 +19,11 @@ export async function GET(request: NextRequest) {
       where: activeOnly ? { active: true } : undefined,
       include: {
         _count: {
-          select: { products: true },
+          select: {
+            products: {
+              where: { active: true }
+            }
+          },
         },
       },
       orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
