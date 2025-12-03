@@ -21,7 +21,7 @@ const updateQuoteSchema = z.object({
   notes: z.string().nullable().optional(),
   internalNotes: z.string().nullable().optional(),
   validUntil: z.string().datetime().nullable().optional(),
-  status: z.enum(['DRAFT', 'FINALIZED', 'SENT', 'SAVED', 'ARCHIVED']).optional(),
+  status: z.enum(['DRAFT', 'FINALIZED', 'PRINTED', 'SENT', 'SAVED', 'ARCHIVED']).optional(),
 });
 
 export async function GET(
