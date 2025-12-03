@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { QuoteStatus } from '@prisma/client';
 import {
@@ -19,9 +20,11 @@ import {
   Edit,
   Copy,
   Archive,
-  MoreVertical
+  MoreVertical,
+  Trash2
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface Quote {
   id: string;
@@ -51,6 +54,114 @@ const statusVariants: Record<QuoteStatus, 'default' | 'warning' | 'info' | 'succ
   SAVED: 'info',
   ARCHIVED: 'danger',
 };
+
+function ActionsDropdown({ quote }: { quote: Quote }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const duplicateMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`/api/quotes/${quote.id}/duplicate`, { method: 'POST' });
+      if (!res.ok) throw new Error('Failed to duplicate');
+      return res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['quotes'] });
+      router.push(`/quotes/${data.data.id}?edit=true`);
+    },
+  });
+
+  const archiveMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`/api/quotes/${quote.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'ARCHIVED' }),
+      });
+      if (!res.ok) throw new Error('Failed to archive');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quotes'] });
+      setIsOpen(false);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`/api/quotes/${quote.id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quotes'] });
+      setIsOpen(false);
+    },
+  });
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <Button
+        variant="ghost"
+        size="icon"
+        title="More actions"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <MoreVertical className="w-4 h-4" />
+      </Button>
+      {isOpen && (
+        <div className="absolute right-0 top-full mt-1 w-48 bg-bg-elevated border border-border-primary rounded-lg shadow-xl z-50 py-1">
+          <button
+            className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary flex items-center gap-2 transition-colors"
+            onClick={() => {
+              duplicateMutation.mutate();
+              setIsOpen(false);
+            }}
+            disabled={duplicateMutation.isPending}
+          >
+            <Copy className="w-4 h-4" />
+            {duplicateMutation.isPending ? 'Duplicating...' : 'Duplicate'}
+          </button>
+          {quote.status !== 'ARCHIVED' && (
+            <button
+              className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary flex items-center gap-2 transition-colors"
+              onClick={() => archiveMutation.mutate()}
+              disabled={archiveMutation.isPending}
+            >
+              <Archive className="w-4 h-4" />
+              {archiveMutation.isPending ? 'Archiving...' : 'Archive'}
+            </button>
+          )}
+          <button
+            className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2 transition-colors"
+            onClick={() => {
+              if (confirm('Are you sure you want to delete this quote? This cannot be undone.')) {
+                deleteMutation.mutate();
+              }
+            }}
+            disabled={deleteMutation.isPending}
+          >
+            <Trash2 className="w-4 h-4" />
+            {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function QuotesTable({ quotes, isLoading }: QuotesTableProps) {
   if (isLoading) {
@@ -120,14 +231,12 @@ export function QuotesTable({ quotes, isLoading }: QuotesTableProps) {
                     <Eye className="w-4 h-4" />
                   </Button>
                 </Link>
-                <Link href={`/quotes/${quote.id}/edit`}>
+                <Link href={`/quotes/${quote.id}?edit=true`}>
                   <Button variant="ghost" size="icon" title="Edit">
                     <Edit className="w-4 h-4" />
                   </Button>
                 </Link>
-                <Button variant="ghost" size="icon" title="More actions">
-                  <MoreVertical className="w-4 h-4" />
-                </Button>
+                <ActionsDropdown quote={quote} />
               </div>
             </TableCell>
           </TableRow>
