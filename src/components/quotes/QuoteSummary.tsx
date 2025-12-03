@@ -192,18 +192,6 @@ export function QuoteSummary({
         </div>
       </Modal>
 
-      {/* Help Text */}
-      <Card className="bg-bg-glass/50">
-        <CardContent className="text-xs text-text-secondary space-y-2 p-4">
-          <p className="font-medium text-text-primary">Quote Workflow:</p>
-          <ul className="space-y-1 list-disc list-inside">
-            <li>Draft: Editable, not sent to customer</li>
-            <li>Finalized: Ready to send, locked pricing</li>
-            <li>Sent: Delivered to customer via email</li>
-            <li>Saved: Completed and archived</li>
-          </ul>
-        </CardContent>
-      </Card>
     </div>
   );
 }

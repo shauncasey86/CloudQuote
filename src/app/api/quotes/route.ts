@@ -32,6 +32,7 @@ const createQuoteSchema = z.object({
   customerEmail: z.string().email().optional().nullable().or(z.literal('')),
   customerPhone: z.string().max(50).optional().nullable(),
   address: z.string().min(1),
+  postcode: z.string().optional().nullable(),
   houseTypeId: z.string().optional().nullable(),
   frontal: z.string().optional().nullable(),
   handle: z.string().optional().nullable(),

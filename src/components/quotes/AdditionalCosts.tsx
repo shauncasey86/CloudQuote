@@ -84,17 +84,6 @@ export function AdditionalCosts({
                     className="input w-32 text-sm text-right"
                   />
                 </div>
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={cost.taxable}
-                    onChange={(e) =>
-                      onUpdateCost(cost.id, { taxable: e.target.checked })
-                    }
-                    className="rounded border-border-glass"
-                  />
-                  <span className="text-text-secondary">Taxable</span>
-                </label>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -133,17 +122,6 @@ export function AdditionalCosts({
               placeholder="0.00"
             />
           </div>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={newCost.taxable}
-              onChange={(e) =>
-                setNewCost((prev) => ({ ...prev, taxable: e.target.checked }))
-              }
-              className="rounded border-border-glass"
-            />
-            <span className="text-text-secondary">Taxable</span>
-          </label>
           <Button
             size="sm"
             onClick={handleAddCost}

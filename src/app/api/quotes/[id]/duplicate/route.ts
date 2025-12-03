@@ -48,6 +48,7 @@ export async function POST(
         customerEmail: originalQuote.customerEmail,
         customerPhone: originalQuote.customerPhone,
         address: originalQuote.address,
+        postcode: originalQuote.postcode,
         houseTypeId: originalQuote.houseTypeId,
         houseTypeAllowance: originalQuote.houseTypeAllowance,
         frontal: originalQuote.frontal,
