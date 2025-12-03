@@ -211,7 +211,7 @@ export function QuoteViewer({
             {comingSoonFeature} functionality is coming soon!
           </p>
           <p className="text-sm text-text-secondary">
-            For now, please use the Print function to create a physical copy or save as PDF via your browser's print dialog.
+            For now, please use the Print function to create a physical copy or save as PDF via your browser&apos;s print dialog.
           </p>
           <Button
             className="mt-6"
