@@ -1,8 +1,26 @@
 import { requireAuth } from '@/lib/auth-utils';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { prisma } from '@/lib/db';
+import { QuoteEditor } from '@/components/quotes/QuoteEditor';
 
 export default async function NewQuotePage() {
   await requireAuth();
+
+  // Fetch all necessary data
+  const [products, categories, houseTypes] = await Promise.all([
+    prisma.product.findMany({
+      where: { active: true },
+      include: { category: true },
+      orderBy: [{ category: { sortOrder: 'asc' } }, { sortOrder: 'asc' }],
+    }),
+    prisma.productCategory.findMany({
+      where: { active: true },
+      orderBy: { sortOrder: 'asc' },
+    }),
+    prisma.houseType.findMany({
+      where: { active: true },
+      orderBy: { sortOrder: 'asc' },
+    }),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -15,16 +33,11 @@ export default async function NewQuotePage() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Quote Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-text-secondary text-center py-8">
-            Quote creation form will be implemented here with product selection, pricing, and customer details.
-          </p>
-        </CardContent>
-      </Card>
+      <QuoteEditor
+        products={products}
+        categories={categories}
+        houseTypes={houseTypes}
+      />
     </div>
   );
 }
