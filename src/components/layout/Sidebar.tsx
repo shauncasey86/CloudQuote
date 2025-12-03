@@ -54,7 +54,7 @@ export const Sidebar: React.FC = () => {
   const isAdmin = session?.user?.role === Role.ADMIN;
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-bg-canvas border-r border-border-glass flex flex-col z-40">
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-bg-canvas/95 backdrop-blur-xl border-r border-border-glass flex flex-col z-40">
       {/* Logo */}
       <div className="p-6">
         <Link href="/quotes" className="flex items-center gap-3 group">
@@ -121,7 +121,7 @@ export const Sidebar: React.FC = () => {
           </div>
         </div>
         <div className="text-xs text-text-muted">
-          Kitchen Installation Quoting
+          Created by Shaun Casey
         </div>
       </div>
     </aside>

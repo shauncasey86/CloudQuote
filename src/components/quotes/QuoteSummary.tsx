@@ -76,30 +76,12 @@ export function QuoteSummary({
             <span className="font-medium">{itemsCount}</span>
           </div>
 
-          <div className="border-t border-border-glass pt-4 space-y-3">
-            {/* Subtotal */}
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-text-secondary">Subtotal</span>
-              <span className="font-mono font-medium">
-                £{subtotal.toFixed(2)}
-              </span>
-            </div>
-
-            {/* VAT */}
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-text-secondary">VAT ({vatRate}%)</span>
-              <span className="font-mono font-medium">
-                £{vatAmount.toFixed(2)}
-              </span>
-            </div>
-          </div>
-
           {/* Total */}
           <div className="border-t border-border-glass pt-4">
             <div className="flex items-center justify-between">
-              <span className="text-lg font-semibold">Total</span>
+              <span className="text-lg font-semibold">Total (VAT Inclusive)</span>
               <span className="text-2xl font-bold font-mono text-gradient">
-                £{total.toFixed(2)}
+                £{subtotal.toFixed(2)}
               </span>
             </div>
           </div>

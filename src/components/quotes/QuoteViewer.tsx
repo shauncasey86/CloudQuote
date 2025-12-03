@@ -404,30 +404,11 @@ export function QuoteViewer({
               <CardTitle>Summary</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-text-secondary">Subtotal</span>
-                  <span className="font-mono font-medium">
-                    £{Number(quote.subtotal).toFixed(2)}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-text-secondary">
-                    VAT ({Number(quote.vatRate)}%)
-                  </span>
-                  <span className="font-mono font-medium">
-                    £{Number(quote.vatAmount).toFixed(2)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="border-t border-border-glass pt-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-semibold">Total</span>
-                  <span className="text-2xl font-bold font-mono text-gradient">
-                    £{Number(quote.total).toFixed(2)}
-                  </span>
-                </div>
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-semibold">Total (VAT Inclusive)</span>
+                <span className="text-2xl font-bold font-mono text-gradient">
+                  £{Number(quote.subtotal).toFixed(2)}
+                </span>
               </div>
 
               {quote.sentAt && (
