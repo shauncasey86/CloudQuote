@@ -5,7 +5,16 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Trash2, Plus } from 'lucide-react';
-import { AdditionalCost } from '@prisma/client';
+
+interface AdditionalCost {
+  id: string;
+  quoteId: string;
+  description: string;
+  amount: number;
+  taxable: boolean;
+  sortOrder: number;
+  createdAt: Date | string;
+}
 
 interface AdditionalCostsProps {
   costs: AdditionalCost[];

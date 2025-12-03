@@ -147,7 +147,7 @@ export function QuoteViewer({
               <h1 className="text-3xl font-display font-bold text-gradient">
                 Quote {quote.quoteNumber}
               </h1>
-              <Badge variant={statusVariants[quote.status]}>
+              <Badge variant={statusVariants[quote.status as QuoteStatus]}>
                 {quote.status}
               </Badge>
             </div>
