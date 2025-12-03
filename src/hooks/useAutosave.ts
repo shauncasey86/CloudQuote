@@ -42,7 +42,7 @@ export function useAutosave<T>({
   }, [data, enabled, debouncedSave]);
 
   return {
-    status: mutation.isPending ? 'saving' : mutation.isError ? 'error' : 'saved',
+    status: mutation.isPending ? ('saving' as const) : mutation.isError ? ('error' as const) : ('saved' as const),
     error: mutation.error,
   };
 }

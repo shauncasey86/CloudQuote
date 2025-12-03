@@ -38,7 +38,7 @@ export default async function QuotesPage({ searchParams }: Props) {
   }
 
   // Fetch quotes with pagination
-  const [quotes, total] = await Promise.all([
+  const [quotesRaw, total] = await Promise.all([
     prisma.quote.findMany({
       where,
       include: {
@@ -51,6 +51,16 @@ export default async function QuotesPage({ searchParams }: Props) {
     }),
     prisma.quote.count({ where }),
   ]);
+
+  // Convert Decimal to number for client components
+  const quotes = quotesRaw.map((quote) => ({
+    ...quote,
+    total: Number(quote.total),
+    subtotal: Number(quote.subtotal),
+    vatAmount: Number(quote.vatAmount),
+    vatRate: Number(quote.vatRate),
+    houseTypeMultiplier: Number(quote.houseTypeMultiplier),
+  }));
 
   return (
     <div className="space-y-6">
