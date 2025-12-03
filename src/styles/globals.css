@@ -107,11 +107,34 @@
 
   body {
     background-color: var(--bg-base);
+    background-image: url('/main-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: var(--text-primary);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Dark overlay on top of background for better readability */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(11, 13, 20, 0.85);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Light mode overlay */
+  .light body::before {
+    background: rgba(248, 250, 252, 0.88);
   }
 
   h1, h2, h3, h4, h5, h6 {

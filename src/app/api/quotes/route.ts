@@ -7,6 +7,25 @@ import { prisma } from '@/lib/db';
 import { authOptions } from '@/lib/auth';
 import { Prisma } from '@prisma/client';
 
+const quoteItemSchema = z.object({
+  productId: z.string(),
+  productName: z.string(),
+  productSku: z.string().optional().nullable(),
+  quantity: z.number(),
+  priceUnit: z.enum(['UNIT', 'LINEAR_METER', 'SQUARE_METER']),
+  unitPrice: z.number(),
+  lineTotal: z.number(),
+  notes: z.string().optional().nullable(),
+  sortOrder: z.number().optional(),
+});
+
+const additionalCostSchema = z.object({
+  description: z.string(),
+  amount: z.number(),
+  taxable: z.boolean().optional(),
+  sortOrder: z.number().optional(),
+});
+
 const createQuoteSchema = z.object({
   quoteNumber: z.string().min(1).max(50),
   customerName: z.string().min(1).max(255),
@@ -18,6 +37,11 @@ const createQuoteSchema = z.object({
   internalNotes: z.string().optional().nullable(),
   validUntil: z.string().datetime().optional().nullable(),
   status: z.enum(['DRAFT', 'FINALIZED', 'SENT', 'SAVED', 'ARCHIVED']).optional(),
+  items: z.array(quoteItemSchema).optional(),
+  additionalCosts: z.array(additionalCostSchema).optional(),
+  subtotal: z.number().optional(),
+  vatAmount: z.number().optional(),
+  total: z.number().optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -110,14 +134,47 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Extract items and additionalCosts from data
+    const { items, additionalCosts, subtotal, vatAmount, total, ...quoteData } = data;
+
     const quote = await prisma.quote.create({
       data: {
-        ...data,
-        customerEmail: data.customerEmail || null,
+        ...quoteData,
+        customerEmail: quoteData.customerEmail || null,
         houseTypeMultiplier,
-        status: data.status || 'DRAFT',
-        validUntil: data.validUntil ? new Date(data.validUntil) : null,
+        status: quoteData.status || 'DRAFT',
+        subtotal: subtotal || 0,
+        vatAmount: vatAmount || 0,
+        total: total || 0,
+        validUntil: quoteData.validUntil ? new Date(quoteData.validUntil) : null,
         createdById: session.user.id,
+        // Create items if provided
+        ...(items && items.length > 0 && {
+          items: {
+            create: items.map((item, index) => ({
+              productId: item.productId,
+              productName: item.productName,
+              productSku: item.productSku || null,
+              quantity: item.quantity,
+              priceUnit: item.priceUnit,
+              unitPrice: item.unitPrice,
+              lineTotal: item.lineTotal,
+              notes: item.notes || null,
+              sortOrder: item.sortOrder ?? index,
+            })),
+          },
+        }),
+        // Create additionalCosts if provided
+        ...(additionalCosts && additionalCosts.length > 0 && {
+          additionalCosts: {
+            create: additionalCosts.map((cost, index) => ({
+              description: cost.description,
+              amount: cost.amount,
+              taxable: cost.taxable ?? true,
+              sortOrder: cost.sortOrder ?? index,
+            })),
+          },
+        }),
       },
       include: {
         createdBy: { select: { id: true, name: true, email: true } },

@@ -176,7 +176,7 @@ export function QuoteViewer({
               </Button>
             </Link>
           )}
-          <Button onClick={() => window.print()}>
+          <Button onClick={() => window.open(`/quotes/${quote.id}/print`, '_blank')}>
             <Printer className="w-4 h-4 mr-2" />
             Print
           </Button>
