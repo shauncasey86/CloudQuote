@@ -50,13 +50,13 @@ enum Role {
 }
 
 // ════════════════════════════════════════════════════════════════════
-// HOUSE TYPES (Pricing Multipliers)
+// HOUSE TYPES (Allowance Amounts)
 // ════════════════════════════════════════════════════════════════════
 
 model HouseType {
   id         String   @id @default(cuid())
   name       String
-  multiplier Decimal  @default(1.00) @db.Decimal(4, 2)
+  allowance  Decimal  @default(0) @db.Decimal(10, 2) // Invoice allowance amount
   active     Boolean  @default(true)
   sortOrder  Int      @default(0)
   createdAt  DateTime @default(now())
@@ -131,9 +131,14 @@ model Quote {
   customerPhone        String?
   address              String
 
+  // Selections
+  frontal              String?           // White Gloss, Walnut, etc.
+  handle               String?           // Tapered D, Classic D, etc.
+  worktop              String?           // Black, Oak, etc.
+
   // Pricing Context
   houseTypeId          String?
-  houseTypeMultiplier  Decimal         @default(1.00) @db.Decimal(4, 2) // Snapshot
+  houseTypeAllowance   Decimal         @default(0) @db.Decimal(10, 2) // Snapshot of allowance at quote time
 
   // Calculated Totals (stored for historical accuracy)
   subtotal             Decimal         @default(0) @db.Decimal(12, 2)
@@ -170,6 +175,7 @@ model Quote {
 enum QuoteStatus {
   DRAFT
   FINALIZED
+  PRINTED
   SENT
   SAVED
   ARCHIVED
@@ -180,30 +186,31 @@ enum QuoteStatus {
 // ════════════════════════════════════════════════════════════════════
 
 model QuoteItem {
-  id          String    @id @default(cuid())
-  quoteId     String
-  productId   String?
+  id            String    @id @default(cuid())
+  quoteId       String
+  productId     String?
 
   // Snapshot of product at quote time
-  productName String
-  productSku  String?
+  productName   String
+  productSku    String?
 
   // Pricing (snapshot)
-  quantity    Decimal   @default(1) @db.Decimal(10, 2)
-  priceUnit   PriceUnit @default(UNIT)
-  unitPrice   Decimal   @db.Decimal(10, 2)
-  lineTotal   Decimal   @db.Decimal(12, 2)
+  quantity      Decimal   @default(1) @db.Decimal(10, 2)
+  priceUnit     PriceUnit @default(UNIT)
+  unitPrice     Decimal   @db.Decimal(10, 2)
+  lineTotal     Decimal   @db.Decimal(12, 2)
+  isInAllowance Boolean   @default(false) // If true, item is part of house type allowance (£0)
 
   // Display
-  sortOrder   Int       @default(0)
-  notes       String?
+  sortOrder     Int       @default(0)
+  notes         String?
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   // Relations
-  quote       Quote     @relation(fields: [quoteId], references: [id], onDelete: Cascade)
-  product     Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  quote         Quote     @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  product       Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
 
   @@index([quoteId])
   @@index([productId])

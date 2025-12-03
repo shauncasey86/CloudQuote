@@ -3,7 +3,7 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Search, Plus } from 'lucide-react';
+import { Search, Plus, Check } from 'lucide-react';
 import { Product, ProductCategory } from '@prisma/client';
 
 interface ProductWithCategory extends Product {
@@ -13,7 +13,7 @@ interface ProductWithCategory extends Product {
 interface ProductSelectorProps {
   products: ProductWithCategory[];
   categories: ProductCategory[];
-  onAddProduct: (product: Product, quantity: number) => void;
+  onAddProduct: (product: Product, quantity: number, isInAllowance: boolean) => void;
   isLoading?: boolean;
 }
 
@@ -26,6 +26,7 @@ export function ProductSelector({
   const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
   const [searchQuery, setSearchQuery] = React.useState('');
   const [quantities, setQuantities] = React.useState<Record<string, number>>({});
+  const [allowances, setAllowances] = React.useState<Record<string, boolean>>({});
 
   const filteredProducts = React.useMemo(() => {
     return products.filter((product) => {
@@ -41,8 +42,10 @@ export function ProductSelector({
 
   const handleAddProduct = (product: Product) => {
     const quantity = quantities[product.id] || 1;
-    onAddProduct(product, quantity);
+    const isInAllowance = allowances[product.id] || false;
+    onAddProduct(product, quantity, isInAllowance);
     setQuantities((prev) => ({ ...prev, [product.id]: 1 }));
+    setAllowances((prev) => ({ ...prev, [product.id]: false }));
   };
 
   const sortedCategories = categories
@@ -112,68 +115,93 @@ export function ProductSelector({
           <div className="max-h-[400px] overflow-y-auto scrollbar-thin">
             {/* Header Row */}
             <div className="grid grid-cols-12 gap-2 px-3 py-2 text-xs font-semibold text-text-muted uppercase tracking-wide border-b border-border-glass">
-              <div className="col-span-5">Product</div>
+              <div className="col-span-4">Product</div>
               <div className="col-span-2 text-right">Price</div>
+              <div className="col-span-1 text-center" title="In Allowance">Allow</div>
               <div className="col-span-2 text-center">Qty</div>
               <div className="col-span-3"></div>
             </div>
             {/* Product Rows */}
             <div className="divide-y divide-border-subtle">
-              {filteredProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="grid grid-cols-12 gap-2 px-3 py-2.5 items-center hover:bg-bg-glass-light transition-colors group"
-                >
-                  {/* Product Info */}
-                  <div className="col-span-5">
-                    <div className="font-medium text-sm text-text-primary leading-tight">
-                      {product.name}
-                    </div>
-                    {product.sku && (
-                      <div className="text-xs text-text-muted font-mono">
-                        {product.sku}
+              {filteredProducts.map((product) => {
+                const isInAllowance = allowances[product.id] || false;
+                return (
+                  <div
+                    key={product.id}
+                    className="grid grid-cols-12 gap-2 px-3 py-2.5 items-center hover:bg-bg-glass-light transition-colors group"
+                  >
+                    {/* Product Info */}
+                    <div className="col-span-4">
+                      <div className="font-medium text-sm text-text-primary leading-tight">
+                        {product.name}
                       </div>
-                    )}
+                      {product.sku && (
+                        <div className="text-xs text-text-muted font-mono">
+                          {product.sku}
+                        </div>
+                      )}
+                    </div>
+                    {/* Price */}
+                    <div className="col-span-2 text-right">
+                      {isInAllowance ? (
+                        <span className="font-mono font-semibold text-sm text-emerald-400">£0.00</span>
+                      ) : (
+                        <>
+                          <span className="font-mono font-semibold text-sm">
+                            £{Number(product.basePrice).toFixed(2)}
+                          </span>
+                          <span className="text-xs text-text-muted ml-1">
+                            /{product.priceUnit === 'LINEAR_METER' ? 'm' : 'ea'}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {/* Allowance Checkbox */}
+                    <div className="col-span-1 flex justify-center">
+                      <button
+                        type="button"
+                        onClick={() => setAllowances((prev) => ({ ...prev, [product.id]: !prev[product.id] }))}
+                        className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${
+                          isInAllowance
+                            ? 'bg-emerald-500 border-emerald-500 text-white'
+                            : 'border-border-glass hover:border-emerald-400'
+                        }`}
+                        title="Include in house type allowance (free)"
+                      >
+                        {isInAllowance && <Check className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    {/* Quantity */}
+                    <div className="col-span-2 flex justify-center">
+                      <input
+                        type="number"
+                        min={Number(product.minQuantity) || 1}
+                        max={Number(product.maxQuantity) || undefined}
+                        step={product.priceUnit === 'LINEAR_METER' ? '0.1' : '1'}
+                        value={quantities[product.id] || 1}
+                        onChange={(e) =>
+                          setQuantities((prev) => ({
+                            ...prev,
+                            [product.id]: parseFloat(e.target.value) || 1,
+                          }))
+                        }
+                        className="w-16 px-2 py-1.5 text-center text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 transition-colors"
+                      />
+                    </div>
+                    {/* Add Button */}
+                    <div className="col-span-3 flex justify-end">
+                      <Button
+                        size="sm"
+                        onClick={() => handleAddProduct(product)}
+                        className="opacity-70 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Plus className="w-3.5 h-3.5 mr-1" />
+                        Add
+                      </Button>
+                    </div>
                   </div>
-                  {/* Price */}
-                  <div className="col-span-2 text-right">
-                    <span className="font-mono font-semibold text-sm">
-                      £{Number(product.basePrice).toFixed(2)}
-                    </span>
-                    <span className="text-xs text-text-muted ml-1">
-                      /{product.priceUnit === 'LINEAR_METER' ? 'm' : 'ea'}
-                    </span>
-                  </div>
-                  {/* Quantity */}
-                  <div className="col-span-2 flex justify-center">
-                    <input
-                      type="number"
-                      min={Number(product.minQuantity) || 1}
-                      max={Number(product.maxQuantity) || undefined}
-                      step={product.priceUnit === 'LINEAR_METER' ? '0.1' : '1'}
-                      value={quantities[product.id] || 1}
-                      onChange={(e) =>
-                        setQuantities((prev) => ({
-                          ...prev,
-                          [product.id]: parseFloat(e.target.value) || 1,
-                        }))
-                      }
-                      className="w-16 px-2 py-1.5 text-center text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 transition-colors"
-                    />
-                  </div>
-                  {/* Add Button */}
-                  <div className="col-span-3 flex justify-end">
-                    <Button
-                      size="sm"
-                      onClick={() => handleAddProduct(product)}
-                      className="opacity-70 group-hover:opacity-100 transition-opacity"
-                    >
-                      <Plus className="w-3.5 h-3.5 mr-1" />
-                      Add
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

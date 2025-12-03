@@ -50,6 +50,7 @@ interface QuotesTableProps {
 const statusVariants: Record<QuoteStatus, 'default' | 'warning' | 'info' | 'success' | 'danger'> = {
   DRAFT: 'default',
   FINALIZED: 'warning',
+  PRINTED: 'info',
   SENT: 'success',
   SAVED: 'info',
   ARCHIVED: 'danger',
@@ -95,8 +96,8 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['quotes'] });
       setIsOpen(false);
+      router.refresh();
     },
   });
 
@@ -106,10 +107,10 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
       if (!res.ok) throw new Error('Failed to delete');
       return res.json();
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       setIsOpen(false);
-      await queryClient.invalidateQueries({ queryKey: ['quotes'] });
-      await queryClient.refetchQueries({ queryKey: ['quotes'] });
+      // Use router.refresh() to re-fetch server component data
+      router.refresh();
     },
   });
 

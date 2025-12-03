@@ -47,6 +47,9 @@ export function QuoteEditor({
       customerPhone: '',
       address: '',
       houseTypeId: '',
+      frontal: '',
+      handle: '',
+      worktop: '',
       notes: '',
       internalNotes: '',
     },
@@ -147,7 +150,8 @@ export function QuoteEditor({
     }));
   };
 
-  const handleAddProduct = async (product: Product, quantity: number) => {
+  const handleAddProduct = async (product: Product, quantity: number, isInAllowance: boolean = false) => {
+    const effectivePrice = isInAllowance ? 0 : Number(product.basePrice);
     const newItem = {
       id: `temp-${Date.now()}`,
       productId: product.id,
@@ -155,8 +159,9 @@ export function QuoteEditor({
       productSku: product.sku,
       quantity,
       priceUnit: product.priceUnit,
-      unitPrice: Number(product.basePrice),
-      lineTotal: Number(product.basePrice) * quantity * houseTypeMultiplier,
+      unitPrice: effectivePrice,
+      lineTotal: effectivePrice * quantity,
+      isInAllowance,
       notes: '',
       sortOrder: quoteState.items.length,
     };
@@ -166,7 +171,7 @@ export function QuoteEditor({
       items: [...prev.items, newItem],
     }));
 
-    toast.success(`Added ${product.name} to quote`);
+    toast.success(`Added ${product.name} to quote${isInAllowance ? ' (in allowance)' : ''}`);
   };
 
   const handleUpdateQuantity = (itemId: string, quantity: number) => {
@@ -177,7 +182,7 @@ export function QuoteEditor({
           ? {
               ...item,
               quantity,
-              lineTotal: Number(item.unitPrice) * quantity * houseTypeMultiplier,
+              lineTotal: Number(item.unitPrice) * quantity,
             }
           : item
       ),
@@ -312,7 +317,6 @@ export function QuoteEditor({
           items={quoteState.items}
           onUpdateQuantity={handleUpdateQuantity}
           onRemoveItem={handleRemoveItem}
-          houseTypeMultiplier={houseTypeMultiplier}
         />
 
         <AdditionalCosts
