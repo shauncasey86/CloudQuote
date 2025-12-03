@@ -62,10 +62,10 @@ export const Sidebar: React.FC = () => {
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div>
-            <span className="font-bold text-lg text-gradient block leading-tight">
+            <span className="font-bold text-lg text-gradient block leading-none">
               CloudQuote
             </span>
-            <span className="text-xs text-text-muted">Kitchen Quoting</span>
+            <span className="text-xs text-text-muted leading-tight">Wilson Interiors</span>
           </div>
         </Link>
       </div>

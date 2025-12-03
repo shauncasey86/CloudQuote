@@ -37,7 +37,7 @@ export function CustomerInfoSection({
   isLoading,
   compact = false,
 }: CustomerInfoSectionProps) {
-  const [isExpanded, setIsExpanded] = React.useState(!compact);
+  const [isExpanded, setIsExpanded] = React.useState(true); // Always open by default
   const {
     register,
     handleSubmit,
@@ -106,10 +106,10 @@ export function CustomerInfoSection({
                     tabIndex={2}
                     className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
                   >
-                    <option value="">Standard</option>
+                    <option value="">Select type...</option>
                     {houseTypes.map((type) => (
                       <option key={type.id} value={type.id}>
-                        {type.name}
+                        {type.name} (£{Number((type as any).allowance || 0).toFixed(2)})
                       </option>
                     ))}
                   </select>
@@ -210,7 +210,7 @@ export function CustomerInfoSection({
               <option value="">Select house type</option>
               {houseTypes.map((type) => (
                 <option key={type.id} value={type.id}>
-                  {type.name} ({Number(type.multiplier)}x)
+                  {type.name} (£{Number((type as any).allowance || 0).toFixed(2)})
                 </option>
               ))}
             </Select>

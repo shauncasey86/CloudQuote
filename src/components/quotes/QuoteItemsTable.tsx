@@ -3,6 +3,7 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 import {
   Table,
   TableBody,
@@ -11,10 +12,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/Table';
-import { Trash2, GripVertical } from 'lucide-react';
-import { QuoteItem } from '@prisma/client';
+import { Trash2, GripVertical, Check } from 'lucide-react';
 
-interface QuoteItemWithDetails extends QuoteItem {
+interface QuoteItemWithDetails {
+  id: string;
+  productName: string;
+  productSku?: string | null;
+  quantity: number | any;
+  priceUnit: string;
+  unitPrice: number | any;
+  lineTotal: number | any;
+  isInAllowance?: boolean;
+  notes?: string | null;
   product?: {
     name: string;
     sku?: string | null;
@@ -34,7 +43,6 @@ export function QuoteItemsTable({
   onUpdateQuantity,
   onRemoveItem,
   isLoading,
-  houseTypeMultiplier = 1,
 }: QuoteItemsTableProps) {
   if (items.length === 0) {
     return (
@@ -73,29 +81,36 @@ export function QuoteItemsTable({
           </TableHeader>
           <TableBody>
             {items.map((item) => {
-              const unitPriceWithMultiplier =
-                Number(item.unitPrice) * houseTypeMultiplier;
-              const lineTotal = unitPriceWithMultiplier * Number(item.quantity);
+              const lineTotal = Number(item.lineTotal);
+              const isInAllowance = item.isInAllowance || false;
 
               return (
-                <TableRow key={item.id}>
+                <TableRow key={item.id} className={isInAllowance ? 'bg-emerald-500/5' : ''}>
                   <TableCell>
                     <button className="cursor-move text-text-secondary hover:text-text-primary">
                       <GripVertical className="w-4 h-4" />
                     </button>
                   </TableCell>
                   <TableCell>
-                    <div>
-                      <p className="font-medium">{item.productName}</p>
-                      {item.productSku && (
-                        <p className="text-xs text-text-secondary font-mono">
-                          {item.productSku}
-                        </p>
-                      )}
-                      {item.notes && (
-                        <p className="text-xs text-text-secondary mt-1 italic">
-                          {item.notes}
-                        </p>
+                    <div className="flex items-start gap-2">
+                      <div className="flex-1">
+                        <p className="font-medium">{item.productName}</p>
+                        {item.productSku && (
+                          <p className="text-xs text-text-secondary font-mono">
+                            {item.productSku}
+                          </p>
+                        )}
+                        {item.notes && (
+                          <p className="text-xs text-text-secondary mt-1 italic">
+                            {item.notes}
+                          </p>
+                        )}
+                      </div>
+                      {isInAllowance && (
+                        <Badge variant="success" className="text-xs whitespace-nowrap">
+                          <Check className="w-3 h-3 mr-1" />
+                          Allowance
+                        </Badge>
                       )}
                     </div>
                   </TableCell>
@@ -118,19 +133,18 @@ export function QuoteItemsTable({
                     </span>
                   </TableCell>
                   <TableCell className="text-right font-mono">
-                    <div className="space-y-1">
-                      <div className="text-xs text-text-secondary">
-                        £{Number(item.unitPrice).toFixed(2)}
-                      </div>
-                      {houseTypeMultiplier !== 1 && (
-                        <div className="text-sm font-medium">
-                          £{unitPriceWithMultiplier.toFixed(2)}
-                        </div>
-                      )}
-                    </div>
+                    {isInAllowance ? (
+                      <span className="text-emerald-400">£0.00</span>
+                    ) : (
+                      <span>£{Number(item.unitPrice).toFixed(2)}</span>
+                    )}
                   </TableCell>
                   <TableCell className="text-right font-mono font-medium">
-                    £{lineTotal.toFixed(2)}
+                    {isInAllowance ? (
+                      <span className="text-emerald-400">£0.00</span>
+                    ) : (
+                      <span>£{lineTotal.toFixed(2)}</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Button

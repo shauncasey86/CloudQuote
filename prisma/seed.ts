@@ -19,19 +19,19 @@ async function main() {
     },
   });
 
-  // House types
+  // House types with allowance amounts
   const houseTypes = [
-    { name: 'Standard', multiplier: 1.0, sortOrder: 1 },
-    { name: 'Premium', multiplier: 1.15, sortOrder: 2 },
-    { name: 'Luxury', multiplier: 1.35, sortOrder: 3 },
-    { name: 'Custom Build', multiplier: 1.5, sortOrder: 4 },
+    { name: 'FLAT-BUNG/1', allowance: 940.80, sortOrder: 1 },
+    { name: 'HOUSE/<3', allowance: 1180.85, sortOrder: 2 },
+    { name: 'FLAT-BUNG/2+', allowance: 953.06, sortOrder: 3 },
+    { name: 'HOUSE/3+', allowance: 1242.14, sortOrder: 4 },
   ];
 
   for (const ht of houseTypes) {
     await prisma.houseType.upsert({
-      where: { id: ht.name.toLowerCase().replace(' ', '-') },
+      where: { id: ht.name.toLowerCase().replace(/[/<>+]/g, '-') },
       update: ht,
-      create: { id: ht.name.toLowerCase().replace(' ', '-'), ...ht },
+      create: { id: ht.name.toLowerCase().replace(/[/<>+]/g, '-'), ...ht },
     });
   }
 
