@@ -20,6 +20,7 @@ const customerInfoSchema = z.object({
   customerEmail: z.string().email('Invalid email').optional().or(z.literal('')),
   customerPhone: z.string().optional(),
   address: z.string().min(1, 'Address is required'),
+  postcode: z.string().optional(),
   houseTypeId: z.string().optional(),
   frontal: z.string().optional(),
   handle: z.string().optional(),
@@ -59,6 +60,7 @@ export function CustomerInfoSection({
       customerEmail: defaultValues?.customerEmail || '',
       customerPhone: defaultValues?.customerPhone || '',
       address: defaultValues?.address || '',
+      postcode: (defaultValues as any)?.postcode || '',
       houseTypeId: defaultValues?.houseTypeId || '',
       frontal: defaultValues?.frontal || '',
       handle: defaultValues?.handle || '',
@@ -187,40 +189,26 @@ export function CustomerInfoSection({
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="text-xs text-text-muted mb-1 block">Email</label>
-                  <input
-                    type="email"
-                    {...register('customerEmail')}
-                    onBlur={handleFieldBlur}
-                    placeholder="email@example.com"
-                    tabIndex={4}
-                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-text-muted mb-1 block">Phone</label>
-                  <input
-                    type="tel"
-                    {...register('customerPhone')}
-                    onBlur={handleFieldBlur}
-                    placeholder="+44 7XXX"
-                    tabIndex={5}
-                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
-                  />
-                </div>
-              </div>
-
               <div>
                 <label className="text-xs text-text-muted mb-1 block">Address *</label>
                 <textarea
                   {...register('address')}
                   onBlur={handleFieldBlur}
-                  placeholder="Full address with postcode"
+                  placeholder="Street address"
                   rows={2}
-                  tabIndex={6}
+                  tabIndex={4}
                   className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs text-text-muted mb-1 block">Postcode</label>
+                <input
+                  {...register('postcode')}
+                  onBlur={handleFieldBlur}
+                  placeholder="e.g., AB12 3CD"
+                  tabIndex={5}
+                  className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
                 />
               </div>
 
@@ -329,36 +317,23 @@ export function CustomerInfoSection({
             tabIndex={3}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Email"
-              type="email"
-              {...register('customerEmail')}
-              error={errors.customerEmail?.message}
-              onBlur={handleFieldBlur}
-              placeholder="customer@example.com"
-              tabIndex={4}
-            />
-            <Input
-              label="Phone"
-              type="tel"
-              {...register('customerPhone')}
-              error={errors.customerPhone?.message}
-              onBlur={handleFieldBlur}
-              placeholder="+44 7XXX XXXXXX"
-              tabIndex={5}
-            />
-          </div>
-
           <Textarea
             label="Address"
             {...register('address')}
             error={errors.address?.message}
             onBlur={handleFieldBlur}
             required
-            rows={3}
-            placeholder="Enter full address including postcode"
-            tabIndex={6}
+            rows={2}
+            placeholder="Street address"
+            tabIndex={4}
+          />
+
+          <Input
+            label="Postcode"
+            {...register('postcode')}
+            onBlur={handleFieldBlur}
+            placeholder="e.g., AB12 3CD"
+            tabIndex={5}
           />
 
           <Textarea

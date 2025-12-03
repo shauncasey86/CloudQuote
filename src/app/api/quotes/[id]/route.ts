@@ -14,6 +14,7 @@ const updateQuoteSchema = z.object({
   customerEmail: z.string().email().nullable().optional().or(z.literal('')),
   customerPhone: z.string().max(50).nullable().optional(),
   address: z.string().min(1).optional(),
+  postcode: z.string().nullable().optional(),
   houseTypeId: z.string().nullable().optional(),
   frontal: z.string().nullable().optional(),
   handle: z.string().nullable().optional(),

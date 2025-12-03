@@ -46,6 +46,7 @@ export function QuoteEditor({
       customerEmail: '',
       customerPhone: '',
       address: '',
+      postcode: '',
       houseTypeId: '',
       frontal: '',
       handle: '',

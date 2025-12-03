@@ -3,7 +3,7 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Search, Plus, Check } from 'lucide-react';
+import { Search, Plus, Check, ChevronUp, ChevronDown } from 'lucide-react';
 import { Product, ProductCategory } from '@prisma/client';
 
 interface ProductWithCategory extends Product {
@@ -114,24 +114,27 @@ export function ProductSelector({
         ) : (
           <div className="max-h-[400px] overflow-y-auto scrollbar-thin">
             {/* Header Row */}
-            <div className="grid grid-cols-12 gap-2 px-3 py-2 text-xs font-semibold text-text-muted uppercase tracking-wide border-b border-border-glass">
-              <div className="col-span-4">Product</div>
+            <div className="grid grid-cols-12 gap-3 px-3 py-2 text-xs font-semibold text-text-muted uppercase tracking-wide border-b border-border-glass">
+              <div className="col-span-5">Product</div>
               <div className="col-span-2 text-right">Price</div>
-              <div className="col-span-1 text-center" title="In Allowance">Allow</div>
+              <div className="col-span-1 text-center">Allowance</div>
               <div className="col-span-2 text-center">Qty</div>
-              <div className="col-span-3"></div>
+              <div className="col-span-2"></div>
             </div>
             {/* Product Rows */}
             <div className="divide-y divide-border-subtle">
               {filteredProducts.map((product) => {
                 const isInAllowance = allowances[product.id] || false;
+                const currentQty = quantities[product.id] || 1;
+                const minQty = Number(product.minQuantity) || 1;
+                const step = product.priceUnit === 'LINEAR_METER' ? 0.1 : 1;
                 return (
                   <div
                     key={product.id}
-                    className="grid grid-cols-12 gap-2 px-3 py-2.5 items-center hover:bg-bg-glass-light transition-colors group"
+                    className="grid grid-cols-12 gap-3 px-3 py-2.5 items-center hover:bg-bg-glass-light transition-colors group"
                   >
                     {/* Product Info */}
-                    <div className="col-span-4">
+                    <div className="col-span-5">
                       <div className="font-medium text-sm text-text-primary leading-tight">
                         {product.name}
                       </div>
@@ -161,35 +164,57 @@ export function ProductSelector({
                       <button
                         type="button"
                         onClick={() => setAllowances((prev) => ({ ...prev, [product.id]: !prev[product.id] }))}
-                        className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${
+                        className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
                           isInAllowance
                             ? 'bg-emerald-500 border-emerald-500 text-white'
                             : 'border-border-glass hover:border-emerald-400'
                         }`}
                         title="Include in house type allowance (free)"
                       >
-                        {isInAllowance && <Check className="w-4 h-4" />}
+                        {isInAllowance && <Check className="w-3 h-3" />}
                       </button>
                     </div>
-                    {/* Quantity */}
+                    {/* Quantity with themed up/down */}
                     <div className="col-span-2 flex justify-center">
-                      <input
-                        type="number"
-                        min={Number(product.minQuantity) || 1}
-                        max={Number(product.maxQuantity) || undefined}
-                        step={product.priceUnit === 'LINEAR_METER' ? '0.1' : '1'}
-                        value={quantities[product.id] || 1}
-                        onChange={(e) =>
-                          setQuantities((prev) => ({
+                      <div className="flex items-center bg-bg-elevated border border-border-subtle rounded-lg overflow-hidden">
+                        <button
+                          type="button"
+                          onClick={() => setQuantities((prev) => ({
                             ...prev,
-                            [product.id]: parseFloat(e.target.value) || 1,
-                          }))
-                        }
-                        className="w-16 px-2 py-1.5 text-center text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 transition-colors"
-                      />
+                            [product.id]: Math.max(minQty, (prev[product.id] || 1) - step),
+                          }))}
+                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-violet-400"
+                        >
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </button>
+                        <input
+                          type="number"
+                          min={minQty}
+                          max={Number(product.maxQuantity) || undefined}
+                          step={step}
+                          value={currentQty}
+                          onChange={(e) =>
+                            setQuantities((prev) => ({
+                              ...prev,
+                              [product.id]: parseFloat(e.target.value) || 1,
+                            }))
+                          }
+                          className="w-12 py-1 text-center text-sm bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setQuantities((prev) => ({
+                            ...prev,
+                            [product.id]: (prev[product.id] || 1) + step,
+                          }))}
+                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-violet-400"
+                        >
+                          <ChevronUp className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
                     {/* Add Button */}
-                    <div className="col-span-3 flex justify-end">
+                    <div className="col-span-2 flex justify-end">
                       <Button
                         size="sm"
                         onClick={() => handleAddProduct(product)}

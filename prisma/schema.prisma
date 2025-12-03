@@ -130,6 +130,7 @@ model Quote {
   customerEmail        String?
   customerPhone        String?
   address              String
+  postcode             String?
 
   // Selections
   frontal              String?           // White Gloss, Walnut, etc.
