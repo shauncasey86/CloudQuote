@@ -3,8 +3,6 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Badge } from '@/components/ui/Badge';
 import { Search, Plus } from 'lucide-react';
 import { Product, ProductCategory } from '@prisma/client';
 
@@ -47,129 +45,136 @@ export function ProductSelector({
     setQuantities((prev) => ({ ...prev, [product.id]: 1 }));
   };
 
+  const sortedCategories = categories
+    .filter((cat) => cat.active)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Product Selection</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Search Bar */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-secondary" />
-          <input
-            type="text"
-            placeholder="Search products by name or SKU..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="input pl-10 w-full"
-          />
+      <CardHeader className="pb-0">
+        <div className="flex items-center justify-between">
+          <CardTitle>Products</CardTitle>
+          {/* Search Bar - Compact */}
+          <div className="relative w-64">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-muted" />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 bg-bg-elevated border border-border-subtle rounded-lg text-sm focus:outline-none focus:border-violet-500 transition-colors"
+            />
+          </div>
         </div>
-
-        {/* Category Tabs */}
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setSelectedCategory('all')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              selectedCategory === 'all'
-                ? 'bg-accent-primary text-white'
-                : 'bg-bg-glass hover:bg-bg-elevated'
-            }`}
-          >
-            All Products
-          </button>
-          {categories
-            .filter((cat) => cat.active)
-            .sort((a, b) => a.sortOrder - b.sortOrder)
-            .map((category) => (
+      </CardHeader>
+      <CardContent className="pt-4">
+        {/* Category Tabs - Tab Style */}
+        <div className="border-b border-border-glass mb-4">
+          <div className="flex gap-1 -mb-px overflow-x-auto scrollbar-thin">
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                selectedCategory === 'all'
+                  ? 'border-violet-500 text-violet-400'
+                  : 'border-transparent text-text-muted hover:text-text-primary hover:border-border-glass'
+              }`}
+            >
+              All
+            </button>
+            {sortedCategories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                   selectedCategory === category.id
-                    ? 'bg-accent-primary text-white'
-                    : 'bg-bg-glass hover:bg-bg-elevated'
+                    ? 'border-violet-500 text-violet-400'
+                    : 'border-transparent text-text-muted hover:text-text-primary hover:border-border-glass'
                 }`}
               >
                 {category.name}
               </button>
             ))}
+          </div>
         </div>
 
-        {/* Products Grid */}
+        {/* Products List - Row Style */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="bg-bg-glass h-32 rounded-lg"></div>
-              </div>
+          <div className="space-y-2">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="animate-pulse h-12 bg-bg-glass rounded-lg"></div>
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="text-center py-12 text-text-secondary">
-            <p>No products found matching your criteria</p>
+          <div className="text-center py-8 text-text-muted">
+            No products found
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto pr-2">
-            {filteredProducts.map((product) => (
-              <div
-                key={product.id}
-                className="bg-bg-glass border border-border-glass rounded-lg p-4 hover:border-accent-primary/30 transition-colors"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex-1">
-                    <h4 className="font-medium text-sm">{product.name}</h4>
+          <div className="max-h-[400px] overflow-y-auto scrollbar-thin">
+            {/* Header Row */}
+            <div className="grid grid-cols-12 gap-2 px-3 py-2 text-xs font-semibold text-text-muted uppercase tracking-wide border-b border-border-glass">
+              <div className="col-span-5">Product</div>
+              <div className="col-span-2 text-right">Price</div>
+              <div className="col-span-2 text-center">Qty</div>
+              <div className="col-span-3"></div>
+            </div>
+            {/* Product Rows */}
+            <div className="divide-y divide-border-subtle">
+              {filteredProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className="grid grid-cols-12 gap-2 px-3 py-2.5 items-center hover:bg-bg-glass-light transition-colors group"
+                >
+                  {/* Product Info */}
+                  <div className="col-span-5">
+                    <div className="font-medium text-sm text-text-primary leading-tight">
+                      {product.name}
+                    </div>
                     {product.sku && (
-                      <p className="text-xs text-text-secondary font-mono mt-1">
+                      <div className="text-xs text-text-muted font-mono">
                         {product.sku}
-                      </p>
+                      </div>
                     )}
                   </div>
-                  <Badge variant="info" className="text-xs">
-                    {product.category.name}
-                  </Badge>
+                  {/* Price */}
+                  <div className="col-span-2 text-right">
+                    <span className="font-mono font-semibold text-sm">
+                      £{Number(product.basePrice).toFixed(2)}
+                    </span>
+                    <span className="text-xs text-text-muted ml-1">
+                      /{product.priceUnit === 'LINEAR_METER' ? 'm' : 'ea'}
+                    </span>
+                  </div>
+                  {/* Quantity */}
+                  <div className="col-span-2 flex justify-center">
+                    <input
+                      type="number"
+                      min={Number(product.minQuantity) || 1}
+                      max={Number(product.maxQuantity) || undefined}
+                      step={product.priceUnit === 'LINEAR_METER' ? '0.1' : '1'}
+                      value={quantities[product.id] || 1}
+                      onChange={(e) =>
+                        setQuantities((prev) => ({
+                          ...prev,
+                          [product.id]: parseFloat(e.target.value) || 1,
+                        }))
+                      }
+                      className="w-16 px-2 py-1.5 text-center text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 transition-colors"
+                    />
+                  </div>
+                  {/* Add Button */}
+                  <div className="col-span-3 flex justify-end">
+                    <Button
+                      size="sm"
+                      onClick={() => handleAddProduct(product)}
+                      className="opacity-70 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Plus className="w-3.5 h-3.5 mr-1" />
+                      Add
+                    </Button>
+                  </div>
                 </div>
-
-                {product.description && (
-                  <p className="text-xs text-text-secondary mb-3 line-clamp-2">
-                    {product.description}
-                  </p>
-                )}
-
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-lg font-bold font-mono">
-                    £{Number(product.basePrice).toFixed(2)}
-                  </span>
-                  <span className="text-xs text-text-secondary">
-                    / {product.priceUnit === 'LINEAR_METER' ? 'm' : 'unit'}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    min={Number(product.minQuantity) || 1}
-                    max={Number(product.maxQuantity) || undefined}
-                    step={product.priceUnit === 'LINEAR_METER' ? '0.1' : '1'}
-                    value={quantities[product.id] || 1}
-                    onChange={(e) =>
-                      setQuantities((prev) => ({
-                        ...prev,
-                        [product.id]: parseFloat(e.target.value) || 1,
-                      }))
-                    }
-                    className="input text-sm w-20"
-                  />
-                  <Button
-                    size="sm"
-                    onClick={() => handleAddProduct(product)}
-                    className="flex-1"
-                  >
-                    <Plus className="w-3 h-3 mr-1" />
-                    Add
-                  </Button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
       </CardContent>

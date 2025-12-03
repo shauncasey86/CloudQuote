@@ -14,7 +14,7 @@ interface DashboardLayoutProps {
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <SessionProvider>
-      <div className="min-h-screen bg-bg-base">
+      <div className="min-h-screen relative">
         <Sidebar />
         <Header />
         <main className="ml-64 pt-16 min-h-screen">

@@ -302,12 +302,6 @@ export function QuoteEditor({
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Main Content */}
       <div className="lg:col-span-2 space-y-6">
-        <CustomerInfoSection
-          defaultValues={quoteState.customerInfo}
-          houseTypes={houseTypes}
-          onSubmit={handleCustomerInfoSubmit}
-        />
-
         <ProductSelector
           products={products}
           categories={categories}
@@ -330,7 +324,14 @@ export function QuoteEditor({
       </div>
 
       {/* Sidebar */}
-      <div className="lg:col-span-1">
+      <div className="lg:col-span-1 space-y-4">
+        <CustomerInfoSection
+          defaultValues={quoteState.customerInfo}
+          houseTypes={houseTypes}
+          onSubmit={handleCustomerInfoSubmit}
+          compact
+        />
+
         <QuoteSummary
           subtotal={totals.subtotal}
           vatRate={20}

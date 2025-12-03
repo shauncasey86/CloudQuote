@@ -37,6 +37,26 @@ export default async function QuotePrintPage({
             size: A4;
             margin: 15mm;
           }
+
+          html, body {
+            background: white !important;
+            background-image: none !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          body::before {
+            display: none !important;
+          }
+
+          aside, nav, .print-controls {
+            display: none !important;
+          }
+
+          main {
+            margin: 0 !important;
+            padding: 0 !important;
+          }
         }
 
         body {
@@ -472,17 +492,9 @@ export default async function QuotePrintPage({
 
         {/* Summary */}
         <div className="summary-section">
-          <div className="summary-row">
-            <span className="summary-label">Subtotal</span>
-            <span className="summary-value">£{Number(quote.subtotal).toFixed(2)}</span>
-          </div>
-          <div className="summary-row">
-            <span className="summary-label">VAT ({Number(quote.vatRate)}%)</span>
-            <span className="summary-value">£{Number(quote.vatAmount).toFixed(2)}</span>
-          </div>
           <div className="summary-row total">
-            <span className="summary-label">Total</span>
-            <span className="summary-value">£{Number(quote.total).toFixed(2)}</span>
+            <span className="summary-label">Total (VAT Inclusive)</span>
+            <span className="summary-value">£{Number(quote.subtotal).toFixed(2)}</span>
           </div>
         </div>
 

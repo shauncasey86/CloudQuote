@@ -106,26 +106,45 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
       if (!res.ok) throw new Error('Failed to delete');
       return res.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['quotes'] });
+    onSuccess: async () => {
       setIsOpen(false);
+      await queryClient.invalidateQueries({ queryKey: ['quotes'] });
+      await queryClient.refetchQueries({ queryKey: ['quotes'] });
     },
   });
+
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const handleToggle = () => {
+    if (!isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + 4,
+        right: window.innerWidth - rect.right,
+      });
+    }
+    setIsOpen(!isOpen);
+  };
 
   return (
     <div className="relative" ref={dropdownRef}>
       <Button
+        ref={buttonRef}
         variant="ghost"
         size="icon"
         title="More actions"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
       >
         <MoreVertical className="w-4 h-4" />
       </Button>
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1 w-48 bg-bg-elevated border border-border-primary rounded-lg shadow-xl z-50 py-1">
+        <div
+          className="fixed w-48 bg-bg-elevated border border-border-glass rounded-lg shadow-xl py-1"
+          style={{ top: dropdownPosition.top, right: dropdownPosition.right, zIndex: 9999 }}
+        >
           <button
-            className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary flex items-center gap-2 transition-colors"
+            className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-glass-light flex items-center gap-2 transition-colors"
             onClick={() => {
               duplicateMutation.mutate();
               setIsOpen(false);
@@ -137,7 +156,7 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
           </button>
           {quote.status !== 'ARCHIVED' && (
             <button
-              className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary flex items-center gap-2 transition-colors"
+              className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-glass-light flex items-center gap-2 transition-colors"
               onClick={() => archiveMutation.mutate()}
               disabled={archiveMutation.isPending}
             >
@@ -195,7 +214,7 @@ export function QuotesTable({ quotes, isLoading }: QuotesTableProps) {
       </TableHeader>
       <TableBody>
         {quotes.map((quote) => (
-          <TableRow key={quote.id} className="group">
+          <TableRow key={quote.id} className="group relative">
             <TableCell className="font-mono font-medium">
               <Link
                 href={`/quotes/${quote.id}`}
