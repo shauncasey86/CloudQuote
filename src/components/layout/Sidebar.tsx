@@ -5,7 +5,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { cn } from '@/lib/utils';
+import { Role } from '@prisma/client';
 import {
   FileText,
   Package,
@@ -33,6 +35,12 @@ const navItems: NavItem[] = [
     icon: Package,
   },
   {
+    href: '/settings/users',
+    label: 'Users',
+    icon: Users,
+    adminOnly: true,
+  },
+  {
     href: '/settings',
     label: 'Settings',
     icon: Settings,
@@ -41,6 +49,9 @@ const navItems: NavItem[] = [
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
+  const { data: session } = useSession();
+
+  const isAdmin = session?.user?.role === Role.ADMIN;
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 glass-effect border-r border-border-glass flex flex-col z-40">
@@ -59,6 +70,11 @@ export const Sidebar: React.FC = () => {
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1">
         {navItems.map((item) => {
+          // Hide admin-only items from non-admins
+          if (item.adminOnly && !isAdmin) {
+            return null;
+          }
+
           const Icon = item.icon;
           const isActive = pathname.startsWith(item.href);
 
