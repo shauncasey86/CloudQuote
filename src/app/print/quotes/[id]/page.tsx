@@ -488,18 +488,52 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           </button>
         </div>
         <script dangerouslySetInnerHTML={{ __html: `
-          document.getElementById('close-btn').addEventListener('click', function() {
-            if (window.opener) {
-              window.close();
-            } else if (window.history.length > 1) {
-              window.history.back();
-            } else {
-              window.location.href = '/quotes';
+          document.addEventListener('DOMContentLoaded', function() {
+            var closeBtn = document.getElementById('close-btn');
+            var printBtn = document.getElementById('print-btn');
+
+            if (closeBtn) {
+              closeBtn.onclick = function() {
+                if (window.opener) {
+                  window.close();
+                } else if (window.history.length > 1) {
+                  window.history.back();
+                } else {
+                  window.location.href = '/quotes';
+                }
+              };
+            }
+
+            if (printBtn) {
+              printBtn.onclick = function() {
+                window.print();
+              };
             }
           });
-          document.getElementById('print-btn').addEventListener('click', function() {
-            window.print();
-          });
+
+          // Also try immediately in case DOMContentLoaded already fired
+          (function() {
+            var closeBtn = document.getElementById('close-btn');
+            var printBtn = document.getElementById('print-btn');
+
+            if (closeBtn) {
+              closeBtn.onclick = function() {
+                if (window.opener) {
+                  window.close();
+                } else if (window.history.length > 1) {
+                  window.history.back();
+                } else {
+                  window.location.href = '/quotes';
+                }
+              };
+            }
+
+            if (printBtn) {
+              printBtn.onclick = function() {
+                window.print();
+              };
+            }
+          })();
         `}} />
 
         {/* Print Document */}
