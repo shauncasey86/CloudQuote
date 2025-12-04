@@ -198,9 +198,9 @@ export function ProductFormModal({
             ))}
           </Select>
 
-          {/* SKU */}
+          {/* Code */}
           <Input
-            label="SKU"
+            label="Code"
             name="sku"
             value={formData.sku || ''}
             onChange={handleChange}

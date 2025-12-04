@@ -114,7 +114,7 @@ export const Sidebar: React.FC = () => {
       <div className="p-4 mx-3 mb-3 rounded-xl bg-gradient-to-br from-[#B19334]/10 to-[#BB9E6C]/10 border border-[#B19334]/20">
         <div className="flex items-center justify-between">
           <div className="text-xs text-text-muted">
-            Wilson Interiors Ltd
+            Created by Shaun Casey
           </div>
           <div className="text-xs text-text-muted">
             v1.0.0

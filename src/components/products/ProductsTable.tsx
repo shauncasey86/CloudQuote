@@ -235,17 +235,6 @@ export function ProductsTable({
             )}
           </div>
         ))}
-
-        {/* Add category button */}
-        {isAdmin && (
-          <button
-            onClick={onAddCategory}
-            className="px-4 py-2 rounded-lg font-medium transition-all bg-glass hover:bg-glass-hover text-text-secondary hover:text-text-primary border-2 border-dashed border-border-glass hover:border-accent-primary flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            Add Category
-          </button>
-        )}
       </div>
 
       {/* Products Table */}
@@ -266,7 +255,7 @@ export function ProductsTable({
           <TableHeader>
             <TableRow>
               {isAdmin && <TableHead className="w-10"></TableHead>}
-              <TableHead>SKU</TableHead>
+              <TableHead>Code</TableHead>
               <TableHead>Product Name</TableHead>
               <TableHead>Category</TableHead>
               <TableHead className="text-right">Base Price</TableHead>
@@ -363,7 +352,7 @@ function ProductsTableSkeleton() {
         <TableHeader>
           <TableRow>
             <TableHead className="w-10"></TableHead>
-            <TableHead>SKU</TableHead>
+            <TableHead>Code</TableHead>
             <TableHead>Product Name</TableHead>
             <TableHead>Category</TableHead>
             <TableHead className="text-right">Base Price</TableHead>
