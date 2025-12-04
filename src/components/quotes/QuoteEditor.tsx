@@ -348,6 +348,9 @@ export function QuoteEditor({
       await updateQuoteMutation.mutateAsync({
         ...finalizedState.customerInfo,
         ...totals,
+        items: finalizedState.items,
+        additionalCosts: finalizedState.additionalCosts,
+        bespokeUpliftQty: finalizedState.bespokeUpliftQty,
         status: QuoteStatus.FINALIZED,
       });
       toast.success('Quote finalized');
