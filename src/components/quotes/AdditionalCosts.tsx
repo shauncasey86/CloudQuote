@@ -21,6 +21,8 @@ interface AdditionalCostsProps {
   onAddCost: (cost: Omit<AdditionalCost, 'id' | 'quoteId' | 'createdAt' | 'sortOrder'>) => void;
   onUpdateCost: (id: string, updates: Partial<AdditionalCost>) => void;
   onRemoveCost: (id: string) => void;
+  bespokeUpliftCost: number;
+  onBespokeUpliftChange: (amount: number) => void;
 }
 
 export function AdditionalCosts({
@@ -28,6 +30,8 @@ export function AdditionalCosts({
   onAddCost,
   onUpdateCost,
   onRemoveCost,
+  bespokeUpliftCost,
+  onBespokeUpliftChange,
 }: AdditionalCostsProps) {
   const [newCost, setNewCost] = React.useState({
     description: '',
@@ -52,13 +56,29 @@ export function AdditionalCosts({
         <CardTitle>Additional Costs</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Bespoke Uplift Cost - Always First */}
+        <div className="flex items-center gap-3 p-2 bg-amber-500/10 rounded-lg border border-amber-500/30">
+          <span className="flex-1 text-sm font-medium text-amber-400">BESPOKE UPLIFT COST</span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-text-secondary">£</span>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={bespokeUpliftCost}
+              onChange={(e) => onBespokeUpliftChange(parseFloat(e.target.value) || 0)}
+              className="input w-24 text-sm text-right"
+            />
+          </div>
+        </div>
+
         {/* Existing Costs */}
         {costs.length > 0 && (
           <div className="space-y-2">
             {costs.map((cost) => (
               <div
                 key={cost.id}
-                className="flex items-center gap-3 p-3 bg-bg-glass rounded-lg border border-border-glass"
+                className="flex items-center gap-3 p-2 bg-bg-glass rounded-lg border border-border-glass"
               >
                 <input
                   type="text"
@@ -81,7 +101,7 @@ export function AdditionalCosts({
                         amount: parseFloat(e.target.value) || 0,
                       })
                     }
-                    className="input w-32 text-sm text-right"
+                    className="input w-24 text-sm text-right"
                   />
                 </div>
                 <Button
