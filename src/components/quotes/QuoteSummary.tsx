@@ -170,13 +170,22 @@ export function QuoteSummary({
               <>
                 <Button
                   className="w-full"
+                  onClick={onSave}
+                  isLoading={isSaving}
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Save Changes
+                </Button>
+                <Button
+                  variant="secondary"
+                  className="w-full"
                   onClick={onPrint}
                 >
                   <Printer className="w-4 h-4 mr-2" />
                   Print Quote
                 </Button>
                 <Button
-                  variant="secondary"
+                  variant="ghost"
                   className="w-full"
                   onClick={() => handleComingSoon('Download PDF')}
                 >

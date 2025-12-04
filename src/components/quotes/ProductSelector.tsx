@@ -111,11 +111,11 @@ export function ProductSelector({
         ) : (
           <div className="max-h-[400px] overflow-y-auto scrollbar-thin">
             {/* Header Row */}
-            <div className="grid grid-cols-12 gap-2 px-3 py-2 text-xs font-bold text-text-muted uppercase tracking-wide border-b border-border-glass">
-              <div className="col-span-5">Product</div>
-              <div className="col-span-2 text-right">Price</div>
-              <div className="col-span-2 text-center">Qty</div>
-              <div className="col-span-3 text-right">Action</div>
+            <div className="grid grid-cols-12 gap-1 px-3 py-2 text-xs font-bold text-text-muted uppercase tracking-wide border-b border-border-glass">
+              <div className="col-span-6">Product</div>
+              <div className="col-span-2">Price</div>
+              <div className="col-span-2">Qty</div>
+              <div className="col-span-2">Action</div>
             </div>
             {/* Product Rows */}
             <div className="divide-y divide-border-subtle">
@@ -126,10 +126,10 @@ export function ProductSelector({
                 return (
                   <div
                     key={product.id}
-                    className="grid grid-cols-12 gap-2 px-3 py-2.5 items-center hover:bg-bg-glass-light transition-colors group"
+                    className="grid grid-cols-12 gap-1 px-3 py-2.5 items-center hover:bg-bg-glass-light transition-colors group"
                   >
                     {/* Product Info */}
-                    <div className="col-span-5">
+                    <div className="col-span-6">
                       <div className="font-medium text-sm text-text-primary leading-tight">
                         {product.name}
                       </div>
@@ -140,7 +140,7 @@ export function ProductSelector({
                       )}
                     </div>
                     {/* Price */}
-                    <div className="col-span-2 text-right">
+                    <div className="col-span-2">
                       <span className="font-mono font-semibold text-sm">
                         £{Number(product.basePrice).toFixed(2)}
                       </span>
@@ -149,7 +149,7 @@ export function ProductSelector({
                       </span>
                     </div>
                     {/* Quantity with themed up/down */}
-                    <div className="col-span-2 flex justify-center">
+                    <div className="col-span-2 flex justify-start">
                       <div className="flex items-center bg-bg-elevated border border-border-subtle rounded-lg overflow-hidden">
                         <button
                           type="button"
@@ -188,7 +188,7 @@ export function ProductSelector({
                       </div>
                     </div>
                     {/* Add Button */}
-                    <div className="col-span-3 flex justify-end">
+                    <div className="col-span-2 flex justify-start">
                       <Button
                         size="sm"
                         onClick={() => handleAddProduct(product)}
