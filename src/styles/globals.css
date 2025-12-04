@@ -2,25 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Brand Fonts - Josefin Slab for Headers, Sansation for Body */
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Slab:wght@400;600;700&display=swap');
-
-/* Sansation font */
-@font-face {
-  font-family: 'Sansation';
-  src: url('https://db.onlinewebfonts.com/t/0d9ce3a5e15e0d5b3b1fcab71e74d8a2.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Sansation';
-  src: url('https://db.onlinewebfonts.com/t/4ca02c40a0f5f6c8a0a11dab11f5f8d2.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+/* Fonts loaded via next/font/google in layout.tsx */
+/* Headers: Josefin Slab Bold 700 UPPERCASE - var(--font-header) */
+/* Body: Open Sans (similar to Sansation) - var(--font-body) */
 
 @layer base {
   /* Dark Theme - Wilson Interiors Brand Colors */
@@ -142,7 +126,7 @@
     background-attachment: fixed;
     background-repeat: no-repeat;
     color: var(--text-primary);
-    font-family: 'Sansation', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--font-body), -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -167,7 +151,7 @@
 
   /* Headers - Josefin Slab Bold UPPERCASE */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Josefin Slab', serif;
+    font-family: var(--font-header), serif;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -273,7 +257,7 @@
   /* Button System - Gold gradient for primary actions */
   .btn {
     @apply px-5 py-2.5 font-medium transition-all duration-200 inline-flex items-center justify-center;
-    font-family: 'Josefin Slab', serif;
+    font-family: var(--font-header), serif;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -403,7 +387,7 @@
     border: 1px solid var(--border-subtle);
     border-radius: 10px;
     color: var(--text-primary);
-    font-family: 'Sansation', sans-serif;
+    font-family: var(--font-body), sans-serif;
   }
 
   .input::placeholder {
@@ -426,7 +410,7 @@
 
   .label {
     @apply text-sm font-medium mb-2 block;
-    font-family: 'Josefin Slab', serif;
+    font-family: var(--font-header), serif;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--text-secondary);
@@ -435,7 +419,7 @@
   /* Badge Styles */
   .badge {
     @apply inline-flex items-center px-2.5 py-1 text-xs font-semibold;
-    font-family: 'Josefin Slab', serif;
+    font-family: var(--font-header), serif;
     text-transform: uppercase;
     letter-spacing: 0.03em;
     border-radius: 6px;
@@ -495,7 +479,7 @@
 
   .table th {
     @apply px-6 py-4 text-left text-xs font-semibold tracking-wider;
-    font-family: 'Josefin Slab', serif;
+    font-family: var(--font-header), serif;
     text-transform: uppercase;
     color: var(--color-gold);
   }
@@ -640,14 +624,14 @@
 
   /* Font utilities */
   .font-header {
-    font-family: 'Josefin Slab', serif;
+    font-family: var(--font-header), serif;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
 
   .font-body {
-    font-family: 'Sansation', sans-serif;
+    font-family: var(--font-body), sans-serif;
   }
 }
 
@@ -663,7 +647,7 @@
     color: black !important;
     font-size: 11pt;
     line-height: 1.4;
-    font-family: 'Sansation', Arial, sans-serif !important;
+    font-family: var(--font-body), Arial, sans-serif !important;
   }
 
   * {
@@ -707,7 +691,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Josefin Slab', Georgia, serif !important;
+    font-family: var(--font-header), Georgia, serif !important;
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
