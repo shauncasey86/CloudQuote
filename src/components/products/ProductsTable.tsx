@@ -166,79 +166,72 @@ export function ProductsTable({
   return (
     <div className="space-y-4">
       {/* Category Filter Tabs */}
-      <div className="flex items-center gap-2 flex-wrap pb-4 border-b border-glass">
-        <button
-          onClick={() => onCategoryChange(null)}
-          className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            selectedCategory === null
-              ? 'bg-accent-primary text-white shadow-glow'
-              : 'bg-glass hover:bg-glass-hover text-text-secondary hover:text-text-primary'
-          }`}
-        >
-          All Categories
-          <span className="ml-2 text-sm opacity-75">
-            ({products.length})
-          </span>
-        </button>
-
-        {orderedCategories.map((category) => (
-          <div
-            key={category.id}
-            className={`group relative flex items-center ${
-              isAdmin ? 'cursor-grab active:cursor-grabbing' : ''
+      <div className="pb-4 border-b border-glass overflow-x-auto scrollbar-thin">
+        <div className="flex gap-1.5 min-w-max">
+          <button
+            onClick={() => onCategoryChange(null)}
+            className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-lg transition-all whitespace-nowrap ${
+              selectedCategory === null
+                ? 'bg-gradient-to-r from-[#B19334] to-[#BB9E6C] text-[#212533] shadow-md'
+                : 'bg-bg-elevated text-text-muted hover:text-text-primary hover:bg-bg-glass border border-border-subtle'
             }`}
-            draggable={isAdmin}
-            onDragStart={(e) => handleCategoryDragStart(e, category.id)}
-            onDragOver={(e) => handleCategoryDragOver(e, category.id)}
-            onDragEnd={handleCategoryDragEnd}
           >
-            {isAdmin && (
-              <GripVertical className="w-4 h-4 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity mr-1" />
-            )}
-            <button
-              onClick={() => onCategoryChange(category.id)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                selectedCategory === category.id
-                  ? 'bg-accent-primary text-white shadow-glow'
-                  : category.active === false
-                  ? 'bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20'
-                  : 'bg-glass hover:bg-glass-hover text-text-secondary hover:text-text-primary'
-              } ${draggedCategoryId === category.id ? 'opacity-50' : ''}`}
-            >
-              {category.active === false && <span className="mr-1">⚠️</span>}
-              {category.name}
-              <span className="ml-2 text-sm opacity-75">
-                ({category._count.products})
-              </span>
-            </button>
+            All ({products.length})
+          </button>
 
-            {/* Category edit/delete buttons */}
-            {isAdmin && (
-              <div className="absolute -top-2 -right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEditCategory?.(category);
-                  }}
-                  className="w-6 h-6 rounded-full bg-bg-elevated border border-border-glass flex items-center justify-center hover:bg-accent-primary hover:border-accent-primary transition-colors"
-                  title="Edit category"
-                >
-                  <Edit className="w-3 h-3" />
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDeleteCategory?.(category);
-                  }}
-                  className="w-6 h-6 rounded-full bg-bg-elevated border border-border-glass flex items-center justify-center hover:bg-accent-danger hover:border-accent-danger transition-colors"
-                  title="Delete category"
-                >
-                  <Trash2 className="w-3 h-3" />
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
+          {orderedCategories.map((category) => (
+            <div
+              key={category.id}
+              className={`group relative flex items-center ${
+                isAdmin ? 'cursor-grab active:cursor-grabbing' : ''
+              }`}
+              draggable={isAdmin}
+              onDragStart={(e) => handleCategoryDragStart(e, category.id)}
+              onDragOver={(e) => handleCategoryDragOver(e, category.id)}
+              onDragEnd={handleCategoryDragEnd}
+            >
+              <button
+                onClick={() => onCategoryChange(category.id)}
+                className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-lg transition-all whitespace-nowrap ${
+                  selectedCategory === category.id
+                    ? 'bg-gradient-to-r from-[#B19334] to-[#BB9E6C] text-[#212533] shadow-md'
+                    : category.active === false
+                    ? 'bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20'
+                    : 'bg-bg-elevated text-text-muted hover:text-text-primary hover:bg-bg-glass border border-border-subtle'
+                } ${draggedCategoryId === category.id ? 'opacity-50' : ''}`}
+              >
+                {category.active === false && <span className="mr-1 text-[10px]">!</span>}
+                {category.name} ({category._count.products})
+              </button>
+
+              {/* Category edit/delete buttons */}
+              {isAdmin && (
+                <div className="absolute -top-2 -right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEditCategory?.(category);
+                    }}
+                    className="w-5 h-5 rounded-full bg-bg-elevated border border-border-glass flex items-center justify-center hover:bg-accent-primary hover:border-accent-primary transition-colors"
+                    title="Edit category"
+                  >
+                    <Edit className="w-2.5 h-2.5" />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteCategory?.(category);
+                    }}
+                    className="w-5 h-5 rounded-full bg-bg-elevated border border-border-glass flex items-center justify-center hover:bg-accent-danger hover:border-accent-danger transition-colors"
+                    title="Delete category"
+                  >
+                    <Trash2 className="w-2.5 h-2.5" />
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Products Table */}
@@ -283,32 +276,25 @@ export function ProductsTable({
                     <GripVertical className="w-4 h-4 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" />
                   </TableCell>
                 )}
-                <TableCell className="font-mono text-sm text-text-secondary">
+                <TableCell className="font-mono text-xs text-text-secondary py-1">
                   {product.sku || '—'}
                 </TableCell>
-                <TableCell className="font-medium py-2">
-                  <div>
-                    {product.name}
-                    {product.description && (
-                      <div className="text-sm text-text-secondary line-clamp-1">
-                        {product.description}
-                      </div>
-                    )}
-                  </div>
+                <TableCell className="font-medium py-1">
+                  <div className="text-sm leading-tight">{product.name}</div>
                 </TableCell>
-                <TableCell className="py-2">
-                  <Badge variant="default" className="max-w-[120px] truncate">{product.category.name}</Badge>
+                <TableCell className="py-1">
+                  <span className="text-xs text-text-secondary">{product.category.name}</span>
                 </TableCell>
-                <TableCell className="text-right font-mono font-medium">
+                <TableCell className="text-right font-mono text-sm py-1">
                   £{Number(product.basePrice).toFixed(2)}
                 </TableCell>
-                <TableCell className="text-text-secondary">
+                <TableCell className="text-text-secondary text-xs py-1">
                   {priceUnitLabels[product.priceUnit]}
                 </TableCell>
-                <TableCell>
-                  <Badge variant={product.active ? 'success' : 'danger'}>
+                <TableCell className="py-1">
+                  <span className={`text-xs font-medium ${product.active ? 'text-emerald-400' : 'text-red-400'}`}>
                     {product.active ? 'Active' : 'Inactive'}
-                  </Badge>
+                  </span>
                 </TableCell>
                 {isAdmin && (
                   <TableCell className="text-right">

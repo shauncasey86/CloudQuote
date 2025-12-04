@@ -25,6 +25,7 @@ interface QuoteSummaryProps {
   houseTypeAllowance?: number;
   itemsSubtotal?: number;
   additionalTotal?: number;
+  bespokeUplift?: number;
   onSave?: () => void;
   onFinalize?: () => void;
   onSend?: () => void;
@@ -44,6 +45,7 @@ export function QuoteSummary({
   houseTypeAllowance = 0,
   itemsSubtotal = 0,
   additionalTotal = 0,
+  bespokeUplift = 0,
   onSave,
   onFinalize,
   onSend,
@@ -97,6 +99,12 @@ export function QuoteSummary({
               <div className="flex items-center justify-between">
                 <span className="text-text-secondary">Additional Items</span>
                 <span className="font-mono">£{itemsSubtotal.toFixed(2)}</span>
+              </div>
+            )}
+            {bespokeUplift > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-text-secondary">Bespoke Uplift</span>
+                <span className="font-mono text-amber-400">£{bespokeUplift.toFixed(2)}</span>
               </div>
             )}
             {additionalTotal > 0 && (

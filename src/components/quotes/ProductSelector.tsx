@@ -23,15 +23,26 @@ export function ProductSelector({
   onAddProduct,
   isLoading,
 }: ProductSelectorProps) {
-  const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [quantities, setQuantities] = React.useState<Record<string, number>>({});
   const [allowances, setAllowances] = React.useState<Record<string, boolean>>({});
 
+  const sortedCategories = React.useMemo(() =>
+    categories.filter((cat) => cat.active).sort((a, b) => a.sortOrder - b.sortOrder),
+    [categories]
+  );
+
+  // Default to first category when categories load
+  React.useEffect(() => {
+    if (sortedCategories.length > 0 && selectedCategory === null) {
+      setSelectedCategory(sortedCategories[0].id);
+    }
+  }, [sortedCategories, selectedCategory]);
+
   const filteredProducts = React.useMemo(() => {
     return products.filter((product) => {
-      const matchesCategory =
-        selectedCategory === 'all' || product.categoryId === selectedCategory;
+      const matchesCategory = selectedCategory ? product.categoryId === selectedCategory : true;
       const matchesSearch =
         !searchQuery ||
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -47,10 +58,6 @@ export function ProductSelector({
     setQuantities((prev) => ({ ...prev, [product.id]: 1 }));
     setAllowances((prev) => ({ ...prev, [product.id]: false }));
   };
-
-  const sortedCategories = categories
-    .filter((cat) => cat.active)
-    .sort((a, b) => a.sortOrder - b.sortOrder);
 
   return (
     <Card>
@@ -72,23 +79,13 @@ export function ProductSelector({
       </CardHeader>
       <CardContent className="pt-4">
         {/* Category Tabs */}
-        <div className="mb-4">
-          <div className="flex flex-wrap gap-1.5">
-            <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-lg transition-all ${
-                selectedCategory === 'all'
-                  ? 'bg-gradient-to-r from-[#B19334] to-[#BB9E6C] text-[#212533] shadow-md'
-                  : 'bg-bg-elevated text-text-muted hover:text-text-primary hover:bg-bg-glass border border-border-subtle'
-              }`}
-            >
-              All
-            </button>
+        <div className="mb-4 overflow-x-auto scrollbar-thin">
+          <div className="flex gap-1.5 min-w-max">
             {sortedCategories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-lg transition-all ${
+                className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-lg transition-all whitespace-nowrap ${
                   selectedCategory === category.id
                     ? 'bg-gradient-to-r from-[#B19334] to-[#BB9E6C] text-[#212533] shadow-md'
                     : 'bg-bg-elevated text-text-muted hover:text-text-primary hover:bg-bg-glass border border-border-subtle'
