@@ -5,10 +5,10 @@ import { ReactQueryProvider } from '@/components/providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { Toaster } from 'sonner';
 
-// Header font - Josefin Slab Bold 700 UPPERCASE
+// Header font - Josefin Slab Bold 700 ONLY
 const josefinSlab = Josefin_Slab({
   subsets: ['latin'],
-  weight: ['400', '600', '700'],
+  weight: '700',
   variable: '--font-header',
   display: 'swap',
 });

@@ -11,7 +11,7 @@ export function QuotesHeader() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [search, setSearch] = React.useState(searchParams.get('search') || '');
-  const [status, setStatus] = React.useState(searchParams.get('status') || 'all');
+  const [status, setStatus] = React.useState(searchParams.get('status') || '');
 
   const handleSearchChange = React.useCallback(
     (value: string) => {
@@ -88,6 +88,7 @@ export function QuotesHeader() {
             onChange={(e) => handleStatusChange(e.target.value)}
             className="input w-full cursor-pointer"
           >
+            <option value="">Active (excl. Archived)</option>
             <option value="all">All Statuses</option>
             <option value={QuoteStatus.DRAFT}>Draft</option>
             <option value={QuoteStatus.FINALIZED}>Finalized</option>

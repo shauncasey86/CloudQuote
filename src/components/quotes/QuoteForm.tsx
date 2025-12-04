@@ -52,6 +52,7 @@ export function CustomerInfoSection({
     handleSubmit,
     formState: { errors },
     watch,
+    getValues,
   } = useForm<CustomerInfoFormData>({
     resolver: zodResolver(customerInfoSchema),
     defaultValues: {
@@ -78,13 +79,15 @@ export function CustomerInfoSection({
   // Get the register props for houseTypeId so we can combine onChange handlers
   const houseTypeRegister = register('houseTypeId');
 
-  // Handle house type change - trigger immediate update after RHF processes it
+  // Handle house type change - bypass validation and update immediately
   const handleHouseTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     // First let React Hook Form update the value
     houseTypeRegister.onChange(e);
-    // Then trigger form submission
+    // Then call onSubmit directly with current values (bypassing validation)
+    // This ensures house type change updates the total even on new quotes
     setTimeout(() => {
-      handleSubmit(onSubmit)();
+      const currentValues = getValues();
+      onSubmit({ ...currentValues, houseTypeId: e.target.value });
     }, 0);
   };
 
