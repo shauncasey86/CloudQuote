@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
@@ -58,27 +59,39 @@ const statusVariants: Record<QuoteStatus, 'default' | 'warning' | 'info' | 'succ
 
 function ActionsDropdown({ quote }: { quote: Quote }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number; openUp: boolean }>({ top: 0, left: 0, openUp: false });
+  const [mounted, setMounted] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0, openUp: false });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      const menuHeight = 150; // Approximate menu height
+      const menuHeight = 150;
       const spaceBelow = window.innerHeight - rect.bottom;
       const openUp = spaceBelow < menuHeight;
 
       setMenuPosition({
         top: openUp ? rect.top : rect.bottom + 4,
-        left: rect.right - 192, // 192px = w-48 (12rem)
+        left: Math.max(8, rect.right - 192),
         openUp
       });
     }
   }, [isOpen]);
 
-  const handleDuplicate = async () => {
+  const handleButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsOpen(!isOpen);
+  };
+
+  const handleDuplicate = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
       const res = await fetch(`/api/quotes/${quote.id}/duplicate`, { method: 'POST' });
       if (!res.ok) throw new Error('Failed to duplicate');
@@ -91,7 +104,8 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
     setIsOpen(false);
   };
 
-  const handleArchive = async () => {
+  const handleArchive = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
       const res = await fetch(`/api/quotes/${quote.id}`, {
         method: 'PATCH',
@@ -99,6 +113,7 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
         body: JSON.stringify({ status: 'ARCHIVED' }),
       });
       if (!res.ok) throw new Error('Failed to archive');
+      queryClient.invalidateQueries({ queryKey: ['quotes'] });
       router.refresh();
     } catch (error) {
       console.error('Failed to archive:', error);
@@ -106,7 +121,8 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
     setIsOpen(false);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!confirm('Are you sure you want to delete this quote? This cannot be undone.')) {
       setIsOpen(false);
       return;
@@ -129,63 +145,69 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
     setIsOpen(false);
   };
 
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsOpen(false);
+  };
+
+  const dropdownMenu = isOpen && mounted ? createPortal(
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 z-[9998]"
+        onClick={handleBackdropClick}
+      />
+      {/* Menu */}
+      <div
+        className="fixed w-48 bg-bg-elevated border border-border-glass rounded-lg shadow-xl py-1 z-[9999]"
+        style={{
+          top: menuPosition.openUp ? 'auto' : menuPosition.top,
+          bottom: menuPosition.openUp ? `${window.innerHeight - menuPosition.top + 4}px` : 'auto',
+          left: menuPosition.left
+        }}
+      >
+        <button
+          type="button"
+          className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-glass-light flex items-center gap-2 transition-colors uppercase"
+          onClick={handleDuplicate}
+        >
+          <Copy className="w-4 h-4" />
+          DUPLICATE
+        </button>
+        {quote.status !== 'ARCHIVED' && (
+          <button
+            type="button"
+            className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-glass-light flex items-center gap-2 transition-colors uppercase"
+            onClick={handleArchive}
+          >
+            <Archive className="w-4 h-4" />
+            ARCHIVE
+          </button>
+        )}
+        <button
+          type="button"
+          className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2 transition-colors uppercase"
+          onClick={handleDelete}
+        >
+          <Trash2 className="w-4 h-4" />
+          DELETE
+        </button>
+      </div>
+    </>,
+    document.body
+  ) : null;
+
   return (
     <div className="relative inline-block">
       <button
         ref={buttonRef}
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleButtonClick}
         className="p-2.5 rounded-xl bg-transparent text-text-primary hover:bg-bg-glass-light transition-all duration-200 cursor-pointer"
       >
         <MoreVertical className="w-4 h-4" />
       </button>
-
-      {isOpen && (
-        <>
-          {/* Backdrop to close dropdown */}
-          <div
-            className="fixed inset-0 z-[9998]"
-            onClick={() => setIsOpen(false)}
-          />
-
-          {/* Dropdown menu - fixed position to escape container overflow */}
-          <div
-            className="fixed w-48 bg-bg-elevated border border-border-glass rounded-lg shadow-xl py-1 z-[9999]"
-            style={{
-              top: menuPosition.openUp ? 'auto' : menuPosition.top,
-              bottom: menuPosition.openUp ? `${window.innerHeight - menuPosition.top + 4}px` : 'auto',
-              left: menuPosition.left
-            }}
-          >
-            <button
-              type="button"
-              className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-glass-light flex items-center gap-2 transition-colors uppercase"
-              onClick={handleDuplicate}
-            >
-              <Copy className="w-4 h-4" />
-              DUPLICATE
-            </button>
-            {quote.status !== 'ARCHIVED' && (
-              <button
-                type="button"
-                className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-glass-light flex items-center gap-2 transition-colors uppercase"
-                onClick={handleArchive}
-              >
-                <Archive className="w-4 h-4" />
-                ARCHIVE
-              </button>
-            )}
-            <button
-              type="button"
-              className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2 transition-colors uppercase"
-              onClick={handleDelete}
-            >
-              <Trash2 className="w-4 h-4" />
-              DELETE
-            </button>
-          </div>
-        </>
-      )}
+      {dropdownMenu}
     </div>
   );
 }
