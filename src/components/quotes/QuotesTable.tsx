@@ -59,19 +59,31 @@ const statusVariants: Record<QuoteStatus, 'default' | 'warning' | 'info' | 'succ
 function ActionsDropdown({ quote }: { quote: Quote }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   const queryClient = useQueryClient();
 
   // Close dropdown when clicking outside
   useEffect(() => {
+    if (!isOpen) return;
+
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
         setIsOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+
+    // Use setTimeout to avoid the immediate click that opened the menu
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('click', handleClickOutside);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isOpen]);
 
   const duplicateMutation = useMutation({
     mutationFn: async () => {
@@ -115,7 +127,6 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
   });
 
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
-  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleToggle = () => {
     if (!isOpen && buttonRef.current) {
@@ -148,7 +159,8 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
           style={{ top: dropdownPosition.top, right: dropdownPosition.right, zIndex: 9999 }}
         >
           <button
-            className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-glass-light flex items-center gap-2 transition-colors"
+            type="button"
+            className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-glass-light flex items-center gap-2 transition-colors uppercase"
             onClick={() => {
               duplicateMutation.mutate();
               setIsOpen(false);
@@ -156,20 +168,22 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
             disabled={duplicateMutation.isPending}
           >
             <Copy className="w-4 h-4" />
-            {duplicateMutation.isPending ? 'Duplicating...' : 'Duplicate'}
+            {duplicateMutation.isPending ? 'DUPLICATING...' : 'DUPLICATE'}
           </button>
           {quote.status !== 'ARCHIVED' && (
             <button
-              className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-glass-light flex items-center gap-2 transition-colors"
+              type="button"
+              className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-glass-light flex items-center gap-2 transition-colors uppercase"
               onClick={() => archiveMutation.mutate()}
               disabled={archiveMutation.isPending}
             >
               <Archive className="w-4 h-4" />
-              {archiveMutation.isPending ? 'Archiving...' : 'Archive'}
+              {archiveMutation.isPending ? 'ARCHIVING...' : 'ARCHIVE'}
             </button>
           )}
           <button
-            className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2 transition-colors"
+            type="button"
+            className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2 transition-colors uppercase"
             onClick={() => {
               if (confirm('Are you sure you want to delete this quote? This cannot be undone.')) {
                 deleteMutation.mutate();
@@ -178,7 +192,7 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
             disabled={deleteMutation.isPending}
           >
             <Trash2 className="w-4 h-4" />
-            {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+            {deleteMutation.isPending ? 'DELETING...' : 'DELETE'}
           </button>
         </div>
       )}
