@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
@@ -58,143 +58,99 @@ const statusVariants: Record<QuoteStatus, 'default' | 'warning' | 'info' | 'succ
 
 function ActionsDropdown({ quote }: { quote: Quote }) {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    if (!isOpen) return;
-
-    function handleClickOutside(event: MouseEvent) {
-      const target = event.target as Node;
-      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
-        setIsOpen(false);
-      }
-    }
-
-    // Use setTimeout to avoid the immediate click that opened the menu
-    const timeoutId = setTimeout(() => {
-      document.addEventListener('click', handleClickOutside);
-    }, 0);
-
-    return () => {
-      clearTimeout(timeoutId);
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [isOpen]);
-
-  const duplicateMutation = useMutation({
-    mutationFn: async () => {
+  const handleDuplicate = async () => {
+    try {
       const res = await fetch(`/api/quotes/${quote.id}/duplicate`, { method: 'POST' });
       if (!res.ok) throw new Error('Failed to duplicate');
-      return res.json();
-    },
-    onSuccess: (data) => {
+      const data = await res.json();
       queryClient.invalidateQueries({ queryKey: ['quotes'] });
       router.push(`/quotes/${data.data.id}?edit=true`);
-    },
-  });
+    } catch (error) {
+      console.error('Failed to duplicate:', error);
+    }
+    setIsOpen(false);
+  };
 
-  const archiveMutation = useMutation({
-    mutationFn: async () => {
+  const handleArchive = async () => {
+    try {
       const res = await fetch(`/api/quotes/${quote.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'ARCHIVED' }),
       });
       if (!res.ok) throw new Error('Failed to archive');
-      return res.json();
-    },
-    onSuccess: () => {
-      setIsOpen(false);
       router.refresh();
-    },
-  });
+    } catch (error) {
+      console.error('Failed to archive:', error);
+    }
+    setIsOpen(false);
+  };
 
-  const deleteMutation = useMutation({
-    mutationFn: async () => {
+  const handleDelete = async () => {
+    if (!confirm('Are you sure you want to delete this quote? This cannot be undone.')) {
+      return;
+    }
+    try {
       const res = await fetch(`/api/quotes/${quote.id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete');
-      return res.json();
-    },
-    onSuccess: () => {
-      setIsOpen(false);
-      // Use router.refresh() to re-fetch server component data
       router.refresh();
-    },
-  });
-
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
-
-  const handleToggle = () => {
-    if (!isOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownPosition({
-        top: rect.bottom + 4,
-        right: window.innerWidth - rect.right,
-      });
+    } catch (error) {
+      console.error('Failed to delete:', error);
     }
-    setIsOpen(!isOpen);
+    setIsOpen(false);
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative inline-block">
       <button
-        ref={buttonRef}
         type="button"
-        title="More actions"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleToggle();
-        }}
+        onClick={() => setIsOpen(!isOpen)}
         className="p-2.5 rounded-xl bg-transparent text-text-primary hover:bg-bg-glass-light transition-all duration-200 cursor-pointer"
       >
         <MoreVertical className="w-4 h-4" />
       </button>
+
       {isOpen && (
-        <div
-          className="fixed w-48 bg-bg-elevated border border-border-glass rounded-lg shadow-xl py-1"
-          style={{ top: dropdownPosition.top, right: dropdownPosition.right, zIndex: 9999 }}
-        >
-          <button
-            type="button"
-            className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-glass-light flex items-center gap-2 transition-colors uppercase"
-            onClick={() => {
-              duplicateMutation.mutate();
-              setIsOpen(false);
-            }}
-            disabled={duplicateMutation.isPending}
-          >
-            <Copy className="w-4 h-4" />
-            {duplicateMutation.isPending ? 'DUPLICATING...' : 'DUPLICATE'}
-          </button>
-          {quote.status !== 'ARCHIVED' && (
+        <>
+          {/* Backdrop to close dropdown */}
+          <div
+            className="fixed inset-0 z-[9998]"
+            onClick={() => setIsOpen(false)}
+          />
+
+          {/* Dropdown menu */}
+          <div className="absolute right-0 top-full mt-1 w-48 bg-bg-elevated border border-border-glass rounded-lg shadow-xl py-1 z-[9999]">
             <button
               type="button"
               className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-glass-light flex items-center gap-2 transition-colors uppercase"
-              onClick={() => archiveMutation.mutate()}
-              disabled={archiveMutation.isPending}
+              onClick={handleDuplicate}
             >
-              <Archive className="w-4 h-4" />
-              {archiveMutation.isPending ? 'ARCHIVING...' : 'ARCHIVE'}
+              <Copy className="w-4 h-4" />
+              DUPLICATE
             </button>
-          )}
-          <button
-            type="button"
-            className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2 transition-colors uppercase"
-            onClick={() => {
-              if (confirm('Are you sure you want to delete this quote? This cannot be undone.')) {
-                deleteMutation.mutate();
-              }
-            }}
-            disabled={deleteMutation.isPending}
-          >
-            <Trash2 className="w-4 h-4" />
-            {deleteMutation.isPending ? 'DELETING...' : 'DELETE'}
-          </button>
-        </div>
+            {quote.status !== 'ARCHIVED' && (
+              <button
+                type="button"
+                className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-glass-light flex items-center gap-2 transition-colors uppercase"
+                onClick={handleArchive}
+              >
+                <Archive className="w-4 h-4" />
+                ARCHIVE
+              </button>
+            )}
+            <button
+              type="button"
+              className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2 transition-colors uppercase"
+              onClick={handleDelete}
+            >
+              <Trash2 className="w-4 h-4" />
+              DELETE
+            </button>
+          </div>
+        </>
       )}
     </div>
   );
