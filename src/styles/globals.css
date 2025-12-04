@@ -2,9 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fonts loaded via next/font/google in layout.tsx */
-/* Headers: Josefin Slab Bold 700 UPPERCASE - var(--font-header) */
-/* Body: Sansation Regular 400 - var(--font-body) */
+/* Fonts:
+   Headers: Josefin Slab Bold 700 UPPERCASE - loaded via next/font/google (var(--font-header))
+   Body: Sansation Regular 400 - loaded via link tag in layout.tsx
+*/
 
 @layer base {
   /* Dark Theme - Wilson Interiors Brand Colors */
@@ -126,7 +127,7 @@
     background-attachment: fixed;
     background-repeat: no-repeat;
     color: var(--text-primary);
-    font-family: var(--font-body), -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Sansation', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -387,7 +388,7 @@
     border: 1px solid var(--border-subtle);
     border-radius: 10px;
     color: var(--text-primary);
-    font-family: var(--font-body), sans-serif;
+    font-family: 'Sansation', sans-serif;
   }
 
   .input::placeholder {
@@ -634,7 +635,7 @@
   }
 
   .font-body {
-    font-family: var(--font-body), sans-serif;
+    font-family: 'Sansation', sans-serif;
   }
 }
 
@@ -650,7 +651,7 @@
     color: black !important;
     font-size: 11pt;
     line-height: 1.4;
-    font-family: var(--font-body), Arial, sans-serif !important;
+    font-family: 'Sansation', Arial, sans-serif !important;
   }
 
   * {
