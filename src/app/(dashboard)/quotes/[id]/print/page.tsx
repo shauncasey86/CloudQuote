@@ -4,12 +4,15 @@ import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
 import { PrintControls } from '@/components/quotes/PrintControls';
 
-export default async function QuotePrintPage({
-  params,
-}: {
+interface Props {
   params: { id: string };
-}) {
+  searchParams: { mode?: string };
+}
+
+export default async function QuotePrintPage({ params, searchParams }: Props) {
   await requireAuth();
+
+  const isProductionMode = searchParams.mode === 'production';
 
   const quote = await prisma.quote.findUnique({
     where: { id: params.id },
@@ -85,15 +88,17 @@ export default async function QuotePrintPage({
           justify-content: space-between;
           align-items: flex-start;
           padding-bottom: 20px;
-          border-bottom: 3px solid #7c3aed;
+          border-bottom: 3px solid #B19334;
           margin-bottom: 24px;
         }
 
         .logo-section h1 {
           font-size: 32px;
           font-weight: 700;
-          color: #7c3aed;
+          color: #B19334;
           margin: 0;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
         }
 
         .logo-section p {
@@ -287,11 +292,12 @@ export default async function QuotePrintPage({
           font-weight: 700;
           padding-top: 12px;
           margin-top: 8px;
-          border-top: 2px solid #7c3aed;
+          border-top: 2px solid #B19334;
         }
 
         .summary-label {
           color: #52525b;
+          text-transform: uppercase;
         }
 
         .summary-value {
@@ -300,7 +306,7 @@ export default async function QuotePrintPage({
         }
 
         .summary-row.total .summary-value {
-          color: #7c3aed;
+          color: #B19334;
         }
 
         .notes-section {
@@ -365,17 +371,37 @@ export default async function QuotePrintPage({
 
         .print-btn {
           padding: 10px 20px;
-          background: #7c3aed;
+          background: #B19334;
           color: white;
           border: none;
           border-radius: 8px;
           font-weight: 600;
           cursor: pointer;
           font-size: 14px;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
         }
 
         .print-btn:hover {
-          background: #6d28d9;
+          background: #9a8129;
+        }
+
+        .mode-btn {
+          padding: 10px 20px;
+          background: #18181b;
+          color: #B19334;
+          border: 2px solid #B19334;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          font-size: 14px;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .mode-btn:hover {
+          background: #B19334;
+          color: #18181b;
         }
 
         .back-btn {
@@ -387,10 +413,52 @@ export default async function QuotePrintPage({
           font-weight: 600;
           cursor: pointer;
           font-size: 14px;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
         }
 
         .back-btn:hover {
           background: #d4d4d8;
+        }
+
+        .selections-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 12px;
+          margin-top: 12px;
+          padding: 12px;
+          background: #f9f9f9;
+          border-radius: 6px;
+        }
+
+        .selection-item {
+          text-align: center;
+        }
+
+        .selection-label {
+          font-size: 10px;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: #71717a;
+          margin-bottom: 4px;
+        }
+
+        .selection-value {
+          font-weight: 600;
+          color: #18181b;
+          text-transform: uppercase;
+        }
+
+        .production-header {
+          background: #18181b;
+          color: #B19334;
+          padding: 8px 16px;
+          border-radius: 6px;
+          text-align: center;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          margin-bottom: 16px;
         }
       `}</style>
 
@@ -399,15 +467,24 @@ export default async function QuotePrintPage({
 
       {/* Print Document */}
       <div className="print-page">
+        {/* Production Mode Header */}
+        {isProductionMode && (
+          <div className="production-header">
+            🏭 PRODUCTION COPY - FOR MANUFACTURING USE ONLY
+          </div>
+        )}
+
         {/* Header */}
         <div className="header">
           <div className="logo-section">
             <h1>CloudQuote</h1>
-            <p>Kitchen Installation Quotation</p>
+            <p style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              {isProductionMode ? 'PRODUCTION SPECIFICATION' : 'KITCHEN INSTALLATION QUOTATION'}
+            </p>
           </div>
           <div className="quote-number-section">
-            <p className="quote-number">#{quote.quoteNumber}</p>
-            <p className="quote-date">{format(new Date(quote.createdAt), 'dd MMMM yyyy')}</p>
+            <p className="quote-number" style={{ textTransform: 'uppercase' }}>#{quote.quoteNumber}</p>
+            <p className="quote-date" style={{ textTransform: 'uppercase' }}>{format(new Date(quote.createdAt), 'dd MMMM yyyy').toUpperCase()}</p>
             <span className={`status-badge status-${quote.status}`}>
               {quote.status}
             </span>
@@ -417,71 +494,100 @@ export default async function QuotePrintPage({
         {/* Customer Information */}
         <div className="customer-section">
           <div className="customer-info">
-            <h3>Customer Details</h3>
-            <p><strong>{quote.customerName}</strong></p>
+            <h3>CUSTOMER DETAILS</h3>
+            <p><strong style={{ textTransform: 'uppercase' }}>{quote.customerName}</strong></p>
             {quote.customerEmail && <p>📧 {quote.customerEmail}</p>}
             {quote.customerPhone && <p>📞 {quote.customerPhone}</p>}
           </div>
           <div className="address-info">
-            <h3>Installation Address</h3>
-            <p style={{ whiteSpace: 'pre-line' }}>{quote.address}</p>
+            <h3>INSTALLATION ADDRESS</h3>
+            <p style={{ whiteSpace: 'pre-line', textTransform: 'uppercase' }}>{quote.address}</p>
             {quote.houseType && (
-              <p style={{ marginTop: '8px', fontSize: '12px', color: '#71717a' }}>
-                House Type: {quote.houseType.name} (Allowance: £{Number(quote.houseType.allowance).toFixed(2)})
+              <p style={{ marginTop: '8px', fontSize: '12px', color: '#71717a', textTransform: 'uppercase' }}>
+                HOUSE TYPE: {quote.houseType.name.toUpperCase()}
+                {!isProductionMode && ` (ALLOWANCE: £${Number(quote.houseType.allowance).toFixed(2)})`}
               </p>
             )}
           </div>
         </div>
 
+        {/* Selections - Frontal, Handle, Worktop */}
+        {((quote as any).frontal || (quote as any).handle || (quote as any).worktop) && (
+          <div className="selections-grid">
+            <div className="selection-item">
+              <div className="selection-label">FRONTAL</div>
+              <div className="selection-value">{(quote as any).frontal || 'NOT SELECTED'}</div>
+            </div>
+            <div className="selection-item">
+              <div className="selection-label">HANDLE</div>
+              <div className="selection-value">{(quote as any).handle || 'NOT SELECTED'}</div>
+            </div>
+            <div className="selection-item">
+              <div className="selection-label">WORKTOP</div>
+              <div className="selection-value">{(quote as any).worktop || 'NOT SELECTED'}</div>
+            </div>
+          </div>
+        )}
+
         {/* Quote Items */}
         <div className="items-section">
-          <h2 className="section-title">Quote Items ({quote.items.length})</h2>
+          <h2 className="section-title" style={{ textTransform: 'uppercase' }}>
+            {isProductionMode ? 'PRODUCTION ITEMS' : 'QUOTE ITEMS'} ({quote.items.length})
+          </h2>
           <table className="items-table">
             <thead>
               <tr>
-                <th style={{ width: '45%' }}>Product</th>
-                <th style={{ width: '20%' }}>Quantity</th>
-                <th style={{ width: '15%' }}>Unit Price</th>
-                <th style={{ width: '20%' }}>Total</th>
+                <th style={{ width: isProductionMode ? '60%' : '45%' }}>PRODUCT</th>
+                <th style={{ width: isProductionMode ? '40%' : '20%' }}>QUANTITY</th>
+                {!isProductionMode && (
+                  <>
+                    <th style={{ width: '15%' }}>UNIT PRICE</th>
+                    <th style={{ width: '20%' }}>TOTAL</th>
+                  </>
+                )}
               </tr>
             </thead>
             <tbody>
               {quote.items.map((item: any) => (
                 <tr key={item.id}>
                   <td>
-                    <div className="product-name">{item.productName}</div>
+                    <div className="product-name" style={{ textTransform: 'uppercase' }}>{item.productName}</div>
                     {item.productSku && (
                       <div className="product-sku">{item.productSku}</div>
                     )}
                     {item.notes && (
-                      <div className="product-notes">{item.notes}</div>
+                      <div className="product-notes" style={{ textTransform: 'uppercase' }}>{item.notes}</div>
                     )}
                   </td>
                   <td className="quantity-info">
                     {Number(item.quantity)}{' '}
-                    {item.priceUnit === 'LINEAR_METER' ? 'meter(s)' :
-                     item.priceUnit === 'SQUARE_METER' ? 'm²' : 'unit(s)'}
+                    {item.priceUnit === 'LINEAR_METER' ? 'METER(S)' :
+                     item.priceUnit === 'SQUARE_METER' ? 'M²' : 'UNIT(S)'}
                   </td>
-                  <td style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                    £{Number(item.unitPrice).toFixed(2)}
-                  </td>
-                  <td className="line-total">
-                    £{Number(item.lineTotal).toFixed(2)}
-                  </td>
+                  {!isProductionMode && (
+                    <>
+                      <td style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                        £{Number(item.unitPrice).toFixed(2)}
+                      </td>
+                      <td className="line-total">
+                        £{Number(item.lineTotal).toFixed(2)}
+                      </td>
+                    </>
+                  )}
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* Additional Costs */}
-        {quote.additionalCosts.length > 0 && (
+        {/* Additional Costs - Only show in quote mode */}
+        {!isProductionMode && quote.additionalCosts.length > 0 && (
           <div className="additional-costs">
-            <h2 className="section-title">Additional Costs</h2>
+            <h2 className="section-title" style={{ textTransform: 'uppercase' }}>ADDITIONAL COSTS</h2>
             {quote.additionalCosts.map((cost: any) => (
               <div key={cost.id} className="cost-row">
                 <div className="cost-description">
-                  <span>{cost.description}</span>
+                  <span style={{ textTransform: 'uppercase' }}>{cost.description}</span>
                   {cost.taxable && <span className="vat-tag">+VAT</span>}
                 </div>
                 <span className="cost-amount">£{Number(cost.amount).toFixed(2)}</span>
@@ -490,34 +596,42 @@ export default async function QuotePrintPage({
           </div>
         )}
 
-        {/* Summary */}
-        <div className="summary-section">
-          <div className="summary-row total">
-            <span className="summary-label">Total (VAT Inclusive)</span>
-            <span className="summary-value">£{Number(quote.subtotal).toFixed(2)}</span>
+        {/* Summary - Only show in quote mode */}
+        {!isProductionMode && (
+          <div className="summary-section">
+            <div className="summary-row total">
+              <span className="summary-label">TOTAL (VAT INCLUSIVE)</span>
+              <span className="summary-value">£{Number(quote.subtotal).toFixed(2)}</span>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Notes */}
         {quote.notes && (
           <div className="notes-section">
-            <h3>Notes</h3>
-            <p>{quote.notes}</p>
+            <h3 style={{ textTransform: 'uppercase' }}>NOTES</h3>
+            <p style={{ textTransform: 'uppercase' }}>{quote.notes}</p>
           </div>
         )}
 
         {/* Footer */}
         <div className="footer">
-          {quote.validUntil && (
+          {!isProductionMode && quote.validUntil && (
             <div className="validity">
-              ⏰ This quote is valid until {format(new Date(quote.validUntil), 'dd MMMM yyyy')}
+              ⏰ THIS QUOTE IS VALID UNTIL {format(new Date(quote.validUntil), 'dd MMMM yyyy').toUpperCase()}
             </div>
           )}
-          <p>Thank you for choosing CloudQuote for your kitchen installation needs.</p>
-          <p>For questions, please contact us at your convenience.</p>
+          <p style={{ textTransform: 'uppercase' }}>
+            {isProductionMode
+              ? 'PRODUCTION SPECIFICATION - FOR INTERNAL USE ONLY'
+              : 'THANK YOU FOR CHOOSING CLOUDQUOTE FOR YOUR KITCHEN INSTALLATION NEEDS.'}
+          </p>
+          {!isProductionMode && (
+            <p style={{ textTransform: 'uppercase' }}>FOR QUESTIONS, PLEASE CONTACT US AT YOUR CONVENIENCE.</p>
+          )}
           {quote.createdBy && (
-            <p style={{ marginTop: '8px' }}>
-              Prepared by: {quote.createdBy.name}
+            <p style={{ marginTop: '8px', textTransform: 'uppercase' }}>
+              PREPARED BY: {quote.createdBy.name?.toUpperCase()}
             </p>
           )}
         </div>

@@ -9,7 +9,6 @@ interface Props {
   searchParams: {
     page?: string;
     search?: string;
-    status?: string;
   };
 }
 
@@ -23,17 +22,7 @@ export default async function QuotesPage({ searchParams }: Props) {
   // Build where clause for filtering
   const where: any = {};
 
-  // Handle status filtering
-  if (searchParams.status === 'all') {
-    // Show all statuses including archived
-  } else if (searchParams.status) {
-    // Show specific status
-    where.status = searchParams.status;
-  } else {
-    // Default: exclude archived
-    where.status = { not: 'ARCHIVED' };
-  }
-
+  // Always show all quotes regardless of status
   if (searchParams.search) {
     where.OR = [
       { quoteNumber: { contains: searchParams.search, mode: 'insensitive' } },

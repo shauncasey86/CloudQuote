@@ -130,15 +130,18 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <Button
+      <button
         ref={buttonRef}
-        variant="ghost"
-        size="icon"
+        type="button"
         title="More actions"
-        onClick={handleToggle}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleToggle();
+        }}
+        className="p-2.5 rounded-xl bg-transparent text-text-primary hover:bg-bg-glass-light transition-all duration-200 cursor-pointer"
       >
         <MoreVertical className="w-4 h-4" />
-      </Button>
+      </button>
       {isOpen && (
         <div
           className="fixed w-48 bg-bg-elevated border border-border-glass rounded-lg shadow-xl py-1"

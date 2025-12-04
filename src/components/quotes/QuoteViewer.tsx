@@ -160,9 +160,8 @@ export function QuoteViewer({
                 {quote.status}
               </Badge>
             </div>
-            <p className="text-text-secondary mt-1">
-              Created {format(new Date(quote.createdAt), 'dd MMM yyyy')} by{' '}
-              {quote.createdBy?.name}
+            <p className="text-text-secondary mt-1 whitespace-nowrap">
+              CREATED {format(new Date(quote.createdAt), 'dd MMM yyyy').toUpperCase()} BY {quote.createdBy?.name?.toUpperCase()}
             </p>
           </div>
         </div>

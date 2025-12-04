@@ -68,16 +68,21 @@ export function QuoteEditor({
     : 0;
 
   // Calculate totals - starting from house type allowance
+  // Note: This recalculates whenever items, additionalCosts, or houseTypeAllowance changes
   const totals = React.useMemo(() => {
     // Calculate items total (only non-allowance items add to the total)
+    // Items marked as "in allowance" are free (£0.00)
     const itemsSubtotal = quoteState.items.reduce((sum, item) => {
-      if (item.isInAllowance) return sum; // Allowance items don't add to total
-      return sum + Number(item.unitPrice) * Number(item.quantity);
+      // Skip items that are marked as in allowance - they're free
+      if (item.isInAllowance === true) return sum;
+      const price = Number(item.unitPrice) || 0;
+      const qty = Number(item.quantity) || 0;
+      return sum + (price * qty);
     }, 0);
 
     // Additional costs
     const additionalTotal = quoteState.additionalCosts.reduce(
-      (sum, cost) => sum + Number(cost.amount),
+      (sum, cost) => sum + (Number(cost.amount) || 0),
       0
     );
 
