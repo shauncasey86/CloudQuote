@@ -3,6 +3,10 @@ import { prisma } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
 
+// Force dynamic rendering - always fetch fresh data
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface Props {
   params: { id: string };
   searchParams: { mode?: string };
@@ -498,77 +502,23 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
         `}</style>
       </head>
       <body>
-        {/* Print Controls */}
-        <div className="print-controls">
-          <button
-            className="back-btn"
-            id="close-btn"
-            type="button"
-          >
-            ← CLOSE
-          </button>
-          <a
-            className="mode-btn"
-            href={isProductionMode ? basePath : `${basePath}?mode=production`}
-          >
-            {isProductionMode ? '💰 SHOW PRICES' : '🏭 PRODUCTION COPY'}
-          </a>
-          <button
-            className="print-btn"
-            id="print-btn"
-            type="button"
-          >
-            🖨️ PRINT {isProductionMode ? 'PRODUCTION SHEET' : 'QUOTE'}
-          </button>
-        </div>
-        <script dangerouslySetInnerHTML={{ __html: `
-          document.addEventListener('DOMContentLoaded', function() {
-            var closeBtn = document.getElementById('close-btn');
-            var printBtn = document.getElementById('print-btn');
-
-            if (closeBtn) {
-              closeBtn.onclick = function() {
-                if (window.opener) {
-                  window.close();
-                } else if (window.history.length > 1) {
-                  window.history.back();
-                } else {
-                  window.location.href = '/quotes';
-                }
-              };
-            }
-
-            if (printBtn) {
-              printBtn.onclick = function() {
-                window.print();
-              };
-            }
-          });
-
-          // Also try immediately in case DOMContentLoaded already fired
-          (function() {
-            var closeBtn = document.getElementById('close-btn');
-            var printBtn = document.getElementById('print-btn');
-
-            if (closeBtn) {
-              closeBtn.onclick = function() {
-                if (window.opener) {
-                  window.close();
-                } else if (window.history.length > 1) {
-                  window.history.back();
-                } else {
-                  window.location.href = '/quotes';
-                }
-              };
-            }
-
-            if (printBtn) {
-              printBtn.onclick = function() {
-                window.print();
-              };
-            }
-          })();
-        `}} />
+        {/* Print Controls - rendered as raw HTML for inline onclick support */}
+        <div
+          className="print-controls"
+          dangerouslySetInnerHTML={{
+            __html: `
+              <button class="back-btn" type="button" onclick="if(window.opener){window.close()}else if(window.history.length>1){window.history.back()}else{window.location.href='/quotes'}">
+                ← CLOSE
+              </button>
+              <a class="mode-btn" href="${isProductionMode ? basePath : `${basePath}?mode=production`}">
+                ${isProductionMode ? '💰 SHOW PRICES' : '🏭 PRODUCTION COPY'}
+              </a>
+              <button class="print-btn" type="button" onclick="window.print()">
+                🖨️ PRINT ${isProductionMode ? 'PRODUCTION SHEET' : 'QUOTE'}
+              </button>
+            `
+          }}
+        />
 
         {/* Print Document */}
         <div className="print-page">
