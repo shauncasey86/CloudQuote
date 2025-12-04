@@ -22,6 +22,9 @@ interface QuoteSummaryProps {
   total: number;
   status: QuoteStatus;
   itemsCount: number;
+  houseTypeAllowance?: number;
+  itemsSubtotal?: number;
+  additionalTotal?: number;
   onSave?: () => void;
   onFinalize?: () => void;
   onSend?: () => void;
@@ -37,6 +40,9 @@ export function QuoteSummary({
   total,
   status,
   itemsCount,
+  houseTypeAllowance = 0,
+  itemsSubtotal = 0,
+  additionalTotal = 0,
   onSave,
   onFinalize,
   onSend,
@@ -75,6 +81,28 @@ export function QuoteSummary({
           <div className="flex items-center justify-between text-sm">
             <span className="text-text-secondary">Items</span>
             <span className="font-medium">{itemsCount}</span>
+          </div>
+
+          {/* Breakdown */}
+          <div className="space-y-2 text-sm">
+            {houseTypeAllowance > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-text-secondary">House Type Allowance</span>
+                <span className="font-mono text-[#B19334]">£{houseTypeAllowance.toFixed(2)}</span>
+              </div>
+            )}
+            {itemsSubtotal > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-text-secondary">Additional Items</span>
+                <span className="font-mono">£{itemsSubtotal.toFixed(2)}</span>
+              </div>
+            )}
+            {additionalTotal > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-text-secondary">Other Costs</span>
+                <span className="font-mono">£{additionalTotal.toFixed(2)}</span>
+              </div>
+            )}
           </div>
 
           {/* Total */}
