@@ -336,6 +336,15 @@ export function QuoteEditor({
     window.open(`/api/quotes/${quoteId}/pdf`, '_blank');
   };
 
+  const handlePrint = () => {
+    if (!quoteId) {
+      toast.error('Please save the quote first');
+      return;
+    }
+
+    window.open(`/print/quotes/${quoteId}`, '_blank');
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Main Content */}
@@ -383,6 +392,7 @@ export function QuoteEditor({
           onSave={handleSave}
           onFinalize={handleFinalize}
           onSend={handleSend}
+          onPrint={handlePrint}
           onDownloadPDF={handleDownloadPDF}
           isSaving={createQuoteMutation.isPending || updateQuoteMutation.isPending}
           autoSaveStatus={autosaveStatus}
