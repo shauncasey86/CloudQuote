@@ -166,29 +166,56 @@ export function QuoteEditor({
     }));
   };
 
-  const handleAddProduct = async (product: Product, quantity: number) => {
+  const handleAddProduct = async (product: Product, quantity: number, isInAllowance: boolean = false) => {
     const basePrice = Number(product.basePrice);
-    const newItem = {
-      id: `temp-${Date.now()}`,
-      productId: product.id,
-      productName: product.name,
-      productSku: product.sku,
-      quantity,
-      priceUnit: product.priceUnit,
-      unitPrice: basePrice,
-      lineTotal: basePrice * quantity,
-      isInAllowance: false,
-      notes: '',
-      sortOrder: quoteState.items.length,
-      basePrice, // Always store original price for allowance toggle
-    };
 
-    setQuoteState((prev) => ({
-      ...prev,
-      items: [...prev.items, newItem],
-    }));
+    // Check if this product already exists in items with the same allowance status
+    const existingItemIndex = quoteState.items.findIndex(
+      (item) => item.productId === product.id && item.isInAllowance === isInAllowance
+    );
 
-    toast.success(`Added ${product.name} to quote`);
+    if (existingItemIndex >= 0) {
+      // Combine quantities
+      setQuoteState((prev) => ({
+        ...prev,
+        items: prev.items.map((item, index) => {
+          if (index === existingItemIndex) {
+            const newQty = Number(item.quantity) + quantity;
+            const effectivePrice = isInAllowance ? 0 : basePrice;
+            return {
+              ...item,
+              quantity: newQty,
+              lineTotal: effectivePrice * newQty,
+            };
+          }
+          return item;
+        }),
+      }));
+      toast.success(`Updated ${product.name} quantity`);
+    } else {
+      // Add as new item
+      const effectivePrice = isInAllowance ? 0 : basePrice;
+      const newItem = {
+        id: `temp-${Date.now()}`,
+        productId: product.id,
+        productName: product.name,
+        productSku: product.sku,
+        quantity,
+        priceUnit: product.priceUnit,
+        unitPrice: effectivePrice,
+        lineTotal: effectivePrice * quantity,
+        isInAllowance,
+        notes: '',
+        sortOrder: quoteState.items.length,
+        basePrice, // Always store original price for allowance toggle
+      };
+
+      setQuoteState((prev) => ({
+        ...prev,
+        items: [...prev.items, newItem],
+      }));
+      toast.success(`Added ${product.name} to quote`);
+    }
   };
 
   const handleUpdateQuantity = (itemId: string, quantity: number) => {
@@ -358,7 +385,6 @@ export function QuoteEditor({
         <QuoteItemsTable
           items={quoteState.items}
           onUpdateQuantity={handleUpdateQuantity}
-          onUpdateAllowance={handleUpdateAllowance}
           onRemoveItem={handleRemoveItem}
         />
 

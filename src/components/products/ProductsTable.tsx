@@ -282,18 +282,18 @@ export function ProductsTable({
                 <TableCell className="font-mono text-sm text-text-secondary">
                   {product.sku || '—'}
                 </TableCell>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium py-2">
                   <div>
                     {product.name}
                     {product.description && (
-                      <div className="text-sm text-text-secondary mt-1 line-clamp-1">
+                      <div className="text-sm text-text-secondary line-clamp-1">
                         {product.description}
                       </div>
                     )}
                   </div>
                 </TableCell>
-                <TableCell>
-                  <Badge variant="default">{product.category.name}</Badge>
+                <TableCell className="py-2">
+                  <Badge variant="default" className="max-w-[120px] truncate">{product.category.name}</Badge>
                 </TableCell>
                 <TableCell className="text-right font-mono font-medium">
                   £{Number(product.basePrice).toFixed(2)}

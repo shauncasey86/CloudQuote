@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/Table';
-import { Trash2, GripVertical, Check, ChevronUp, ChevronDown } from 'lucide-react';
+import { Trash2, GripVertical, ChevronUp, ChevronDown } from 'lucide-react';
 
 interface QuoteItemWithDetails {
   id: string;
@@ -35,7 +35,6 @@ interface QuoteItemWithDetails {
 interface QuoteItemsTableProps {
   items: QuoteItemWithDetails[];
   onUpdateQuantity: (itemId: string, quantity: number) => void;
-  onUpdateAllowance?: (itemId: string, isInAllowance: boolean) => void;
   onRemoveItem: (itemId: string) => void;
   isLoading?: boolean;
 }
@@ -43,7 +42,6 @@ interface QuoteItemsTableProps {
 export function QuoteItemsTable({
   items,
   onUpdateQuantity,
-  onUpdateAllowance,
   onRemoveItem,
   isLoading,
 }: QuoteItemsTableProps) {
@@ -76,7 +74,6 @@ export function QuoteItemsTable({
             <TableRow>
               <TableHead className="w-8"></TableHead>
               <TableHead>Product</TableHead>
-              <TableHead className="w-20 text-center">Allowance</TableHead>
               <TableHead className="w-28 text-center">Qty</TableHead>
               <TableHead className="w-28 text-right">Unit Price</TableHead>
               <TableHead className="w-28 text-right">Line Total</TableHead>
@@ -111,21 +108,6 @@ export function QuoteItemsTable({
                         </p>
                       )}
                     </div>
-                  </TableCell>
-                  {/* Allowance Toggle */}
-                  <TableCell className="text-center">
-                    <button
-                      type="button"
-                      onClick={() => onUpdateAllowance?.(item.id, !isInAllowance)}
-                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all mx-auto ${
-                        isInAllowance
-                          ? 'bg-emerald-500 border-emerald-500 text-white'
-                          : 'border-border-glass hover:border-emerald-400'
-                      }`}
-                      title={isInAllowance ? 'Remove from allowance' : 'Include in allowance (free)'}
-                    >
-                      {isInAllowance && <Check className="w-3 h-3" />}
-                    </button>
                   </TableCell>
                   {/* Quantity with up/down arrows */}
                   <TableCell className="text-center">

@@ -319,7 +319,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
 
           .items-table th {
             text-align: left;
-            padding: 10px 8px;
+            padding: 6px 8px;
             background: #f4f4f5;
             font-weight: 600;
             font-size: 11px;
@@ -334,7 +334,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .items-table td {
-            padding: 12px 8px;
+            padding: 6px 8px;
             border-bottom: 1px solid #e4e4e7;
             vertical-align: top;
           }
