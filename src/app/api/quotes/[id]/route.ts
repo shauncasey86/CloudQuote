@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { prisma } from '@/lib/db';
 import { authOptions } from '@/lib/auth';
 import { calculateQuoteTotal } from '@/lib/pricing';
-import { Role, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 const updateQuoteSchema = z.object({
   quoteNumber: z.string().min(1).max(50).optional(),
@@ -179,11 +179,6 @@ export async function DELETE(
   const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  // Only ADMIN can delete quotes
-  if (session.user.role !== Role.ADMIN) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   try {

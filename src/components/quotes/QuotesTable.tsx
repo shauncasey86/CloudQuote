@@ -108,14 +108,23 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this quote? This cannot be undone.')) {
+      setIsOpen(false);
       return;
     }
     try {
       const res = await fetch(`/api/quotes/${quote.id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete');
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        const message = data.error || 'Failed to delete quote';
+        alert(message);
+        setIsOpen(false);
+        return;
+      }
+      queryClient.invalidateQueries({ queryKey: ['quotes'] });
       router.refresh();
     } catch (error) {
       console.error('Failed to delete:', error);
+      alert('Failed to delete quote. Please try again.');
     }
     setIsOpen(false);
   };
