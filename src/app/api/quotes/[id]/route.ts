@@ -10,23 +10,24 @@ import { Prisma } from '@prisma/client';
 
 const quoteItemSchema = z.object({
   id: z.string().optional(),
-  productId: z.string(),
+  productId: z.string().nullable().optional(),
   productName: z.string(),
   productSku: z.string().optional().nullable(),
-  quantity: z.number(),
+  quantity: z.union([z.number(), z.string()]).transform(v => Number(v)),
   priceUnit: z.enum(['UNIT', 'LINEAR_METER', 'SQUARE_METER']),
-  unitPrice: z.number(),
-  lineTotal: z.number(),
+  unitPrice: z.union([z.number(), z.string()]).transform(v => Number(v)),
+  lineTotal: z.union([z.number(), z.string()]).transform(v => Number(v)),
   isInAllowance: z.boolean().optional(),
   notes: z.string().optional().nullable(),
   sortOrder: z.number().optional(),
-  basePrice: z.number().optional(),
+  basePrice: z.union([z.number(), z.string()]).transform(v => Number(v)).optional(),
+  product: z.any().optional(), // Allow nested product from database
 });
 
 const additionalCostSchema = z.object({
   id: z.string().optional(),
   description: z.string(),
-  amount: z.number(),
+  amount: z.union([z.number(), z.string()]).transform(v => Number(v)),
   taxable: z.boolean().optional(),
   sortOrder: z.number().optional(),
 });
@@ -46,12 +47,17 @@ const updateQuoteSchema = z.object({
   internalNotes: z.string().nullable().optional(),
   validUntil: z.string().datetime().nullable().optional(),
   status: z.enum(['DRAFT', 'FINALIZED', 'PRINTED', 'SENT', 'SAVED', 'ARCHIVED']).optional(),
-  bespokeUpliftQty: z.number().int().optional(),
+  bespokeUpliftQty: z.union([z.number(), z.string()]).transform(v => Number(v)).optional(),
   items: z.array(quoteItemSchema).optional(),
   additionalCosts: z.array(additionalCostSchema).optional(),
-  subtotal: z.number().optional(),
-  vatAmount: z.number().optional(),
-  total: z.number().optional(),
+  subtotal: z.union([z.number(), z.string()]).transform(v => Number(v)).optional(),
+  vatAmount: z.union([z.number(), z.string()]).transform(v => Number(v)).optional(),
+  total: z.union([z.number(), z.string()]).transform(v => Number(v)).optional(),
+  // Allow these to be passed but ignore them (calculated on frontend)
+  houseTypeAllowance: z.any().optional(),
+  itemsSubtotal: z.any().optional(),
+  additionalTotal: z.any().optional(),
+  bespokeUplift: z.any().optional(),
 });
 
 export async function GET(
