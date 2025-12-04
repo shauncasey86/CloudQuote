@@ -3,15 +3,15 @@
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { Search, Plus } from 'lucide-react';
+import { Search, Plus, FolderPlus } from 'lucide-react';
 
 interface ProductsHeaderProps {
   onAddProduct: () => void;
+  onAddCategory?: () => void;
   isAdmin: boolean;
 }
 
-export function ProductsHeader({ onAddProduct, isAdmin }: ProductsHeaderProps) {
+export function ProductsHeader({ onAddProduct, onAddCategory, isAdmin }: ProductsHeaderProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [search, setSearch] = React.useState(searchParams.get('search') || '');
@@ -51,10 +51,15 @@ export function ProductsHeader({ onAddProduct, isAdmin }: ProductsHeaderProps) {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <ThemeToggle />
+          {isAdmin && onAddCategory && (
+            <Button variant="secondary" onClick={onAddCategory}>
+              <FolderPlus className="w-4 h-4 mr-2" />
+              New Category
+            </Button>
+          )}
           {isAdmin && (
-            <Button variant="primary" size="lg" onClick={onAddProduct}>
-              <Plus className="w-5 h-5 mr-2" />
+            <Button variant="primary" onClick={onAddProduct}>
+              <Plus className="w-4 h-4 mr-2" />
               New Product
             </Button>
           )}
@@ -66,7 +71,7 @@ export function ProductsHeader({ onAddProduct, isAdmin }: ProductsHeaderProps) {
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-secondary" />
           <input
             type="text"
-            placeholder="Search by product name, SKU, or description..."
+            placeholder="Search by product name, code, or description..."
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             className="input pl-12 w-full"

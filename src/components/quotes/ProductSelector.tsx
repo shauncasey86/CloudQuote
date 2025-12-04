@@ -71,15 +71,15 @@ export function ProductSelector({
         </div>
       </CardHeader>
       <CardContent className="pt-4">
-        {/* Category Tabs - Tab Style */}
-        <div className="border-b border-border-glass mb-4">
-          <div className="flex gap-1 -mb-px overflow-x-auto scrollbar-thin">
+        {/* Category Tabs */}
+        <div className="mb-4">
+          <div className="flex flex-wrap gap-1.5">
             <button
               onClick={() => setSelectedCategory('all')}
-              className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+              className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-lg transition-all ${
                 selectedCategory === 'all'
-                  ? 'border-violet-500 text-violet-400'
-                  : 'border-transparent text-text-muted hover:text-text-primary hover:border-border-glass'
+                  ? 'bg-gradient-to-r from-[#B19334] to-[#BB9E6C] text-[#212533] shadow-md'
+                  : 'bg-bg-elevated text-text-muted hover:text-text-primary hover:bg-bg-glass border border-border-subtle'
               }`}
             >
               All
@@ -88,10 +88,10 @@ export function ProductSelector({
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-lg transition-all ${
                   selectedCategory === category.id
-                    ? 'border-violet-500 text-violet-400'
-                    : 'border-transparent text-text-muted hover:text-text-primary hover:border-border-glass'
+                    ? 'bg-gradient-to-r from-[#B19334] to-[#BB9E6C] text-[#212533] shadow-md'
+                    : 'bg-bg-elevated text-text-muted hover:text-text-primary hover:bg-bg-glass border border-border-subtle'
                 }`}
               >
                 {category.name}
@@ -114,12 +114,12 @@ export function ProductSelector({
         ) : (
           <div className="max-h-[400px] overflow-y-auto scrollbar-thin">
             {/* Header Row */}
-            <div className="grid grid-cols-12 gap-3 px-3 py-2 text-xs font-semibold text-text-muted uppercase tracking-wide border-b border-border-glass">
-              <div className="col-span-5">Product</div>
+            <div className="grid grid-cols-12 gap-2 px-3 py-2 text-xs font-bold text-text-muted uppercase tracking-wide border-b border-border-glass">
+              <div className="col-span-4">Product</div>
               <div className="col-span-2 text-right">Price</div>
-              <div className="col-span-1 text-center">Allowance</div>
+              <div className="col-span-2 text-center">Allowance</div>
               <div className="col-span-2 text-center">Qty</div>
-              <div className="col-span-2"></div>
+              <div className="col-span-2 text-right">Action</div>
             </div>
             {/* Product Rows */}
             <div className="divide-y divide-border-subtle">
@@ -131,10 +131,10 @@ export function ProductSelector({
                 return (
                   <div
                     key={product.id}
-                    className="grid grid-cols-12 gap-3 px-3 py-2.5 items-center hover:bg-bg-glass-light transition-colors group"
+                    className="grid grid-cols-12 gap-2 px-3 py-2.5 items-center hover:bg-bg-glass-light transition-colors group"
                   >
                     {/* Product Info */}
-                    <div className="col-span-5">
+                    <div className="col-span-4">
                       <div className="font-medium text-sm text-text-primary leading-tight">
                         {product.name}
                       </div>
@@ -160,7 +160,7 @@ export function ProductSelector({
                       )}
                     </div>
                     {/* Allowance Checkbox */}
-                    <div className="col-span-1 flex justify-center">
+                    <div className="col-span-2 flex justify-center">
                       <button
                         type="button"
                         onClick={() => setAllowances((prev) => ({ ...prev, [product.id]: !prev[product.id] }))}
@@ -183,7 +183,7 @@ export function ProductSelector({
                             ...prev,
                             [product.id]: Math.max(minQty, (prev[product.id] || 1) - step),
                           }))}
-                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-violet-400"
+                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-[#B19334]"
                         >
                           <ChevronDown className="w-3.5 h-3.5" />
                         </button>
@@ -207,7 +207,7 @@ export function ProductSelector({
                             ...prev,
                             [product.id]: (prev[product.id] || 1) + step,
                           }))}
-                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-violet-400"
+                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-[#B19334]"
                         >
                           <ChevronUp className="w-3.5 h-3.5" />
                         </button>

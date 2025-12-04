@@ -296,7 +296,7 @@ export default function ProductsPage() {
 
   return (
     <div className="space-y-6">
-      <ProductsHeader onAddProduct={handleAddProduct} isAdmin={isAdmin} />
+      <ProductsHeader onAddProduct={handleAddProduct} onAddCategory={handleAddCategory} isAdmin={isAdmin} />
 
       <Card className="animate-fadeUp-delay-2" hover={false}>
         <CardContent className="p-6">

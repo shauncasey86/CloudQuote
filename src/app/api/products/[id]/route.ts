@@ -74,6 +74,11 @@ export async function PATCH(
     const body = await request.json();
     const data = updateProductSchema.parse(body);
 
+    // Convert empty string SKU to null (unique constraint requires null, not empty string)
+    if (data.sku === '' || data.sku === undefined) {
+      data.sku = null;
+    }
+
     // Check if product exists
     const existingProduct = await prisma.product.findUnique({
       where: { id: params.id },
@@ -100,7 +105,7 @@ export async function PATCH(
       }
     }
 
-    // Check for duplicate SKU if being updated
+    // Check for duplicate SKU if being updated (only if SKU is not null)
     if (data.sku && data.sku !== existingProduct.sku) {
       const duplicate = await prisma.product.findUnique({
         where: { sku: data.sku },

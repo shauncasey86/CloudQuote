@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/Table';
-import { Trash2, GripVertical, Check } from 'lucide-react';
+import { Trash2, GripVertical, Check, ChevronUp, ChevronDown } from 'lucide-react';
 
 interface QuoteItemWithDetails {
   id: string;
@@ -24,15 +24,18 @@ interface QuoteItemWithDetails {
   lineTotal: number | any;
   isInAllowance?: boolean;
   notes?: string | null;
+  basePrice?: number | any;
   product?: {
     name: string;
     sku?: string | null;
+    basePrice?: number | any;
   };
 }
 
 interface QuoteItemsTableProps {
   items: QuoteItemWithDetails[];
   onUpdateQuantity: (itemId: string, quantity: number) => void;
+  onUpdateAllowance?: (itemId: string, isInAllowance: boolean) => void;
   onRemoveItem: (itemId: string) => void;
   isLoading?: boolean;
 }
@@ -40,6 +43,7 @@ interface QuoteItemsTableProps {
 export function QuoteItemsTable({
   items,
   onUpdateQuantity,
+  onUpdateAllowance,
   onRemoveItem,
   isLoading,
 }: QuoteItemsTableProps) {
@@ -72,9 +76,10 @@ export function QuoteItemsTable({
             <TableRow>
               <TableHead className="w-8"></TableHead>
               <TableHead>Product</TableHead>
-              <TableHead className="w-24 text-right">Qty</TableHead>
-              <TableHead className="w-32 text-right">Unit Price</TableHead>
-              <TableHead className="w-32 text-right">Line Total</TableHead>
+              <TableHead className="w-20 text-center">Allowance</TableHead>
+              <TableHead className="w-28 text-center">Qty</TableHead>
+              <TableHead className="w-28 text-right">Unit Price</TableHead>
+              <TableHead className="w-28 text-right">Line Total</TableHead>
               <TableHead className="w-12"></TableHead>
             </TableRow>
           </TableHeader>
@@ -82,6 +87,8 @@ export function QuoteItemsTable({
             {items.map((item) => {
               const lineTotal = Number(item.lineTotal);
               const isInAllowance = item.isInAllowance || false;
+              const step = item.priceUnit === 'LINEAR_METER' ? 0.1 : 1;
+              const currentQty = Number(item.quantity);
 
               return (
                 <TableRow key={item.id} className={isInAllowance ? 'bg-emerald-500/5' : ''}>
@@ -91,45 +98,74 @@ export function QuoteItemsTable({
                     </button>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-start gap-2">
-                      <div className="flex-1">
-                        <p className="font-medium">{item.productName}</p>
-                        {item.productSku && (
-                          <p className="text-xs text-text-secondary font-mono">
-                            {item.productSku}
-                          </p>
-                        )}
-                        {item.notes && (
-                          <p className="text-xs text-text-secondary mt-1 italic">
-                            {item.notes}
-                          </p>
-                        )}
-                      </div>
-                      {isInAllowance && (
-                        <Badge variant="success" className="text-xs whitespace-nowrap">
-                          <Check className="w-3 h-3 mr-1" />
-                          Allowance
-                        </Badge>
+                    <div className="flex-1">
+                      <p className="font-medium">{item.productName}</p>
+                      {item.productSku && (
+                        <p className="text-xs text-text-secondary font-mono">
+                          {item.productSku}
+                        </p>
+                      )}
+                      {item.notes && (
+                        <p className="text-xs text-text-secondary mt-1 italic">
+                          {item.notes}
+                        </p>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-right">
-                    <input
-                      type="number"
-                      min={0.1}
-                      step={item.priceUnit === 'LINEAR_METER' ? '0.1' : '1'}
-                      value={Number(item.quantity)}
-                      onChange={(e) => {
-                        const newQty = parseFloat(e.target.value) || 0;
-                        if (newQty > 0) {
-                          onUpdateQuantity(item.id, newQty);
-                        }
-                      }}
-                      className="input text-right w-20 text-sm"
-                    />
-                    <span className="text-xs text-text-secondary ml-1">
-                      {item.priceUnit === 'LINEAR_METER' ? 'm' : ''}
-                    </span>
+                  {/* Allowance Toggle */}
+                  <TableCell className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => onUpdateAllowance?.(item.id, !isInAllowance)}
+                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all mx-auto ${
+                        isInAllowance
+                          ? 'bg-emerald-500 border-emerald-500 text-white'
+                          : 'border-border-glass hover:border-emerald-400'
+                      }`}
+                      title={isInAllowance ? 'Remove from allowance' : 'Include in allowance (free)'}
+                    >
+                      {isInAllowance && <Check className="w-3 h-3" />}
+                    </button>
+                  </TableCell>
+                  {/* Quantity with up/down arrows */}
+                  <TableCell className="text-center">
+                    <div className="flex items-center justify-center">
+                      <div className="flex items-center bg-bg-elevated border border-border-subtle rounded-lg overflow-hidden">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newQty = Math.max(step, currentQty - step);
+                            onUpdateQuantity(item.id, newQty);
+                          }}
+                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-[#B19334]"
+                        >
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </button>
+                        <input
+                          type="number"
+                          min={step}
+                          step={step}
+                          value={currentQty}
+                          onChange={(e) => {
+                            const newQty = parseFloat(e.target.value) || step;
+                            if (newQty > 0) {
+                              onUpdateQuantity(item.id, newQty);
+                            }
+                          }}
+                          className="w-12 py-1 text-center text-sm bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => onUpdateQuantity(item.id, currentQty + step)}
+                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-[#B19334]"
+                        >
+                          <ChevronUp className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      {item.priceUnit === 'LINEAR_METER' && (
+                        <span className="text-xs text-text-secondary ml-1">m</span>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="text-right font-mono">
                     {isInAllowance ? (

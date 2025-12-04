@@ -67,21 +67,32 @@ export function QuoteEditor({
     ? Number((selectedHouseType as any).allowance)
     : 0;
 
-  // Calculate totals
+  // Calculate totals - starting from house type allowance
   const totals = React.useMemo(() => {
-    return calculateQuoteTotal({
-      items: quoteState.items.map((item) => ({
-        quantity: Number(item.quantity),
-        unitPrice: Number(item.unitPrice),
-        priceUnit: item.priceUnit,
-      })),
-      additionalCosts: quoteState.additionalCosts.map((cost) => ({
-        amount: Number(cost.amount),
-        taxable: cost.taxable,
-      })),
-      vatRate: 20,
-    });
-  }, [quoteState.items, quoteState.additionalCosts]);
+    // Calculate items total (only non-allowance items add to the total)
+    const itemsSubtotal = quoteState.items.reduce((sum, item) => {
+      if (item.isInAllowance) return sum; // Allowance items don't add to total
+      return sum + Number(item.unitPrice) * Number(item.quantity);
+    }, 0);
+
+    // Additional costs
+    const additionalTotal = quoteState.additionalCosts.reduce(
+      (sum, cost) => sum + Number(cost.amount),
+      0
+    );
+
+    // Total = House type allowance + non-allowance items + additional costs
+    const subtotal = houseTypeAllowance + itemsSubtotal + additionalTotal;
+
+    return {
+      subtotal,
+      vatAmount: 0, // VAT handled separately if needed
+      total: subtotal,
+      houseTypeAllowance,
+      itemsSubtotal,
+      additionalTotal,
+    };
+  }, [quoteState.items, quoteState.additionalCosts, houseTypeAllowance]);
 
   // Mutations
   const createQuoteMutation = useMutation({
@@ -182,10 +193,29 @@ export function QuoteEditor({
           ? {
               ...item,
               quantity,
-              lineTotal: Number(item.unitPrice) * quantity,
+              lineTotal: item.isInAllowance ? 0 : Number(item.unitPrice) * quantity,
             }
           : item
       ),
+    }));
+  };
+
+  const handleUpdateAllowance = (itemId: string, isInAllowance: boolean) => {
+    setQuoteState((prev) => ({
+      ...prev,
+      items: prev.items.map((item) => {
+        if (item.id !== itemId) return item;
+        // Get the base price - if switching to allowance, price becomes 0; otherwise restore base price
+        const basePrice = item.basePrice || item.unitPrice;
+        const effectivePrice = isInAllowance ? 0 : basePrice;
+        return {
+          ...item,
+          isInAllowance,
+          unitPrice: effectivePrice,
+          lineTotal: effectivePrice * Number(item.quantity),
+          basePrice, // Keep track of original price
+        };
+      }),
     }));
   };
 
@@ -316,6 +346,7 @@ export function QuoteEditor({
         <QuoteItemsTable
           items={quoteState.items}
           onUpdateQuantity={handleUpdateQuantity}
+          onUpdateAllowance={handleUpdateAllowance}
           onRemoveItem={handleRemoveItem}
         />
 
@@ -343,6 +374,9 @@ export function QuoteEditor({
           total={totals.total}
           status={quoteState.status}
           itemsCount={quoteState.items.length}
+          houseTypeAllowance={totals.houseTypeAllowance}
+          itemsSubtotal={totals.itemsSubtotal}
+          additionalTotal={totals.additionalTotal}
           onSave={handleSave}
           onFinalize={handleFinalize}
           onSend={handleSend}

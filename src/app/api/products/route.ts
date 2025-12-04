@@ -79,6 +79,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const data = createProductSchema.parse(body);
 
+    // Convert empty string SKU to null (unique constraint requires null, not empty string)
+    if (data.sku === '' || data.sku === undefined) {
+      data.sku = null;
+    }
+
     // Check if category exists
     const category = await prisma.productCategory.findUnique({
       where: { id: data.categoryId },
@@ -91,7 +96,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check for duplicate SKU if provided
+    // Check for duplicate SKU if provided (only if SKU is not null)
     if (data.sku) {
       const existing = await prisma.product.findUnique({
         where: { sku: data.sku },

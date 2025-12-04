@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/Button';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { UserPlus } from 'lucide-react';
 
 interface UsersHeaderProps {
@@ -21,13 +20,10 @@ export function UsersHeader({ onAddUser }: UsersHeaderProps) {
             Manage user accounts and permissions
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
-          <Button variant="primary" size="lg" onClick={onAddUser}>
-            <UserPlus className="w-5 h-5 mr-2" />
-            Add User
-          </Button>
-        </div>
+        <Button variant="primary" onClick={onAddUser}>
+          <UserPlus className="w-4 h-4 mr-2" />
+          Add User
+        </Button>
       </div>
     </div>
   );

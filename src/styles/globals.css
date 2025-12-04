@@ -4,7 +4,7 @@
 
 /* Fonts loaded via next/font/google in layout.tsx */
 /* Headers: Josefin Slab Bold 700 UPPERCASE - var(--font-header) */
-/* Body: Open Sans (similar to Sansation) - var(--font-body) */
+/* Body: Sansation Regular 400 - var(--font-body) */
 
 @layer base {
   /* Dark Theme - Wilson Interiors Brand Colors */
@@ -258,7 +258,7 @@
   .btn {
     @apply px-5 py-2.5 font-medium transition-all duration-200 inline-flex items-center justify-center;
     font-family: var(--font-header), serif;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     border-radius: 12px;
@@ -409,8 +409,9 @@
   }
 
   .label {
-    @apply text-sm font-medium mb-2 block;
+    @apply text-sm font-bold mb-2 block;
     font-family: var(--font-header), serif;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--text-secondary);
@@ -418,8 +419,9 @@
 
   /* Badge Styles */
   .badge {
-    @apply inline-flex items-center px-2.5 py-1 text-xs font-semibold;
+    @apply inline-flex items-center px-2.5 py-1 text-xs font-bold;
     font-family: var(--font-header), serif;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.03em;
     border-radius: 6px;
@@ -478,8 +480,9 @@
   }
 
   .table th {
-    @apply px-6 py-4 text-left text-xs font-semibold tracking-wider;
+    @apply px-6 py-4 text-left text-xs font-bold tracking-wider;
     font-family: var(--font-header), serif;
+    font-weight: 700;
     text-transform: uppercase;
     color: var(--color-gold);
   }
