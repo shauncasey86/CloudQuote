@@ -43,7 +43,7 @@ const createQuoteSchema = z.object({
   status: z.enum(['DRAFT', 'FINALIZED', 'PRINTED', 'SENT', 'SAVED', 'ARCHIVED']).optional(),
   items: z.array(quoteItemSchema).optional(),
   additionalCosts: z.array(additionalCostSchema).optional(),
-  bespokeUpliftCost: z.number().optional(),
+  bespokeUpliftQty: z.number().int().optional(),
   subtotal: z.number().optional(),
   vatAmount: z.number().optional(),
   total: z.number().optional(),
@@ -153,14 +153,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract items and additionalCosts from data
-    const { items, additionalCosts, bespokeUpliftCost, subtotal, vatAmount, total, ...quoteData } = data;
+    const { items, additionalCosts, bespokeUpliftQty, subtotal, vatAmount, total, ...quoteData } = data;
 
     const quote = await prisma.quote.create({
       data: {
         ...quoteData,
         customerEmail: quoteData.customerEmail || null,
         houseTypeAllowance,
-        bespokeUpliftCost: bespokeUpliftCost ?? 30,
+        bespokeUpliftQty: bespokeUpliftQty ?? 0,
         status: quoteData.status || 'DRAFT',
         subtotal: subtotal || 0,
         vatAmount: vatAmount || 0,
