@@ -4,7 +4,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, ChevronUp, ChevronDown } from 'lucide-react';
 
 interface AdditionalCost {
   id: string;
@@ -21,17 +21,19 @@ interface AdditionalCostsProps {
   onAddCost: (cost: Omit<AdditionalCost, 'id' | 'quoteId' | 'createdAt' | 'sortOrder'>) => void;
   onUpdateCost: (id: string, updates: Partial<AdditionalCost>) => void;
   onRemoveCost: (id: string) => void;
-  bespokeUpliftCost: number;
-  onBespokeUpliftChange: (amount: number) => void;
+  bespokeUpliftQty: number;
+  onBespokeUpliftQtyChange: (qty: number) => void;
 }
+
+const BESPOKE_UPLIFT_PRICE = 30;
 
 export function AdditionalCosts({
   costs,
   onAddCost,
   onUpdateCost,
   onRemoveCost,
-  bespokeUpliftCost,
-  onBespokeUpliftChange,
+  bespokeUpliftQty,
+  onBespokeUpliftQtyChange,
 }: AdditionalCostsProps) {
   const [newCost, setNewCost] = React.useState({
     description: '',
@@ -50,25 +52,46 @@ export function AdditionalCosts({
     }
   };
 
+  const bespokeTotal = bespokeUpliftQty * BESPOKE_UPLIFT_PRICE;
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Additional Costs</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Bespoke Uplift Cost - Always First */}
-        <div className="flex items-center gap-3 p-2 bg-amber-500/10 rounded-lg border border-amber-500/30">
-          <span className="flex-1 text-sm font-medium text-amber-400">BESPOKE UPLIFT COST</span>
+        {/* Bespoke Uplift Cost - Fixed price £30, adjustable qty */}
+        <div className="flex items-center gap-3 p-2 bg-bg-glass rounded-lg border border-border-glass">
+          <span className="flex-1 text-sm">Bespoke Uplift Cost</span>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-text-secondary">£</span>
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={bespokeUpliftCost}
-              onChange={(e) => onBespokeUpliftChange(parseFloat(e.target.value) || 0)}
-              className="input w-24 text-sm text-right"
-            />
+            <span className="text-sm text-text-secondary">£{BESPOKE_UPLIFT_PRICE.toFixed(2)}</span>
+            <span className="text-xs text-text-muted">×</span>
+            <div className="flex items-center bg-bg-elevated border border-border-subtle rounded-lg overflow-hidden">
+              <button
+                type="button"
+                onClick={() => onBespokeUpliftQtyChange(Math.max(0, bespokeUpliftQty - 1))}
+                className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-[#B19334]"
+              >
+                <ChevronDown className="w-3.5 h-3.5" />
+              </button>
+              <input
+                type="number"
+                min="0"
+                value={bespokeUpliftQty}
+                onChange={(e) => onBespokeUpliftQtyChange(Math.max(0, parseInt(e.target.value) || 0))}
+                className="w-10 py-1 text-center text-sm bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+              <button
+                type="button"
+                onClick={() => onBespokeUpliftQtyChange(bespokeUpliftQty + 1)}
+                className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-[#B19334]"
+              >
+                <ChevronUp className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <span className="font-mono text-sm w-20 text-right">
+              £{bespokeTotal.toFixed(2)}
+            </span>
           </div>
         </div>
 

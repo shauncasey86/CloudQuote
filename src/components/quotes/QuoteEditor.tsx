@@ -25,9 +25,11 @@ interface QuoteState {
   customerInfo: CustomerInfoFormData;
   items: any[];
   additionalCosts: any[];
-  bespokeUpliftCost: number;
+  bespokeUpliftQty: number;
   status: QuoteStatus;
 }
+
+const BESPOKE_UPLIFT_PRICE = 30;
 
 export function QuoteEditor({
   quoteId,
@@ -57,7 +59,7 @@ export function QuoteEditor({
     },
     items: initialData?.items || [],
     additionalCosts: initialData?.additionalCosts || [],
-    bespokeUpliftCost: initialData?.bespokeUpliftCost ?? 30,
+    bespokeUpliftQty: initialData?.bespokeUpliftQty ?? 0,
     status: initialData?.status || QuoteStatus.DRAFT,
   });
 
@@ -88,8 +90,8 @@ export function QuoteEditor({
       0
     );
 
-    // Bespoke uplift cost
-    const bespokeUplift = quoteState.bespokeUpliftCost || 0;
+    // Bespoke uplift cost (qty * price)
+    const bespokeUplift = (quoteState.bespokeUpliftQty || 0) * BESPOKE_UPLIFT_PRICE;
 
     // Total = House type allowance + non-allowance items + additional costs + bespoke uplift
     const subtotal = houseTypeAllowance + itemsSubtotal + additionalTotal + bespokeUplift;
@@ -103,7 +105,7 @@ export function QuoteEditor({
       additionalTotal,
       bespokeUplift,
     };
-  }, [quoteState.items, quoteState.additionalCosts, quoteState.bespokeUpliftCost, houseTypeAllowance]);
+  }, [quoteState.items, quoteState.additionalCosts, quoteState.bespokeUpliftQty, houseTypeAllowance]);
 
   // Mutations
   const createQuoteMutation = useMutation({
@@ -149,7 +151,7 @@ export function QuoteEditor({
       ...quoteState.customerInfo,
       items: quoteState.items,
       additionalCosts: quoteState.additionalCosts,
-      bespokeUpliftCost: quoteState.bespokeUpliftCost,
+      bespokeUpliftQty: quoteState.bespokeUpliftQty,
     }),
     [quoteState]
   );
@@ -297,10 +299,10 @@ export function QuoteEditor({
     }));
   };
 
-  const handleBespokeUpliftChange = (amount: number) => {
+  const handleBespokeUpliftQtyChange = (qty: number) => {
     setQuoteState((prev) => ({
       ...prev,
-      bespokeUpliftCost: amount,
+      bespokeUpliftQty: qty,
     }));
   };
 
@@ -312,7 +314,7 @@ export function QuoteEditor({
         ...totals,
         items: quoteState.items,
         additionalCosts: quoteState.additionalCosts,
-        bespokeUpliftCost: quoteState.bespokeUpliftCost,
+        bespokeUpliftQty: quoteState.bespokeUpliftQty,
       });
     } else {
       // Update existing quote
@@ -335,7 +337,7 @@ export function QuoteEditor({
         ...totals,
         items: finalizedState.items,
         additionalCosts: finalizedState.additionalCosts,
-        bespokeUpliftCost: finalizedState.bespokeUpliftCost,
+        bespokeUpliftQty: finalizedState.bespokeUpliftQty,
         status: QuoteStatus.FINALIZED,
       });
     } else {
@@ -409,8 +411,8 @@ export function QuoteEditor({
           onAddCost={handleAddCost}
           onUpdateCost={handleUpdateCost}
           onRemoveCost={handleRemoveCost}
-          bespokeUpliftCost={quoteState.bespokeUpliftCost}
-          onBespokeUpliftChange={handleBespokeUpliftChange}
+          bespokeUpliftQty={quoteState.bespokeUpliftQty}
+          onBespokeUpliftQtyChange={handleBespokeUpliftQtyChange}
         />
       </div>
 
