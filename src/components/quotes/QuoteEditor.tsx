@@ -321,6 +321,9 @@ export function QuoteEditor({
       await updateQuoteMutation.mutateAsync({
         ...quoteState.customerInfo,
         ...totals,
+        items: quoteState.items,
+        additionalCosts: quoteState.additionalCosts,
+        bespokeUpliftQty: quoteState.bespokeUpliftQty,
       });
       toast.success('Quote saved successfully');
     }
