@@ -56,7 +56,8 @@ const navItems: NavItem[] = [
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const isLoading = status === 'loading';
 
   const isAdmin = session?.user?.role === Role.ADMIN;
 
@@ -85,14 +86,28 @@ export const Sidebar: React.FC = () => {
         </div>
         <div className="space-y-1">
           {navItems.map((item) => {
-            // Hide admin-only items from non-admins
-            if (item.adminOnly && !isAdmin) {
+            // During loading, show all items (including admin items with loading state)
+            // After loading, hide admin-only items from non-admins
+            if (item.adminOnly && !isLoading && !isAdmin) {
               return null;
             }
 
             const Icon = item.icon;
             const isActive = pathname === item.href ||
               (item.href !== '/settings' && pathname.startsWith(item.href));
+
+            // Show loading skeleton for admin items while session is loading
+            if (item.adminOnly && isLoading) {
+              return (
+                <div
+                  key={item.href}
+                  className="nav-item group opacity-50"
+                >
+                  <Icon className="w-5 h-5 text-text-muted" />
+                  <span className="font-header text-sm tracking-wide">{item.label.toUpperCase()}</span>
+                </div>
+              );
+            }
 
             return (
               <Link

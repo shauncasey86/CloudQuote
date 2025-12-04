@@ -10,10 +10,11 @@ import { Button } from '@/components/ui/Button';
 import { useTheme } from '@/components/providers/ThemeProvider';
 
 export const Header: React.FC = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { theme, toggleTheme } = useTheme();
   const [userMenuOpen, setUserMenuOpen] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
+  const isLoading = status === 'loading';
 
   // Close menu when clicking outside
   React.useEffect(() => {
@@ -53,57 +54,68 @@ export const Header: React.FC = () => {
         </button>
 
         {/* User Menu */}
-        {session && (
-          <div className="relative pl-3 ml-3 border-l border-border-glass" ref={menuRef}>
-            <button
-              onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="flex items-center gap-3 p-1.5 pr-3 rounded-xl hover:bg-bg-elevated transition-all"
-            >
-              <div className="w-9 h-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-md">
-                <User className="w-4 h-4 text-white" />
+        <div className="relative pl-3 ml-3 border-l border-border-glass" ref={menuRef}>
+          {isLoading ? (
+            /* Loading skeleton */
+            <div className="flex items-center gap-3 p-1.5 pr-3">
+              <div className="w-9 h-9 rounded-xl bg-bg-elevated animate-pulse" />
+              <div className="hidden sm:block space-y-1.5">
+                <div className="w-20 h-3 bg-bg-elevated rounded animate-pulse" />
+                <div className="w-12 h-2.5 bg-bg-elevated rounded animate-pulse" />
               </div>
-              <div className="text-left hidden sm:block">
-                <div className="text-sm font-medium text-text-primary leading-tight">
-                  {session.user.name}
+            </div>
+          ) : session ? (
+            <>
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex items-center gap-3 p-1.5 pr-3 rounded-xl hover:bg-bg-elevated transition-all"
+              >
+                <div className="w-9 h-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-md">
+                  <User className="w-4 h-4 text-white" />
                 </div>
-                <div className="text-xs text-text-muted">
-                  {session.user.role}
+                <div className="text-left hidden sm:block">
+                  <div className="text-sm font-medium text-text-primary leading-tight">
+                    {session.user.name}
+                  </div>
+                  <div className="text-xs text-text-muted">
+                    {session.user.role}
+                  </div>
                 </div>
-              </div>
-              <ChevronDown className={`w-4 h-4 text-text-muted transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
-            </button>
+                <ChevronDown className={`w-4 h-4 text-text-muted transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
 
-            {/* Dropdown Menu */}
-            {userMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-56 dropdown-menu animate-slideUp">
-                <div className="p-3 border-b border-border-glass">
-                  <div className="text-sm font-semibold text-text-primary">{session.user.name}</div>
-                  <div className="text-xs text-text-muted truncate">{session.user.email}</div>
+              {/* Dropdown Menu */}
+              {userMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-56 dropdown-menu animate-slideUp">
+                  <div className="p-3 border-b border-border-glass">
+                    <div className="text-sm font-semibold text-text-primary">{session.user.name}</div>
+                    <div className="text-xs text-text-muted truncate">{session.user.email}</div>
+                  </div>
+                  <div className="py-1">
+                    <Link
+                      href="/settings"
+                      className="dropdown-item"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <Settings className="w-4 h-4 text-text-muted" />
+                      Settings
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setUserMenuOpen(false);
+                        signOut();
+                      }}
+                      className="w-full dropdown-item text-red-400 hover:text-red-300"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Sign Out
+                    </button>
+                  </div>
                 </div>
-                <div className="py-1">
-                  <Link
-                    href="/settings"
-                    className="dropdown-item"
-                    onClick={() => setUserMenuOpen(false)}
-                  >
-                    <Settings className="w-4 h-4 text-text-muted" />
-                    Settings
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setUserMenuOpen(false);
-                      signOut();
-                    }}
-                    className="w-full dropdown-item text-red-400 hover:text-red-300"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Sign Out
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+              )}
+            </>
+          ) : null}
+        </div>
       </div>
     </header>
   );
