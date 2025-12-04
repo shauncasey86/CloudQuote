@@ -57,17 +57,15 @@ export const Sidebar: React.FC = () => {
     <aside className="fixed left-0 top-0 h-screen w-64 bg-bg-canvas/95 backdrop-blur-xl border-r border-border-glass flex flex-col z-40">
       {/* Logo */}
       <div className="p-6">
-        <Link href="/quotes" className="flex items-center gap-3 group">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#212533] to-[#2D3142] flex items-center justify-center shadow-md group-hover:shadow-lg group-hover:shadow-[#B19334]/20 transition-all border border-[#B19334]/20">
-            <Image
-              src="/wi-logo.svg"
-              alt="Wilson Interiors"
-              width={32}
-              height={32}
-              className="w-8 h-8"
-            />
-          </div>
-          <span className="text-xl font-bold text-gradient leading-tight font-header">
+        <Link href="/quotes" className="flex flex-col items-center text-center group">
+          <Image
+            src="/wi-logo.svg"
+            alt="Wilson Interiors"
+            width={160}
+            height={48}
+            className="w-40 h-auto mb-3 group-hover:opacity-90 transition-opacity"
+          />
+          <span className="text-lg font-bold text-gradient leading-tight font-header tracking-wider">
             CLOUDQUOTE
           </span>
         </Link>
@@ -114,23 +112,13 @@ export const Sidebar: React.FC = () => {
 
       {/* Footer */}
       <div className="p-4 mx-3 mb-3 rounded-xl bg-gradient-to-br from-[#B19334]/10 to-[#BB9E6C]/10 border border-[#B19334]/20">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
-            <Image
-              src="/wi-logo.svg"
-              alt="Wilson Interiors"
-              width={20}
-              height={20}
-              className="w-5 h-5"
-            />
+        <div className="flex items-center justify-between">
+          <div className="text-xs text-text-muted">
+            Wilson Interiors Ltd
           </div>
-          <div>
-            <div className="text-sm font-header text-text-primary tracking-wide">CLOUDQUOTE</div>
-            <div className="text-xs text-text-muted">v1.0.0</div>
+          <div className="text-xs text-text-muted">
+            v1.0.0
           </div>
-        </div>
-        <div className="text-xs text-text-muted">
-          Wilson Interiors Ltd
         </div>
       </div>
     </aside>
