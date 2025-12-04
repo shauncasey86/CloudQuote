@@ -261,7 +261,6 @@ export function QuoteEditor({
       // Create new quote
       await createQuoteMutation.mutateAsync({
         ...quoteState.customerInfo,
-        houseTypeAllowance,
         ...totals,
         items: quoteState.items,
         additionalCosts: quoteState.additionalCosts,
@@ -270,7 +269,6 @@ export function QuoteEditor({
       // Update existing quote
       await updateQuoteMutation.mutateAsync({
         ...quoteState.customerInfo,
-        houseTypeAllowance,
         ...totals,
       });
       toast.success('Quote saved successfully');
@@ -285,7 +283,6 @@ export function QuoteEditor({
       // Create new quote with finalized status
       await createQuoteMutation.mutateAsync({
         ...finalizedState.customerInfo,
-        houseTypeAllowance,
         ...totals,
         items: finalizedState.items,
         additionalCosts: finalizedState.additionalCosts,
@@ -295,7 +292,6 @@ export function QuoteEditor({
       // Update existing quote with finalized status
       await updateQuoteMutation.mutateAsync({
         ...finalizedState.customerInfo,
-        houseTypeAllowance,
         ...totals,
         status: QuoteStatus.FINALIZED,
       });

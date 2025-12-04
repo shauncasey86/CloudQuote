@@ -14,6 +14,7 @@ import {
   Package,
   Settings,
   Users,
+  Home,
 } from 'lucide-react';
 
 interface NavItem {
@@ -33,6 +34,12 @@ const navItems: NavItem[] = [
     href: '/products',
     label: 'Products',
     icon: Package,
+  },
+  {
+    href: '/settings/house-types',
+    label: 'House Types',
+    icon: Home,
+    adminOnly: true,
   },
   {
     href: '/settings/users',
