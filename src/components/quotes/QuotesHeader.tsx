@@ -32,7 +32,7 @@ export function QuotesHeader() {
     (value: string) => {
       setStatus(value);
       const params = new URLSearchParams(searchParams.toString());
-      if (value && value !== 'all') {
+      if (value) {
         params.set('status', value);
       } else {
         params.delete('status');
