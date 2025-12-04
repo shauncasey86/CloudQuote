@@ -44,8 +44,20 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
               margin: 15mm;
             }
 
+            html, body {
+              background: white !important;
+              background-color: white !important;
+            }
+
             .print-controls {
               display: none !important;
+            }
+
+            .print-page {
+              margin: 0 !important;
+              padding: 0 !important;
+              box-shadow: none !important;
+              background: white !important;
             }
           }
 
@@ -70,17 +82,6 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             color: #18181b;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             min-height: 297mm;
-          }
-
-          @media print {
-            body {
-              background: white;
-            }
-            .print-page {
-              margin: 0;
-              padding: 0;
-              box-shadow: none;
-            }
           }
 
           .print-controls {
@@ -488,7 +489,13 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
         </div>
         <script dangerouslySetInnerHTML={{ __html: `
           document.getElementById('close-btn').addEventListener('click', function() {
-            window.close();
+            if (window.opener) {
+              window.close();
+            } else if (window.history.length > 1) {
+              window.history.back();
+            } else {
+              window.location.href = '/quotes';
+            }
           });
           document.getElementById('print-btn').addEventListener('click', function() {
             window.print();
