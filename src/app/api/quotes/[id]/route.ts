@@ -8,6 +8,29 @@ import { authOptions } from '@/lib/auth';
 import { calculateQuoteTotal } from '@/lib/pricing';
 import { Prisma } from '@prisma/client';
 
+const quoteItemSchema = z.object({
+  id: z.string().optional(),
+  productId: z.string(),
+  productName: z.string(),
+  productSku: z.string().optional().nullable(),
+  quantity: z.number(),
+  priceUnit: z.enum(['UNIT', 'LINEAR_METER', 'SQUARE_METER']),
+  unitPrice: z.number(),
+  lineTotal: z.number(),
+  isInAllowance: z.boolean().optional(),
+  notes: z.string().optional().nullable(),
+  sortOrder: z.number().optional(),
+  basePrice: z.number().optional(),
+});
+
+const additionalCostSchema = z.object({
+  id: z.string().optional(),
+  description: z.string(),
+  amount: z.number(),
+  taxable: z.boolean().optional(),
+  sortOrder: z.number().optional(),
+});
+
 const updateQuoteSchema = z.object({
   quoteNumber: z.string().min(1).max(50).optional(),
   customerName: z.string().min(1).max(255).optional(),
@@ -24,6 +47,11 @@ const updateQuoteSchema = z.object({
   validUntil: z.string().datetime().nullable().optional(),
   status: z.enum(['DRAFT', 'FINALIZED', 'PRINTED', 'SENT', 'SAVED', 'ARCHIVED']).optional(),
   bespokeUpliftQty: z.number().int().optional(),
+  items: z.array(quoteItemSchema).optional(),
+  additionalCosts: z.array(additionalCostSchema).optional(),
+  subtotal: z.number().optional(),
+  vatAmount: z.number().optional(),
+  total: z.number().optional(),
 });
 
 export async function GET(
@@ -129,22 +157,79 @@ export async function PATCH(
       }
     }
 
-    const quote = await prisma.quote.update({
-      where: { id: params.id },
-      data: {
-        ...data,
-        customerEmail: data.customerEmail === '' ? null : data.customerEmail,
-        houseTypeAllowance,
-        validUntil: data.validUntil ? new Date(data.validUntil) : undefined,
-        updatedById: session.user.id,
-      },
-      include: {
-        items: { orderBy: { sortOrder: 'asc' } },
-        additionalCosts: { orderBy: { sortOrder: 'asc' } },
-        houseType: true,
-        createdBy: { select: { id: true, name: true } },
-        updatedBy: { select: { id: true, name: true } },
-      },
+    // Extract items and additionalCosts from data
+    const { items, additionalCosts, subtotal, vatAmount, total, ...quoteData } = data;
+
+    // Use transaction to update quote, items, and costs atomically
+    const quote = await prisma.$transaction(async (tx) => {
+      // Update items if provided
+      if (items !== undefined) {
+        // Delete existing items
+        await tx.quoteItem.deleteMany({
+          where: { quoteId: params.id },
+        });
+
+        // Create new items
+        if (items.length > 0) {
+          await tx.quoteItem.createMany({
+            data: items.map((item, index) => ({
+              quoteId: params.id,
+              productId: item.productId,
+              productName: item.productName,
+              productSku: item.productSku || null,
+              quantity: item.quantity,
+              priceUnit: item.priceUnit,
+              unitPrice: item.unitPrice,
+              lineTotal: item.lineTotal,
+              isInAllowance: item.isInAllowance || false,
+              notes: item.notes || null,
+              sortOrder: item.sortOrder ?? index,
+            })),
+          });
+        }
+      }
+
+      // Update additional costs if provided
+      if (additionalCosts !== undefined) {
+        // Delete existing costs
+        await tx.additionalCost.deleteMany({
+          where: { quoteId: params.id },
+        });
+
+        // Create new costs
+        if (additionalCosts.length > 0) {
+          await tx.additionalCost.createMany({
+            data: additionalCosts.map((cost, index) => ({
+              quoteId: params.id,
+              description: cost.description,
+              amount: cost.amount,
+              taxable: cost.taxable ?? true,
+              sortOrder: cost.sortOrder ?? index,
+            })),
+          });
+        }
+      }
+
+      // Update the quote
+      return tx.quote.update({
+        where: { id: params.id },
+        data: {
+          ...quoteData,
+          customerEmail: quoteData.customerEmail === '' ? null : quoteData.customerEmail,
+          houseTypeAllowance,
+          subtotal: subtotal ?? undefined,
+          total: total ?? undefined,
+          validUntil: quoteData.validUntil ? new Date(quoteData.validUntil) : undefined,
+          updatedById: session.user.id,
+        },
+        include: {
+          items: { orderBy: { sortOrder: 'asc' } },
+          additionalCosts: { orderBy: { sortOrder: 'asc' } },
+          houseType: true,
+          createdBy: { select: { id: true, name: true } },
+          updatedBy: { select: { id: true, name: true } },
+        },
+      });
     });
 
     // Log the update
