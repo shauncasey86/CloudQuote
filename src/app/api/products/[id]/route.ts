@@ -171,13 +171,13 @@ export async function DELETE(
       );
     }
 
-    // Deactivate instead of delete (soft delete)
-    await prisma.product.update({
+    // Fully delete the product
+    // QuoteItems have optional productId, so they'll retain their snapshot data
+    await prisma.product.delete({
       where: { id: params.id },
-      data: { active: false },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, deleted: true });
   } catch (error) {
     console.error('DELETE /api/products/[id] error:', error);
     return NextResponse.json(

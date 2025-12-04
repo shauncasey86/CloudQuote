@@ -44,9 +44,20 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
               margin: 15mm;
             }
 
-            html, body {
+            *, *::before, *::after {
+              background: transparent !important;
+              background-color: transparent !important;
+            }
+
+            html {
               background: white !important;
               background-color: white !important;
+            }
+
+            body {
+              background: white !important;
+              background-color: white !important;
+              min-height: auto !important;
             }
 
             .print-controls {
@@ -58,6 +69,30 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
               padding: 0 !important;
               box-shadow: none !important;
               background: white !important;
+              background-color: white !important;
+              min-height: auto !important;
+              max-width: none !important;
+            }
+
+            .header {
+              border-bottom-color: #B19334 !important;
+            }
+
+            .status-badge {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+
+            .summary-section, .customer-section, .notes-section, .selections-grid {
+              background: #fafafa !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+
+            .items-table th {
+              background: #f4f4f5 !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
             }
           }
 
@@ -81,7 +116,6 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             background: white;
             color: #18181b;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            min-height: 297mm;
           }
 
           .print-controls {
@@ -285,7 +319,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
 
           .items-table th {
             text-align: left;
-            padding: 10px 8px;
+            padding: 6px 8px;
             background: #f4f4f5;
             font-weight: 600;
             font-size: 11px;
@@ -300,7 +334,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .items-table td {
-            padding: 12px 8px;
+            padding: 6px 8px;
             border-bottom: 1px solid #e4e4e7;
             vertical-align: top;
           }
@@ -488,18 +522,52 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           </button>
         </div>
         <script dangerouslySetInnerHTML={{ __html: `
-          document.getElementById('close-btn').addEventListener('click', function() {
-            if (window.opener) {
-              window.close();
-            } else if (window.history.length > 1) {
-              window.history.back();
-            } else {
-              window.location.href = '/quotes';
+          document.addEventListener('DOMContentLoaded', function() {
+            var closeBtn = document.getElementById('close-btn');
+            var printBtn = document.getElementById('print-btn');
+
+            if (closeBtn) {
+              closeBtn.onclick = function() {
+                if (window.opener) {
+                  window.close();
+                } else if (window.history.length > 1) {
+                  window.history.back();
+                } else {
+                  window.location.href = '/quotes';
+                }
+              };
+            }
+
+            if (printBtn) {
+              printBtn.onclick = function() {
+                window.print();
+              };
             }
           });
-          document.getElementById('print-btn').addEventListener('click', function() {
-            window.print();
-          });
+
+          // Also try immediately in case DOMContentLoaded already fired
+          (function() {
+            var closeBtn = document.getElementById('close-btn');
+            var printBtn = document.getElementById('print-btn');
+
+            if (closeBtn) {
+              closeBtn.onclick = function() {
+                if (window.opener) {
+                  window.close();
+                } else if (window.history.length > 1) {
+                  window.history.back();
+                } else {
+                  window.location.href = '/quotes';
+                }
+              };
+            }
+
+            if (printBtn) {
+              printBtn.onclick = function() {
+                window.print();
+              };
+            }
+          })();
         `}} />
 
         {/* Print Document */}
