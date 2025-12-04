@@ -1,6 +1,12 @@
 'use client';
 
+import { usePathname, useSearchParams } from 'next/navigation';
+
 export function PrintControls() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isProductionMode = searchParams.get('mode') === 'production';
+
   const handleBack = () => {
     // If opened in a new tab/window, close it
     // Otherwise go back in history
@@ -11,6 +17,12 @@ export function PrintControls() {
     }
   };
 
+  const toggleMode = () => {
+    const newMode = isProductionMode ? '' : 'production';
+    const url = newMode ? `${pathname}?mode=${newMode}` : pathname;
+    window.location.href = url;
+  };
+
   return (
     <div className="print-controls">
       <button
@@ -18,14 +30,21 @@ export function PrintControls() {
         onClick={handleBack}
         type="button"
       >
-        ← Close
+        ← CLOSE
+      </button>
+      <button
+        className="mode-btn"
+        onClick={toggleMode}
+        type="button"
+      >
+        {isProductionMode ? '💰 SHOW PRICES' : '🏭 PRODUCTION COPY'}
       </button>
       <button
         className="print-btn"
         onClick={() => window.print()}
         type="button"
       >
-        🖨️ Print Quote
+        🖨️ PRINT {isProductionMode ? 'PRODUCTION SHEET' : 'QUOTE'}
       </button>
     </div>
   );

@@ -118,78 +118,115 @@ export function CustomerInfoSection({
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs text-text-muted mb-1 block">Quote #</label>
+                  <label className="text-xs text-text-muted mb-1 block uppercase">Quote #</label>
                   <input
                     {...register('quoteNumber')}
                     onBlur={handleFieldBlur}
-                    placeholder="Q-2024-001"
+                    placeholder="WO25..."
                     tabIndex={1}
-                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
+                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 uppercase"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-text-muted mb-1 block">House Type</label>
+                  <label className="text-xs text-text-muted mb-1 block uppercase">House Type</label>
                   <select
                     name={houseTypeRegister.name}
                     ref={houseTypeRegister.ref}
                     onChange={handleHouseTypeChange}
                     onBlur={handleFieldBlur}
-                    tabIndex={2}
-                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
+                    tabIndex={10}
+                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 uppercase"
                   >
-                    <option value="">Select type...</option>
+                    <option value="">SELECT TYPE...</option>
                     {houseTypes.map((type) => (
                       <option key={type.id} value={type.id}>
-                        {type.name} (£{Number((type as any).allowance || 0).toFixed(2)})
+                        {type.name.toUpperCase()} (£{Number((type as any).allowance || 0).toFixed(2)})
                       </option>
                     ))}
                   </select>
                 </div>
+              </div>
+
+              <div>
+                <label className="text-xs text-text-muted mb-1 block uppercase">Customer Name *</label>
+                <input
+                  {...register('customerName')}
+                  onBlur={handleFieldBlur}
+                  placeholder="FULL NAME"
+                  tabIndex={2}
+                  className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 uppercase"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs text-text-muted mb-1 block uppercase">Address *</label>
+                <textarea
+                  {...register('address')}
+                  onBlur={handleFieldBlur}
+                  placeholder="STREET ADDRESS"
+                  rows={2}
+                  tabIndex={3}
+                  className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 resize-none uppercase"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs text-text-muted mb-1 block uppercase">Postcode</label>
+                <input
+                  {...register('postcode')}
+                  onBlur={handleFieldBlur}
+                  placeholder="E.G., AB12 3CD"
+                  tabIndex={4}
+                  className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 uppercase"
+                />
               </div>
 
               {/* Selection Dropdowns */}
               <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <label className="text-xs text-text-muted mb-1 block">Frontal</label>
+                  <label className="text-xs text-text-muted mb-1 block uppercase">Frontal</label>
                   <select
                     {...register('frontal')}
                     onBlur={handleFieldBlur}
-                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
+                    tabIndex={11}
+                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 uppercase"
                   >
-                    <option value="">Select...</option>
+                    <option value="">SELECT...</option>
                     {FRONTAL_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {option}
+                        {option.toUpperCase()}
                       </option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs text-text-muted mb-1 block">Handle</label>
+                  <label className="text-xs text-text-muted mb-1 block uppercase">Handle</label>
                   <select
                     {...register('handle')}
                     onBlur={handleFieldBlur}
-                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
+                    tabIndex={12}
+                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 uppercase"
                   >
-                    <option value="">Select...</option>
+                    <option value="">SELECT...</option>
                     {HANDLE_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {option}
+                        {option.toUpperCase()}
                       </option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs text-text-muted mb-1 block">Worktop</label>
+                  <label className="text-xs text-text-muted mb-1 block uppercase">Worktop</label>
                   <select
                     {...register('worktop')}
                     onBlur={handleFieldBlur}
-                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
+                    tabIndex={13}
+                    className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 uppercase"
                   >
-                    <option value="">Select...</option>
+                    <option value="">SELECT...</option>
                     {WORKTOP_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {option}
+                        {option.toUpperCase()}
                       </option>
                     ))}
                   </select>
@@ -197,48 +234,14 @@ export function CustomerInfoSection({
               </div>
 
               <div>
-                <label className="text-xs text-text-muted mb-1 block">Customer Name *</label>
-                <input
-                  {...register('customerName')}
-                  onBlur={handleFieldBlur}
-                  placeholder="Full name"
-                  tabIndex={3}
-                  className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs text-text-muted mb-1 block">Address *</label>
-                <textarea
-                  {...register('address')}
-                  onBlur={handleFieldBlur}
-                  placeholder="Street address"
-                  rows={2}
-                  tabIndex={4}
-                  className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 resize-none"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs text-text-muted mb-1 block">Postcode</label>
-                <input
-                  {...register('postcode')}
-                  onBlur={handleFieldBlur}
-                  placeholder="e.g., AB12 3CD"
-                  tabIndex={5}
-                  className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs text-text-muted mb-1 block">Notes</label>
+                <label className="text-xs text-text-muted mb-1 block uppercase">Notes</label>
                 <textarea
                   {...register('notes')}
                   onBlur={handleFieldBlur}
-                  placeholder="Customer-visible notes..."
+                  placeholder="CUSTOMER-VISIBLE NOTES..."
                   rows={2}
-                  tabIndex={7}
-                  className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 resize-none"
+                  tabIndex={5}
+                  className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500 resize-none uppercase"
                 />
               </div>
             </form>
@@ -258,122 +261,125 @@ export function CustomerInfoSection({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label="Quote Number"
+              label="QUOTE NUMBER"
               {...register('quoteNumber')}
               error={errors.quoteNumber?.message}
               onBlur={handleFieldBlur}
               required
-              placeholder="e.g., Q-2024-001"
+              placeholder="WO25..."
               tabIndex={1}
             />
             <Select
-              label="House Type"
+              label="HOUSE TYPE"
               name={houseTypeRegister.name}
               ref={houseTypeRegister.ref}
               onChange={handleHouseTypeChange}
               error={errors.houseTypeId?.message}
               onBlur={handleFieldBlur}
-              tabIndex={2}
+              tabIndex={10}
             >
-              <option value="">Select house type</option>
+              <option value="">SELECT HOUSE TYPE</option>
               {houseTypes.map((type) => (
                 <option key={type.id} value={type.id}>
-                  {type.name} (£{Number((type as any).allowance || 0).toFixed(2)})
-                </option>
-              ))}
-            </Select>
-          </div>
-
-          {/* Selection Dropdowns */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Select
-              label="Frontal"
-              {...register('frontal')}
-              error={errors.frontal?.message}
-              onBlur={handleFieldBlur}
-            >
-              <option value="">Select frontal</option>
-              {FRONTAL_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </Select>
-            <Select
-              label="Handle"
-              {...register('handle')}
-              error={errors.handle?.message}
-              onBlur={handleFieldBlur}
-            >
-              <option value="">Select handle</option>
-              {HANDLE_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </Select>
-            <Select
-              label="Worktop"
-              {...register('worktop')}
-              error={errors.worktop?.message}
-              onBlur={handleFieldBlur}
-            >
-              <option value="">Select worktop</option>
-              {WORKTOP_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option}
+                  {type.name.toUpperCase()} (£{Number((type as any).allowance || 0).toFixed(2)})
                 </option>
               ))}
             </Select>
           </div>
 
           <Input
-            label="Customer Name"
+            label="CUSTOMER NAME"
             {...register('customerName')}
             error={errors.customerName?.message}
             onBlur={handleFieldBlur}
             required
-            placeholder="Enter customer full name"
-            tabIndex={3}
+            placeholder="ENTER CUSTOMER FULL NAME"
+            tabIndex={2}
           />
 
           <Textarea
-            label="Address"
+            label="ADDRESS"
             {...register('address')}
             error={errors.address?.message}
             onBlur={handleFieldBlur}
             required
             rows={2}
-            placeholder="Street address"
-            tabIndex={4}
+            placeholder="STREET ADDRESS"
+            tabIndex={3}
           />
 
           <Input
-            label="Postcode"
+            label="POSTCODE"
             {...register('postcode')}
             onBlur={handleFieldBlur}
-            placeholder="e.g., AB12 3CD"
-            tabIndex={5}
+            placeholder="E.G., AB12 3CD"
+            tabIndex={4}
           />
 
+          {/* Selection Dropdowns */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Select
+              label="FRONTAL"
+              {...register('frontal')}
+              error={errors.frontal?.message}
+              onBlur={handleFieldBlur}
+              tabIndex={11}
+            >
+              <option value="">SELECT FRONTAL</option>
+              {FRONTAL_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option.toUpperCase()}
+                </option>
+              ))}
+            </Select>
+            <Select
+              label="HANDLE"
+              {...register('handle')}
+              error={errors.handle?.message}
+              onBlur={handleFieldBlur}
+              tabIndex={12}
+            >
+              <option value="">SELECT HANDLE</option>
+              {HANDLE_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option.toUpperCase()}
+                </option>
+              ))}
+            </Select>
+            <Select
+              label="WORKTOP"
+              {...register('worktop')}
+              error={errors.worktop?.message}
+              onBlur={handleFieldBlur}
+              tabIndex={13}
+            >
+              <option value="">SELECT WORKTOP</option>
+              {WORKTOP_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option.toUpperCase()}
+                </option>
+              ))}
+            </Select>
+          </div>
+
           <Textarea
-            label="Notes (Visible to Customer)"
+            label="NOTES (VISIBLE TO CUSTOMER)"
             {...register('notes')}
             error={errors.notes?.message}
             onBlur={handleFieldBlur}
             rows={3}
-            placeholder="Any additional notes for the customer..."
-            tabIndex={7}
+            placeholder="ANY ADDITIONAL NOTES FOR THE CUSTOMER..."
+            tabIndex={5}
           />
 
           <Textarea
-            label="Internal Notes"
+            label="INTERNAL NOTES"
             {...register('internalNotes')}
             error={errors.internalNotes?.message}
             onBlur={handleFieldBlur}
             rows={2}
-            placeholder="Internal notes (not visible to customer)..."
-            tabIndex={8}
+            placeholder="INTERNAL NOTES (NOT VISIBLE TO CUSTOMER)..."
+            tabIndex={6}
           />
         </form>
       </CardContent>
