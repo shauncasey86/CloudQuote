@@ -21,12 +21,17 @@ export default async function QuotesPage({ searchParams }: Props) {
   const skip = (page - 1) * limit;
 
   // Build where clause for filtering
-  const where: any = {
-    status: { not: 'ARCHIVED' },
-  };
+  const where: any = {};
 
-  if (searchParams.status) {
+  // Handle status filtering
+  if (searchParams.status === 'all') {
+    // Show all statuses including archived
+  } else if (searchParams.status) {
+    // Show specific status
     where.status = searchParams.status;
+  } else {
+    // Default: exclude archived
+    where.status = { not: 'ARCHIVED' };
   }
 
   if (searchParams.search) {

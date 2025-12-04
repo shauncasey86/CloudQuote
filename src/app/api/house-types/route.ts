@@ -28,7 +28,13 @@ export async function GET(request: NextRequest) {
       where: activeOnly ? { active: true } : undefined,
       orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
       include: {
-        _count: { select: { quotes: true } },
+        _count: {
+          select: {
+            quotes: {
+              where: { status: { not: 'ARCHIVED' } },
+            },
+          },
+        },
       },
     });
 

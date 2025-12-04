@@ -75,6 +75,19 @@ export function CustomerInfoSection({
     handleSubmit(onSubmit)();
   };
 
+  // Get the register props for houseTypeId so we can combine onChange handlers
+  const houseTypeRegister = register('houseTypeId');
+
+  // Handle house type change - trigger immediate update after RHF processes it
+  const handleHouseTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    // First let React Hook Form update the value
+    houseTypeRegister.onChange(e);
+    // Then trigger form submission
+    setTimeout(() => {
+      handleSubmit(onSubmit)();
+    }, 0);
+  };
+
   const customerName = watch('customerName');
   const quoteNumber = watch('quoteNumber');
 
@@ -114,7 +127,9 @@ export function CustomerInfoSection({
                 <div>
                   <label className="text-xs text-text-muted mb-1 block">House Type</label>
                   <select
-                    {...register('houseTypeId')}
+                    name={houseTypeRegister.name}
+                    ref={houseTypeRegister.ref}
+                    onChange={handleHouseTypeChange}
                     onBlur={handleFieldBlur}
                     tabIndex={2}
                     className="w-full px-2.5 py-1.5 text-sm bg-bg-elevated border border-border-subtle rounded-lg focus:outline-none focus:border-violet-500"
@@ -250,7 +265,9 @@ export function CustomerInfoSection({
             />
             <Select
               label="House Type"
-              {...register('houseTypeId')}
+              name={houseTypeRegister.name}
+              ref={houseTypeRegister.ref}
+              onChange={handleHouseTypeChange}
               error={errors.houseTypeId?.message}
               onBlur={handleFieldBlur}
               tabIndex={2}

@@ -61,8 +61,21 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search');
     const status = searchParams.get('status');
 
+    // Build status filter
+    let statusFilter: Prisma.QuoteWhereInput['status'];
+    if (status === 'all') {
+      // Show all statuses including archived
+      statusFilter = undefined;
+    } else if (status) {
+      // Show specific status
+      statusFilter = { equals: status as any };
+    } else {
+      // Default: exclude archived
+      statusFilter = { not: 'ARCHIVED' };
+    }
+
     const where: Prisma.QuoteWhereInput = {
-      status: status ? { equals: status as any } : { not: 'ARCHIVED' },
+      ...(statusFilter && { status: statusFilter }),
       ...(search && {
         OR: [
           { quoteNumber: { contains: search, mode: 'insensitive' } },
