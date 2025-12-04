@@ -163,8 +163,20 @@ export async function PATCH(
       }
     }
 
-    // Extract items and additionalCosts from data
-    const { items, additionalCosts, subtotal, vatAmount, total, ...quoteData } = data;
+    // Extract items, additionalCosts, and frontend-only calculated fields from data
+    const {
+      items,
+      additionalCosts,
+      subtotal,
+      vatAmount,
+      total,
+      // These are frontend-calculated fields that should not be sent to Prisma
+      houseTypeAllowance: _houseTypeAllowance,
+      itemsSubtotal: _itemsSubtotal,
+      additionalTotal: _additionalTotal,
+      bespokeUplift: _bespokeUplift,
+      ...quoteData
+    } = data;
 
     // Use transaction to update quote, items, and costs atomically
     const quote = await prisma.$transaction(async (tx) => {
