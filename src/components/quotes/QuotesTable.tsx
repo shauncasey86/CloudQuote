@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
@@ -24,7 +24,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Quote {
   id: string;
@@ -58,8 +58,25 @@ const statusVariants: Record<QuoteStatus, 'default' | 'warning' | 'info' | 'succ
 
 function ActionsDropdown({ quote }: { quote: Quote }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number; openUp: boolean }>({ top: 0, left: 0, openUp: false });
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const menuHeight = 150; // Approximate menu height
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const openUp = spaceBelow < menuHeight;
+
+      setMenuPosition({
+        top: openUp ? rect.top : rect.bottom + 4,
+        left: rect.right - 192, // 192px = w-48 (12rem)
+        openUp
+      });
+    }
+  }, [isOpen]);
 
   const handleDuplicate = async () => {
     try {
@@ -91,14 +108,23 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this quote? This cannot be undone.')) {
+      setIsOpen(false);
       return;
     }
     try {
       const res = await fetch(`/api/quotes/${quote.id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete');
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        const message = data.error || 'Failed to delete quote';
+        alert(message);
+        setIsOpen(false);
+        return;
+      }
+      queryClient.invalidateQueries({ queryKey: ['quotes'] });
       router.refresh();
     } catch (error) {
       console.error('Failed to delete:', error);
+      alert('Failed to delete quote. Please try again.');
     }
     setIsOpen(false);
   };
@@ -106,6 +132,7 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
   return (
     <div className="relative inline-block">
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="p-2.5 rounded-xl bg-transparent text-text-primary hover:bg-bg-glass-light transition-all duration-200 cursor-pointer"
@@ -121,8 +148,15 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
             onClick={() => setIsOpen(false)}
           />
 
-          {/* Dropdown menu */}
-          <div className="absolute right-0 top-full mt-1 w-48 bg-bg-elevated border border-border-glass rounded-lg shadow-xl py-1 z-[9999]">
+          {/* Dropdown menu - fixed position to escape container overflow */}
+          <div
+            className="fixed w-48 bg-bg-elevated border border-border-glass rounded-lg shadow-xl py-1 z-[9999]"
+            style={{
+              top: menuPosition.openUp ? 'auto' : menuPosition.top,
+              bottom: menuPosition.openUp ? `${window.innerHeight - menuPosition.top + 4}px` : 'auto',
+              left: menuPosition.left
+            }}
+          >
             <button
               type="button"
               className="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-glass-light flex items-center gap-2 transition-colors uppercase"
