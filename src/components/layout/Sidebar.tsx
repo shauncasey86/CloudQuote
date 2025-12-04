@@ -67,14 +67,9 @@ export const Sidebar: React.FC = () => {
               className="w-8 h-8"
             />
           </div>
-          <div>
-            <span className="font-header text-xs text-gold block leading-none tracking-wider">
-              WILSON INTERIORS
-            </span>
-            <span className="text-lg font-bold text-gradient leading-tight font-header">
-              CLOUDQUOTE
-            </span>
-          </div>
+          <span className="text-xl font-bold text-gradient leading-tight font-header">
+            CLOUDQUOTE
+          </span>
         </Link>
       </div>
 
