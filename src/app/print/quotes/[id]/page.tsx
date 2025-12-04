@@ -44,9 +44,20 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
               margin: 15mm;
             }
 
-            html, body {
+            *, *::before, *::after {
+              background: transparent !important;
+              background-color: transparent !important;
+            }
+
+            html {
               background: white !important;
               background-color: white !important;
+            }
+
+            body {
+              background: white !important;
+              background-color: white !important;
+              min-height: auto !important;
             }
 
             .print-controls {
@@ -58,6 +69,30 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
               padding: 0 !important;
               box-shadow: none !important;
               background: white !important;
+              background-color: white !important;
+              min-height: auto !important;
+              max-width: none !important;
+            }
+
+            .header {
+              border-bottom-color: #B19334 !important;
+            }
+
+            .status-badge {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+
+            .summary-section, .customer-section, .notes-section, .selections-grid {
+              background: #fafafa !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+
+            .items-table th {
+              background: #f4f4f5 !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
             }
           }
 
@@ -81,7 +116,6 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             background: white;
             color: #18181b;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            min-height: 297mm;
           }
 
           .print-controls {
