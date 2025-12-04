@@ -28,6 +28,7 @@ interface QuoteSummaryProps {
   onSave?: () => void;
   onFinalize?: () => void;
   onSend?: () => void;
+  onPrint?: () => void;
   onDownloadPDF?: () => void;
   isSaving?: boolean;
   autoSaveStatus?: 'saving' | 'saved' | 'error';
@@ -46,6 +47,7 @@ export function QuoteSummary({
   onSave,
   onFinalize,
   onSend,
+  onPrint,
   onDownloadPDF,
   isSaving,
   autoSaveStatus,
@@ -168,7 +170,7 @@ export function QuoteSummary({
               <>
                 <Button
                   className="w-full"
-                  onClick={() => window.print()}
+                  onClick={onPrint}
                 >
                   <Printer className="w-4 h-4 mr-2" />
                   Print Quote
