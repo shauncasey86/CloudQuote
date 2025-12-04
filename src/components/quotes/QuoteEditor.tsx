@@ -166,8 +166,8 @@ export function QuoteEditor({
     }));
   };
 
-  const handleAddProduct = async (product: Product, quantity: number, isInAllowance: boolean = false) => {
-    const effectivePrice = isInAllowance ? 0 : Number(product.basePrice);
+  const handleAddProduct = async (product: Product, quantity: number) => {
+    const basePrice = Number(product.basePrice);
     const newItem = {
       id: `temp-${Date.now()}`,
       productId: product.id,
@@ -175,11 +175,12 @@ export function QuoteEditor({
       productSku: product.sku,
       quantity,
       priceUnit: product.priceUnit,
-      unitPrice: effectivePrice,
-      lineTotal: effectivePrice * quantity,
-      isInAllowance,
+      unitPrice: basePrice,
+      lineTotal: basePrice * quantity,
+      isInAllowance: false,
       notes: '',
       sortOrder: quoteState.items.length,
+      basePrice, // Always store original price for allowance toggle
     };
 
     setQuoteState((prev) => ({
@@ -187,7 +188,7 @@ export function QuoteEditor({
       items: [...prev.items, newItem],
     }));
 
-    toast.success(`Added ${product.name} to quote${isInAllowance ? ' (in allowance)' : ''}`);
+    toast.success(`Added ${product.name} to quote`);
   };
 
   const handleUpdateQuantity = (itemId: string, quantity: number) => {
@@ -210,15 +211,16 @@ export function QuoteEditor({
       ...prev,
       items: prev.items.map((item) => {
         if (item.id !== itemId) return item;
-        // Get the base price - if switching to allowance, price becomes 0; otherwise restore base price
-        const basePrice = item.basePrice || item.unitPrice;
-        const effectivePrice = isInAllowance ? 0 : basePrice;
+        // basePrice should always be set, but fallback to unitPrice just in case
+        const originalPrice = item.basePrice ?? item.unitPrice;
+        // When in allowance, item is free (£0.00); otherwise use original price
+        const effectivePrice = isInAllowance ? 0 : Number(originalPrice);
         return {
           ...item,
           isInAllowance,
           unitPrice: effectivePrice,
           lineTotal: effectivePrice * Number(item.quantity),
-          basePrice, // Keep track of original price
+          basePrice: originalPrice, // Preserve the original price
         };
       }),
     }));
