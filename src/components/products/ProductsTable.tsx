@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/Table';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { Edit, Trash2, AlertCircle } from 'lucide-react';
+import { Edit, Trash2, AlertCircle, Plus, GripVertical } from 'lucide-react';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 interface Product {
@@ -35,6 +35,7 @@ interface Category {
   id: string;
   name: string;
   slug: string;
+  description?: string | null;
   _count: {
     products: number;
   };
@@ -49,6 +50,11 @@ interface ProductsTableProps {
   onDelete: (product: Product) => void;
   isLoading?: boolean;
   isAdmin: boolean;
+  onAddCategory?: () => void;
+  onEditCategory?: (category: Category) => void;
+  onDeleteCategory?: (category: Category) => void;
+  onReorderCategories?: (orderedIds: string[]) => void;
+  onReorderProducts?: (orderedIds: string[], categoryId: string | null) => void;
 }
 
 const priceUnitLabels: Record<PriceUnit, string> = {
@@ -66,7 +72,92 @@ export function ProductsTable({
   onDelete,
   isLoading,
   isAdmin,
+  onAddCategory,
+  onEditCategory,
+  onDeleteCategory,
+  onReorderCategories,
+  onReorderProducts,
 }: ProductsTableProps) {
+  const [draggedCategoryId, setDraggedCategoryId] = React.useState<string | null>(null);
+  const [draggedProductId, setDraggedProductId] = React.useState<string | null>(null);
+  const [categoryOrder, setCategoryOrder] = React.useState<string[]>([]);
+  const [productOrder, setProductOrder] = React.useState<string[]>([]);
+
+  // Initialize category order when categories change
+  React.useEffect(() => {
+    setCategoryOrder(categories.map(c => c.id));
+  }, [categories]);
+
+  // Initialize product order when products change
+  React.useEffect(() => {
+    setProductOrder(products.map(p => p.id));
+  }, [products]);
+
+  // Category drag handlers
+  const handleCategoryDragStart = (e: React.DragEvent, categoryId: string) => {
+    setDraggedCategoryId(categoryId);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', categoryId);
+  };
+
+  const handleCategoryDragOver = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    if (!draggedCategoryId || draggedCategoryId === targetId) return;
+
+    const newOrder = [...categoryOrder];
+    const draggedIndex = newOrder.indexOf(draggedCategoryId);
+    const targetIndex = newOrder.indexOf(targetId);
+
+    newOrder.splice(draggedIndex, 1);
+    newOrder.splice(targetIndex, 0, draggedCategoryId);
+
+    setCategoryOrder(newOrder);
+  };
+
+  const handleCategoryDragEnd = () => {
+    if (draggedCategoryId && onReorderCategories) {
+      onReorderCategories(categoryOrder);
+    }
+    setDraggedCategoryId(null);
+  };
+
+  // Product drag handlers
+  const handleProductDragStart = (e: React.DragEvent, productId: string) => {
+    setDraggedProductId(productId);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', productId);
+  };
+
+  const handleProductDragOver = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    if (!draggedProductId || draggedProductId === targetId) return;
+
+    const newOrder = [...productOrder];
+    const draggedIndex = newOrder.indexOf(draggedProductId);
+    const targetIndex = newOrder.indexOf(targetId);
+
+    newOrder.splice(draggedIndex, 1);
+    newOrder.splice(targetIndex, 0, draggedProductId);
+
+    setProductOrder(newOrder);
+  };
+
+  const handleProductDragEnd = () => {
+    if (draggedProductId && onReorderProducts) {
+      onReorderProducts(productOrder, selectedCategory);
+    }
+    setDraggedProductId(null);
+  };
+
+  // Sort categories and products by drag order
+  const orderedCategories = [...categories].sort(
+    (a, b) => categoryOrder.indexOf(a.id) - categoryOrder.indexOf(b.id)
+  );
+
+  const orderedProducts = [...products].sort(
+    (a, b) => productOrder.indexOf(a.id) - productOrder.indexOf(b.id)
+  );
+
   if (isLoading) {
     return <ProductsTableSkeleton />;
   }
@@ -74,7 +165,7 @@ export function ProductsTable({
   return (
     <div className="space-y-4">
       {/* Category Filter Tabs */}
-      <div className="flex gap-2 flex-wrap pb-4 border-b border-glass">
+      <div className="flex items-center gap-2 flex-wrap pb-4 border-b border-glass">
         <button
           onClick={() => onCategoryChange(null)}
           className={`px-4 py-2 rounded-lg font-medium transition-all ${
@@ -88,26 +179,77 @@ export function ProductsTable({
             ({products.length})
           </span>
         </button>
-        {categories.map((category) => (
-          <button
+
+        {orderedCategories.map((category) => (
+          <div
             key={category.id}
-            onClick={() => onCategoryChange(category.id)}
-            className={`px-4 py-2 rounded-lg font-medium transition-all ${
-              selectedCategory === category.id
-                ? 'bg-accent-primary text-white shadow-glow'
-                : 'bg-glass hover:bg-glass-hover text-text-secondary hover:text-text-primary'
+            className={`group relative flex items-center ${
+              isAdmin ? 'cursor-grab active:cursor-grabbing' : ''
             }`}
+            draggable={isAdmin}
+            onDragStart={(e) => handleCategoryDragStart(e, category.id)}
+            onDragOver={(e) => handleCategoryDragOver(e, category.id)}
+            onDragEnd={handleCategoryDragEnd}
           >
-            {category.name}
-            <span className="ml-2 text-sm opacity-75">
-              ({category._count.products})
-            </span>
-          </button>
+            {isAdmin && (
+              <GripVertical className="w-4 h-4 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity mr-1" />
+            )}
+            <button
+              onClick={() => onCategoryChange(category.id)}
+              className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                selectedCategory === category.id
+                  ? 'bg-accent-primary text-white shadow-glow'
+                  : 'bg-glass hover:bg-glass-hover text-text-secondary hover:text-text-primary'
+              } ${draggedCategoryId === category.id ? 'opacity-50' : ''}`}
+            >
+              {category.name}
+              <span className="ml-2 text-sm opacity-75">
+                ({category._count.products})
+              </span>
+            </button>
+
+            {/* Category edit/delete buttons */}
+            {isAdmin && (
+              <div className="absolute -top-2 -right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEditCategory?.(category);
+                  }}
+                  className="w-6 h-6 rounded-full bg-bg-elevated border border-border-glass flex items-center justify-center hover:bg-accent-primary hover:border-accent-primary transition-colors"
+                  title="Edit category"
+                >
+                  <Edit className="w-3 h-3" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDeleteCategory?.(category);
+                  }}
+                  className="w-6 h-6 rounded-full bg-bg-elevated border border-border-glass flex items-center justify-center hover:bg-accent-danger hover:border-accent-danger transition-colors"
+                  title="Delete category"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+          </div>
         ))}
+
+        {/* Add category button */}
+        {isAdmin && (
+          <button
+            onClick={onAddCategory}
+            className="px-4 py-2 rounded-lg font-medium transition-all bg-glass hover:bg-glass-hover text-text-secondary hover:text-text-primary border-2 border-dashed border-border-glass hover:border-accent-primary flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Add Category
+          </button>
+        )}
       </div>
 
       {/* Products Table */}
-      {products.length === 0 ? (
+      {orderedProducts.length === 0 ? (
         <div className="text-center py-12">
           <AlertCircle className="w-12 h-12 text-text-secondary mx-auto mb-4 opacity-50" />
           <p className="text-text-secondary text-lg">No products found</p>
@@ -123,6 +265,7 @@ export function ProductsTable({
         <Table>
           <TableHeader>
             <TableRow>
+              {isAdmin && <TableHead className="w-10"></TableHead>}
               <TableHead>SKU</TableHead>
               <TableHead>Product Name</TableHead>
               <TableHead>Category</TableHead>
@@ -133,8 +276,20 @@ export function ProductsTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id} className="group">
+            {orderedProducts.map((product) => (
+              <TableRow
+                key={product.id}
+                className={`group ${draggedProductId === product.id ? 'opacity-50' : ''}`}
+                draggable={isAdmin}
+                onDragStart={(e) => handleProductDragStart(e, product.id)}
+                onDragOver={(e) => handleProductDragOver(e, product.id)}
+                onDragEnd={handleProductDragEnd}
+              >
+                {isAdmin && (
+                  <TableCell className="cursor-grab active:cursor-grabbing">
+                    <GripVertical className="w-4 h-4 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </TableCell>
+                )}
                 <TableCell className="font-mono text-sm text-text-secondary">
                   {product.sku || '—'}
                 </TableCell>
@@ -207,6 +362,7 @@ function ProductsTableSkeleton() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-10"></TableHead>
             <TableHead>SKU</TableHead>
             <TableHead>Product Name</TableHead>
             <TableHead>Category</TableHead>
@@ -219,6 +375,9 @@ function ProductsTableSkeleton() {
         <TableBody>
           {[...Array(5)].map((_, i) => (
             <TableRow key={i}>
+              <TableCell>
+                <Skeleton className="h-4 w-4" />
+              </TableCell>
               <TableCell>
                 <Skeleton className="h-4 w-16" />
               </TableCell>

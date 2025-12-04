@@ -4,6 +4,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { cn } from '@/lib/utils';
@@ -13,7 +14,6 @@ import {
   Package,
   Settings,
   Users,
-  Sparkles,
 } from 'lucide-react';
 
 interface NavItem {
@@ -58,22 +58,30 @@ export const Sidebar: React.FC = () => {
       {/* Logo */}
       <div className="p-6">
         <Link href="/quotes" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-md group-hover:shadow-lg group-hover:shadow-violet-500/20 transition-all">
-            <Sparkles className="w-5 h-5 text-white" />
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#212533] to-[#2D3142] flex items-center justify-center shadow-md group-hover:shadow-lg group-hover:shadow-[#B19334]/20 transition-all border border-[#B19334]/20">
+            <Image
+              src="/wi-logo.svg"
+              alt="Wilson Interiors"
+              width={32}
+              height={32}
+              className="w-8 h-8"
+            />
           </div>
           <div>
-            <span className="font-bold text-lg text-gradient block leading-none">
-              CloudQuote
+            <span className="font-header text-xs text-gold block leading-none tracking-wider">
+              WILSON INTERIORS
             </span>
-            <span className="text-xs text-text-muted leading-tight">Wilson Interiors</span>
+            <span className="text-lg font-bold text-gradient leading-tight font-header">
+              CLOUDQUOTE
+            </span>
           </div>
         </Link>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4">
-        <div className="text-xs font-semibold text-text-muted uppercase tracking-wider px-4 mb-3">
-          Menu
+        <div className="text-xs font-header text-text-muted tracking-wider px-4 mb-3">
+          MENU
         </div>
         <div className="space-y-1">
           {navItems.map((item) => {
@@ -97,11 +105,11 @@ export const Sidebar: React.FC = () => {
               >
                 <Icon className={cn(
                   "w-5 h-5 transition-colors",
-                  isActive ? "text-white" : "text-text-muted group-hover:text-text-primary"
+                  isActive ? "text-[#212533]" : "text-text-muted group-hover:text-gold"
                 )} />
-                <span className="font-medium">{item.label}</span>
+                <span className="font-header text-sm tracking-wide">{item.label.toUpperCase()}</span>
                 {isActive && (
-                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white/80" />
+                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#212533]/80" />
                 )}
               </Link>
             );
@@ -110,18 +118,24 @@ export const Sidebar: React.FC = () => {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 mx-3 mb-3 rounded-xl bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 border border-violet-500/20">
+      <div className="p-4 mx-3 mb-3 rounded-xl bg-gradient-to-br from-[#B19334]/10 to-[#BB9E6C]/10 border border-[#B19334]/20">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-white" />
+            <Image
+              src="/wi-logo.svg"
+              alt="Wilson Interiors"
+              width={20}
+              height={20}
+              className="w-5 h-5"
+            />
           </div>
           <div>
-            <div className="text-sm font-semibold text-text-primary">CloudQuote</div>
+            <div className="text-sm font-header text-text-primary tracking-wide">CLOUDQUOTE</div>
             <div className="text-xs text-text-muted">v1.0.0</div>
           </div>
         </div>
         <div className="text-xs text-text-muted">
-          Created by Shaun Casey
+          Wilson Interiors Ltd
         </div>
       </div>
     </aside>
