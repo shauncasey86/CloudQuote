@@ -63,3 +63,54 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  // Only ADMIN can delete house types
+  if (session.user.role !== Role.ADMIN) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  try {
+    const houseType = await prisma.houseType.findUnique({
+      where: { id: params.id },
+      include: { _count: { select: { quotes: true } } },
+    });
+
+    if (!houseType) {
+      return NextResponse.json(
+        { error: 'House type not found' },
+        { status: 404 }
+      );
+    }
+
+    // If house type is used by quotes, deactivate instead of delete
+    if (houseType._count.quotes > 0) {
+      const deactivated = await prisma.houseType.update({
+        where: { id: params.id },
+        data: { active: false },
+      });
+      return NextResponse.json({ data: deactivated, deactivated: true });
+    }
+
+    // Delete the house type if not used
+    await prisma.houseType.delete({
+      where: { id: params.id },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('DELETE /api/house-types/[id] error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

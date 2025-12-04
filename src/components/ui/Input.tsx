@@ -110,3 +110,34 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 );
 
 Select.displayName = 'Select';
+
+export interface CheckboxProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+}
+
+export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
+  ({ className, label, id, ...props }, ref) => {
+    return (
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          id={id}
+          className={cn(
+            'h-4 w-4 rounded border-glass bg-glass text-accent-primary focus:ring-accent-primary/20 focus:ring-offset-0 cursor-pointer',
+            className
+          )}
+          ref={ref}
+          {...props}
+        />
+        {label && (
+          <label htmlFor={id} className="ml-2 text-sm text-text-primary cursor-pointer">
+            {label}
+          </label>
+        )}
+      </div>
+    );
+  }
+);
+
+Checkbox.displayName = 'Checkbox';
