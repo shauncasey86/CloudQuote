@@ -190,23 +190,13 @@ export async function DELETE(
       return NextResponse.json({ error: 'Quote not found' }, { status: 404 });
     }
 
-    // Archive instead of delete
-    await prisma.quote.update({
-      where: { id: params.id },
-      data: {
-        status: 'ARCHIVED',
-        updatedById: session.user.id,
-      },
-    });
-
-    // Log the action
-    await prisma.changeHistory.create({
-      data: {
-        quoteId: params.id,
-        userId: session.user.id,
-        action: 'archived',
-      },
-    });
+    // Delete related records first, then the quote
+    await prisma.$transaction([
+      prisma.changeHistory.deleteMany({ where: { quoteId: params.id } }),
+      prisma.quoteItem.deleteMany({ where: { quoteId: params.id } }),
+      prisma.additionalCost.deleteMany({ where: { quoteId: params.id } }),
+      prisma.quote.delete({ where: { id: params.id } }),
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (error) {
