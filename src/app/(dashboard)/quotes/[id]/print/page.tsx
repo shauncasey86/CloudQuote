@@ -477,7 +477,8 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
         {/* Header */}
         <div className="header">
           <div className="logo-section">
-            <h1>CloudQuote</h1>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/wi-logo.svg" alt="WI Logo" style={{ height: '60px', marginBottom: '8px' }} />
             <p style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               {isProductionMode ? 'PRODUCTION SPECIFICATION' : 'KITCHEN INSTALLATION QUOTATION'}
             </p>
@@ -621,13 +622,10 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
               ⏰ THIS QUOTE IS VALID UNTIL {format(new Date(quote.validUntil), 'dd MMMM yyyy').toUpperCase()}
             </div>
           )}
-          <p style={{ textTransform: 'uppercase' }}>
-            {isProductionMode
-              ? 'PRODUCTION SPECIFICATION - FOR INTERNAL USE ONLY'
-              : 'THANK YOU FOR CHOOSING CLOUDQUOTE FOR YOUR KITCHEN INSTALLATION NEEDS.'}
-          </p>
-          {!isProductionMode && (
-            <p style={{ textTransform: 'uppercase' }}>FOR QUESTIONS, PLEASE CONTACT US AT YOUR CONVENIENCE.</p>
+          {isProductionMode && (
+            <p style={{ textTransform: 'uppercase' }}>
+              PRODUCTION SPECIFICATION - FOR INTERNAL USE ONLY
+            </p>
           )}
           {quote.createdBy && (
             <p style={{ marginTop: '8px', textTransform: 'uppercase' }}>
