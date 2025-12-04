@@ -3,7 +3,7 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Search, Plus, Check, ChevronUp, ChevronDown } from 'lucide-react';
+import { Search, Plus, ChevronUp, ChevronDown } from 'lucide-react';
 import { Product, ProductCategory } from '@prisma/client';
 
 interface ProductWithCategory extends Product {
@@ -13,7 +13,7 @@ interface ProductWithCategory extends Product {
 interface ProductSelectorProps {
   products: ProductWithCategory[];
   categories: ProductCategory[];
-  onAddProduct: (product: Product, quantity: number, isInAllowance: boolean) => void;
+  onAddProduct: (product: Product, quantity: number) => void;
   isLoading?: boolean;
 }
 
@@ -26,7 +26,6 @@ export function ProductSelector({
   const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
   const [searchQuery, setSearchQuery] = React.useState('');
   const [quantities, setQuantities] = React.useState<Record<string, number>>({});
-  const [allowances, setAllowances] = React.useState<Record<string, boolean>>({});
 
   const filteredProducts = React.useMemo(() => {
     return products.filter((product) => {
@@ -42,10 +41,8 @@ export function ProductSelector({
 
   const handleAddProduct = (product: Product) => {
     const quantity = quantities[product.id] || 1;
-    const isInAllowance = allowances[product.id] || false;
-    onAddProduct(product, quantity, isInAllowance);
+    onAddProduct(product, quantity);
     setQuantities((prev) => ({ ...prev, [product.id]: 1 }));
-    setAllowances((prev) => ({ ...prev, [product.id]: false }));
   };
 
   const sortedCategories = categories
@@ -115,16 +112,14 @@ export function ProductSelector({
           <div className="max-h-[400px] overflow-y-auto scrollbar-thin">
             {/* Header Row */}
             <div className="grid grid-cols-12 gap-2 px-3 py-2 text-xs font-bold text-text-muted uppercase tracking-wide border-b border-border-glass">
-              <div className="col-span-4">Product</div>
+              <div className="col-span-5">Product</div>
               <div className="col-span-2 text-right">Price</div>
-              <div className="col-span-2 text-center">Allowance</div>
               <div className="col-span-2 text-center">Qty</div>
-              <div className="col-span-2 text-right">Action</div>
+              <div className="col-span-3 text-right">Action</div>
             </div>
             {/* Product Rows */}
             <div className="divide-y divide-border-subtle">
               {filteredProducts.map((product) => {
-                const isInAllowance = allowances[product.id] || false;
                 const currentQty = quantities[product.id] || 1;
                 const minQty = Number(product.minQuantity) || 1;
                 const step = product.priceUnit === 'LINEAR_METER' ? 0.1 : 1;
@@ -134,7 +129,7 @@ export function ProductSelector({
                     className="grid grid-cols-12 gap-2 px-3 py-2.5 items-center hover:bg-bg-glass-light transition-colors group"
                   >
                     {/* Product Info */}
-                    <div className="col-span-4">
+                    <div className="col-span-5">
                       <div className="font-medium text-sm text-text-primary leading-tight">
                         {product.name}
                       </div>
@@ -146,33 +141,12 @@ export function ProductSelector({
                     </div>
                     {/* Price */}
                     <div className="col-span-2 text-right">
-                      {isInAllowance ? (
-                        <span className="font-mono font-semibold text-sm text-emerald-400">£0.00</span>
-                      ) : (
-                        <>
-                          <span className="font-mono font-semibold text-sm">
-                            £{Number(product.basePrice).toFixed(2)}
-                          </span>
-                          <span className="text-xs text-text-muted ml-1">
-                            /{product.priceUnit === 'LINEAR_METER' ? 'm' : 'ea'}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                    {/* Allowance Checkbox */}
-                    <div className="col-span-2 flex justify-center">
-                      <button
-                        type="button"
-                        onClick={() => setAllowances((prev) => ({ ...prev, [product.id]: !prev[product.id] }))}
-                        className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
-                          isInAllowance
-                            ? 'bg-emerald-500 border-emerald-500 text-white'
-                            : 'border-border-glass hover:border-emerald-400'
-                        }`}
-                        title="Include in house type allowance (free)"
-                      >
-                        {isInAllowance && <Check className="w-3 h-3" />}
-                      </button>
+                      <span className="font-mono font-semibold text-sm">
+                        £{Number(product.basePrice).toFixed(2)}
+                      </span>
+                      <span className="text-xs text-text-muted ml-1">
+                        /{product.priceUnit === 'LINEAR_METER' ? 'm' : 'ea'}
+                      </span>
                     </div>
                     {/* Quantity with themed up/down */}
                     <div className="col-span-2 flex justify-center">
@@ -214,7 +188,7 @@ export function ProductSelector({
                       </div>
                     </div>
                     {/* Add Button */}
-                    <div className="col-span-2 flex justify-end">
+                    <div className="col-span-3 flex justify-end">
                       <Button
                         size="sm"
                         onClick={() => handleAddProduct(product)}
