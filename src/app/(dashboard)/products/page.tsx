@@ -32,6 +32,7 @@ interface Category {
   name: string;
   slug: string;
   description?: string | null;
+  active?: boolean;
   _count: {
     products: number;
   };
@@ -57,10 +58,11 @@ export default function ProductsPage() {
 
   const isAdmin = session?.user?.role === Role.ADMIN;
 
-  // Fetch categories
+  // Fetch categories - include inactive for admins so they can reactivate them
   const fetchCategories = React.useCallback(async () => {
     try {
-      const response = await fetch('/api/categories');
+      // Fetch all categories (including inactive) so admins can see and reactivate them
+      const response = await fetch('/api/categories?active=false');
       const data = await response.json();
       setCategories(data.data || []);
     } catch (error) {

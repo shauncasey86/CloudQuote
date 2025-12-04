@@ -36,6 +36,7 @@ interface Category {
   name: string;
   slug: string;
   description?: string | null;
+  active?: boolean;
   _count: {
     products: number;
   };
@@ -199,9 +200,12 @@ export function ProductsTable({
               className={`px-4 py-2 rounded-lg font-medium transition-all ${
                 selectedCategory === category.id
                   ? 'bg-accent-primary text-white shadow-glow'
+                  : category.active === false
+                  ? 'bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20'
                   : 'bg-glass hover:bg-glass-hover text-text-secondary hover:text-text-primary'
               } ${draggedCategoryId === category.id ? 'opacity-50' : ''}`}
             >
+              {category.active === false && <span className="mr-1">⚠️</span>}
               {category.name}
               <span className="ml-2 text-sm opacity-75">
                 ({category._count.products})

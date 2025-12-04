@@ -10,6 +10,7 @@ interface Category {
   name: string;
   slug: string;
   description?: string | null;
+  active?: boolean;
   _count?: {
     products: number;
   };
@@ -26,6 +27,7 @@ interface CategoryFormModalProps {
 export interface CategoryFormData {
   name: string;
   description?: string | null;
+  active?: boolean;
 }
 
 export function CategoryFormModal({
@@ -38,6 +40,7 @@ export function CategoryFormModal({
   const [formData, setFormData] = React.useState<CategoryFormData>({
     name: '',
     description: '',
+    active: true,
   });
 
   const [errors, setErrors] = React.useState<Record<string, string>>({});
@@ -48,11 +51,13 @@ export function CategoryFormModal({
       setFormData({
         name: category.name,
         description: category.description || '',
+        active: category.active !== false,
       });
     } else {
       setFormData({
         name: '',
         description: '',
+        active: true,
       });
     }
     setErrors({});
@@ -133,6 +138,31 @@ export function CategoryFormModal({
           placeholder="Brief description of this category"
           rows={3}
         />
+
+        {/* Active Toggle - only show when editing */}
+        {category && (
+          <div className="flex items-center justify-between p-3 bg-bg-glass rounded-lg border border-border-glass">
+            <div>
+              <p className="font-medium text-text-primary">Active Status</p>
+              <p className="text-sm text-text-secondary">
+                Inactive categories won&apos;t appear in product selection
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setFormData(prev => ({ ...prev, active: !prev.active }))}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                formData.active ? 'bg-emerald-500' : 'bg-gray-600'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  formData.active ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+        )}
 
         {/* Form Actions */}
         <div className="flex justify-end gap-3 pt-4 border-t border-glass">
