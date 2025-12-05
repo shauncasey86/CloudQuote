@@ -13,7 +13,7 @@ export interface EmptyStateProps {
   action?: {
     label: string;
     onClick: () => void;
-    variant?: 'default' | 'primary' | 'secondary' | 'ghost';
+    variant?: 'primary' | 'secondary' | 'ghost';
   };
   className?: string;
   size?: 'sm' | 'md' | 'lg';
