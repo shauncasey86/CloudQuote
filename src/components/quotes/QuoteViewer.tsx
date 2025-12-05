@@ -28,6 +28,7 @@ import {
 import { QuoteStatus } from '@prisma/client';
 import { toast } from '@/lib/toast';
 import { Modal } from '@/components/ui/Modal';
+import { QUOTE_STATUS_VARIANTS } from '@/lib/constants';
 
 interface QuoteViewerProps {
   quote: any;
@@ -160,15 +161,6 @@ export function QuoteViewer({
   }
 
   // View mode
-  const statusVariants: Record<QuoteStatus, 'default' | 'warning' | 'success' | 'info' | 'danger'> = {
-    DRAFT: 'default',
-    FINALIZED: 'warning',
-    PRINTED: 'info',
-    SENT: 'success',
-    SAVED: 'info',
-    ARCHIVED: 'danger',
-  };
-
   const handleSendEmail = async () => {
     try {
       const response = await fetch(`/api/quotes/${quote.id}/send`, {
@@ -219,7 +211,7 @@ export function QuoteViewer({
               <h1 className="text-2xl font-display font-bold text-gradient">
                 Quote {quote.quoteNumber}
               </h1>
-              <Badge variant={statusVariants[quote.status as QuoteStatus]} className="text-xs">
+              <Badge variant={QUOTE_STATUS_VARIANTS[quote.status as QuoteStatus]} className="text-xs">
                 {quote.status}
               </Badge>
             </div>

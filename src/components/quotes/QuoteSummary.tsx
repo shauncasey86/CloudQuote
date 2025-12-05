@@ -14,6 +14,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { QuoteStatus } from '@prisma/client';
+import { QUOTE_STATUS_VARIANTS } from '@/lib/constants';
 
 interface QuoteSummaryProps {
   subtotal: number;
@@ -61,14 +62,6 @@ export function QuoteSummary({
     setComingSoonFeature(feature);
     setShowComingSoon(true);
   };
-  const statusVariants: Record<QuoteStatus, 'default' | 'warning' | 'success' | 'info' | 'danger'> = {
-    DRAFT: 'default',
-    FINALIZED: 'warning',
-    PRINTED: 'info',
-    SENT: 'success',
-    SAVED: 'info',
-    ARCHIVED: 'danger',
-  };
 
   return (
     <div className="space-y-4">
@@ -77,7 +70,7 @@ export function QuoteSummary({
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Quote Summary</CardTitle>
-            <Badge variant={statusVariants[status]}>{status}</Badge>
+            <Badge variant={QUOTE_STATUS_VARIANTS[status]}>{status}</Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">

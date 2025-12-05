@@ -104,23 +104,23 @@ export function HouseTypesTable({ houseTypes, onEdit, onDelete, onReorder }: Hou
         <table className="w-full">
           <thead>
             <tr className="border-b border-glass">
-              <th className="w-10 px-4 py-4"></th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
+              <th className="w-8 px-2 py-2"></th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                 Name
               </th>
-              <th className="px-6 py-4 text-right text-xs font-semibold text-text-secondary uppercase tracking-wider">
+              <th className="px-3 py-2 text-right text-xs font-semibold text-text-secondary uppercase tracking-wider">
                 Allowance
               </th>
-              <th className="px-6 py-4 text-center text-xs font-semibold text-text-secondary uppercase tracking-wider">
+              <th className="px-3 py-2 text-center text-xs font-semibold text-text-secondary uppercase tracking-wider">
                 Quotes
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
+              <th className="px-3 py-2 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
+              <th className="px-3 py-2 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                 Created
               </th>
-              <th className="px-6 py-4 text-right text-xs font-semibold text-text-secondary uppercase tracking-wider">
+              <th className="px-3 py-2 text-right text-xs font-semibold text-text-secondary uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -137,43 +137,35 @@ export function HouseTypesTable({ houseTypes, onEdit, onDelete, onReorder }: Hou
                 onDragOver={(e) => handleDragOver(e, houseType.id)}
                 onDragEnd={handleDragEnd}
               >
-                <td className="px-4 py-4 cursor-grab active:cursor-grabbing">
+                <td className="px-2 py-2 cursor-grab active:cursor-grabbing">
                   <GripVertical className="w-4 h-4 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" />
                 </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-accent-primary/20 to-accent-secondary/20 rounded-full flex items-center justify-center">
-                      <Home className="w-5 h-5 text-accent-primary" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-text-primary">
-                        {houseType.name}
-                      </div>
-                    </div>
+                <td className="px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    <Home className="w-4 h-4 text-accent-primary flex-shrink-0" />
+                    <span className="font-medium text-text-primary text-sm">{houseType.name}</span>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-right">
-                  <span className="font-mono font-semibold text-text-primary">
+                <td className="px-3 py-2 text-right">
+                  <span className="font-mono text-sm text-text-primary">
                     £{Number(houseType.allowance).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-center">
-                  <span className="text-text-secondary">
-                    {houseType._count?.quotes ?? 0}
+                <td className="px-3 py-2 text-center">
+                  <span className="text-text-secondary text-sm">{houseType._count?.quotes ?? 0}</span>
+                </td>
+                <td className="px-3 py-2">
+                  <span className={`text-xs font-medium ${houseType.active ? 'text-emerald-400' : 'text-red-400'}`}>
+                    {houseType.active ? 'Active' : 'Inactive'}
                   </span>
                 </td>
-                <td className="px-6 py-4">
-                  <Badge variant={houseType.active ? 'success' : 'danger'}>
-                    {houseType.active ? 'Active' : 'Inactive'}
-                  </Badge>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="text-text-secondary text-sm">
+                <td className="px-3 py-2">
+                  <span className="text-text-secondary text-xs">
                     {format(new Date(houseType.createdAt), 'dd MMM yyyy')}
                   </span>
                 </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center justify-end gap-2">
+                <td className="px-3 py-2">
+                  <div className="flex items-center justify-end gap-1">
                     <Button
                       variant="ghost"
                       size="icon"
