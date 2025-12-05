@@ -97,6 +97,14 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
               print-color-adjust: exact !important;
             }
 
+            .production-header {
+              background: #18181b !important;
+              background-color: #18181b !important;
+              color: #B19334 !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+
             .items-table th {
               background: #f4f4f5 !important;
               -webkit-print-color-adjust: exact !important;
@@ -557,8 +565,9 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .production-header {
-            background: #18181b;
-            color: #B19334;
+            background: #18181b !important;
+            background-color: #18181b !important;
+            color: #B19334 !important;
             padding: 6px 12px;
             border-radius: 4px;
             text-align: center;
@@ -567,6 +576,8 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             text-transform: uppercase;
             letter-spacing: 0.1em;
             margin-bottom: 12px;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
 
           .footer-content {
