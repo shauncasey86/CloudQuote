@@ -86,7 +86,7 @@ export function EmptyState({
           <Button
             variant={action.variant || 'primary'}
             onClick={action.onClick}
-            size={size === 'lg' ? 'default' : 'sm'}
+            size={size === 'lg' ? 'md' : 'sm'}
           >
             {action.label}
           </Button>
