@@ -696,6 +696,23 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                 </tr>
               </thead>
               <tbody>
+                {/* House Type Allowance Row - Only in quote mode */}
+                {!isProductionMode && quote.houseType && (
+                  <tr style={{ backgroundColor: '#f0fdf4' }}>
+                    <td>
+                      <span className="product-name" style={{ textTransform: 'uppercase', fontWeight: 600 }}>
+                        {quote.houseType.name} KITCHEN ALLOWANCE
+                      </span>
+                    </td>
+                    <td className="quantity-info col-qty">1</td>
+                    <td className="col-each" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                      £{Number(quote.houseType.allowance).toFixed(2)}
+                    </td>
+                    <td className="line-total col-total">
+                      £{Number(quote.houseType.allowance).toFixed(2)}
+                    </td>
+                  </tr>
+                )}
                 {quote.items.map((item: any) => (
                   <tr key={item.id}>
                     <td>
