@@ -27,6 +27,14 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
       additionalCosts: { orderBy: { sortOrder: 'asc' } },
       houseType: true,
       createdBy: { select: { name: true, email: true } },
+      updatedBy: { select: { name: true, email: true } },
+      changeHistory: {
+        orderBy: { changedAt: 'desc' },
+        take: 10,
+        include: {
+          user: { select: { id: true, name: true } },
+        },
+      },
     },
   });
 
@@ -284,7 +292,8 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
 
           .selections-row {
             display: flex;
-            gap: 16px;
+            justify-content: center;
+            gap: 32px;
             margin-bottom: 12px;
             padding: 8px 12px;
             background: #f9f9f9;
@@ -295,6 +304,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           .selection-item {
             display: flex;
             gap: 6px;
+            text-align: center;
           }
 
           .selection-label {
@@ -331,13 +341,14 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
 
           .items-table th {
             text-align: left;
-            padding: 4px 6px;
-            background: #f4f4f5;
+            padding: 4px 4px;
+            background: #f9f9f9;
             font-weight: 600;
             font-size: 9px;
             text-transform: uppercase;
             letter-spacing: 0.03em;
             color: #52525b;
+            border-bottom: 1px solid #e0e0e0;
           }
 
           .items-table th:last-child,
@@ -346,13 +357,43 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .items-table td {
-            padding: 4px 6px;
-            border-bottom: 1px solid #f4f4f5;
+            padding: 3px 4px;
+            border-bottom: 1px solid #f0f0f0;
             vertical-align: top;
           }
 
           .items-table tr:last-child td {
             border-bottom: none;
+          }
+
+          .items-table .col-qty,
+          .items-table .col-each,
+          .items-table .col-total {
+            width: 50px;
+            text-align: right;
+          }
+
+          .items-table .col-check {
+            width: 30px;
+            text-align: center;
+          }
+
+          .items-table .col-notes {
+            width: 120px;
+          }
+
+          .checkbox-cell {
+            width: 14px;
+            height: 14px;
+            border: 1px solid #999;
+            display: inline-block;
+            vertical-align: middle;
+          }
+
+          .notes-line {
+            border-bottom: 1px solid #ccc;
+            height: 18px;
+            width: 100%;
           }
 
           .product-name {
@@ -519,6 +560,42 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             letter-spacing: 0.1em;
             margin-bottom: 12px;
           }
+
+          .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+          }
+
+          .change-history {
+            flex: 1;
+            text-align: left;
+            max-width: 60%;
+          }
+
+          .change-history h4 {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #71717a;
+            margin: 0 0 4px 0;
+          }
+
+          .change-history-list {
+            font-size: 9px;
+            color: #52525b;
+            line-height: 1.4;
+          }
+
+          .change-history-list span {
+            display: block;
+          }
+
+          .footer-right {
+            text-align: right;
+            flex-shrink: 0;
+          }
         `}</style>
       </head>
       <body>
@@ -531,10 +608,10 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                 ← CLOSE
               </button>
               <a class="mode-btn" href="${isProductionMode ? basePath : `${basePath}?mode=production`}">
-                ${isProductionMode ? '💰 SHOW PRICES' : '🏭 PRODUCTION COPY'}
+                ${isProductionMode ? '💰 SHOW INVOICE' : '🏭 JOB SPEC'}
               </a>
               <button class="print-btn" type="button" onclick="window.print()">
-                🖨️ PRINT ${isProductionMode ? 'PRODUCTION SHEET' : 'QUOTE'}
+                🖨️ PRINT ${isProductionMode ? 'JOB SPEC' : 'INVOICE'}
               </button>
             `
           }}
@@ -545,7 +622,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           {/* Production Mode Header */}
           {isProductionMode && (
             <div className="production-header">
-              🏭 PRODUCTION COPY - FOR MANUFACTURING USE ONLY
+              🏭 JOB SPEC - FOR MANUFACTURING USE ONLY
             </div>
           )}
 
@@ -555,15 +632,12 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/wi-logo.svg" alt="WI Logo" style={{ height: '48px', marginBottom: '4px' }} />
               <p style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                {isProductionMode ? 'PRODUCTION SPECIFICATION' : 'KITCHEN INSTALLATION QUOTATION'}
+                {isProductionMode ? 'CONTRACT KITCHEN JOB SPEC' : 'CONTRACT KITCHEN INVOICE'}
               </p>
             </div>
             <div className="quote-number-section">
               <p className="quote-number" style={{ textTransform: 'uppercase' }}>#{quote.quoteNumber}</p>
               <p className="quote-date" style={{ textTransform: 'uppercase' }}>{format(new Date(quote.createdAt), 'dd MMM yyyy').toUpperCase()}</p>
-              <span className={`status-badge status-${quote.status}`}>
-                {quote.status}
-              </span>
             </div>
           </div>
 
@@ -586,11 +660,6 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
               <div className="info-value" style={{ textTransform: 'uppercase' }}>
                 {quote.houseType ? quote.houseType.name.toUpperCase() : 'NOT SET'}
               </div>
-              {!isProductionMode && quote.houseType && (
-                <div className="info-value" style={{ fontSize: '10px', color: '#B19334' }}>
-                  ALLOWANCE: £{Number(quote.houseType.allowance).toFixed(2)}
-                </div>
-              )}
             </div>
           </div>
 
@@ -612,20 +681,26 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             </div>
           )}
 
-          {/* Quote Items */}
+          {/* Items */}
           <div className="items-section">
             <h2 className="section-title">
-              {isProductionMode ? 'PRODUCTION ITEMS' : 'QUOTE ITEMS'} ({quote.items.length})
+              ITEMS ({quote.items.length})
             </h2>
             <table className="items-table">
               <thead>
                 <tr>
-                  <th style={{ width: isProductionMode ? '55%' : '40%' }}>PRODUCT</th>
-                  <th style={{ width: isProductionMode ? '45%' : '20%' }}>QTY</th>
+                  <th style={{ width: isProductionMode ? '40%' : '40%' }}>PRODUCT</th>
+                  <th className="col-qty">QTY</th>
                   {!isProductionMode && (
                     <>
-                      <th style={{ width: '20%' }}>UNIT</th>
-                      <th style={{ width: '20%' }}>TOTAL</th>
+                      <th className="col-each">EACH</th>
+                      <th className="col-total">TOTAL</th>
+                    </>
+                  )}
+                  {isProductionMode && (
+                    <>
+                      <th className="col-check">✓</th>
+                      <th className="col-notes">NOTES</th>
                     </>
                   )}
                 </tr>
@@ -637,9 +712,6 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                       <span className="product-name" style={{ textTransform: 'uppercase' }}>
                         {item.productName}
                       </span>
-                      {item.isInAllowance && !isProductionMode && (
-                        <span className="allowance-badge">IN ALLOWANCE</span>
-                      )}
                       {item.productSku && (
                         <div className="product-sku">{item.productSku}</div>
                       )}
@@ -647,18 +719,28 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                         <div className="product-notes" style={{ textTransform: 'uppercase' }}>{item.notes}</div>
                       )}
                     </td>
-                    <td className="quantity-info">
+                    <td className="quantity-info col-qty">
                       {Number(item.quantity)}{' '}
                       {item.priceUnit === 'LINEAR_METER' ? 'M' :
-                       item.priceUnit === 'SQUARE_METER' ? 'M²' : 'UNIT'}
+                       item.priceUnit === 'SQUARE_METER' ? 'M²' : ''}
                     </td>
                     {!isProductionMode && (
                       <>
-                        <td style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                          {item.isInAllowance ? '£0.00' : `£${Number(item.unitPrice).toFixed(2)}`}
+                        <td className="col-each" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                          £{Number(item.unitPrice).toFixed(2)}
                         </td>
-                        <td className="line-total">
-                          {item.isInAllowance ? '£0.00' : `£${Number(item.lineTotal).toFixed(2)}`}
+                        <td className="line-total col-total">
+                          £{Number(item.lineTotal).toFixed(2)}
+                        </td>
+                      </>
+                    )}
+                    {isProductionMode && (
+                      <>
+                        <td className="col-check">
+                          <span className="checkbox-cell"></span>
+                        </td>
+                        <td className="col-notes">
+                          <div className="notes-line"></div>
                         </td>
                       </>
                     )}
@@ -714,19 +796,40 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           <div className="footer">
             {!isProductionMode && quote.validUntil && (
               <div className="validity">
-                ⏰ THIS QUOTE IS VALID UNTIL {format(new Date(quote.validUntil), 'dd MMMM yyyy').toUpperCase()}
+                ⏰ THIS INVOICE IS VALID UNTIL {format(new Date(quote.validUntil), 'dd MMMM yyyy').toUpperCase()}
               </div>
             )}
             {isProductionMode && (
-              <p style={{ textTransform: 'uppercase' }}>
-                PRODUCTION SPECIFICATION - FOR INTERNAL USE ONLY
+              <p style={{ textTransform: 'uppercase', marginBottom: '8px' }}>
+                CONTRACT KITCHEN JOB SPEC - FOR INTERNAL USE ONLY
               </p>
             )}
-            {quote.createdBy && (
-              <p style={{ marginTop: '8px', textTransform: 'uppercase' }}>
-                PREPARED BY: {quote.createdBy.name?.toUpperCase()}
-              </p>
-            )}
+            <div className="footer-content">
+              {/* Change History - Bottom Left */}
+              <div className="change-history">
+                <h4>DOCUMENT HISTORY</h4>
+                <div className="change-history-list">
+                  {quote.createdBy && (
+                    <span>
+                      CREATED: {format(new Date(quote.createdAt), 'dd MMM yyyy HH:mm').toUpperCase()} BY {quote.createdBy.name?.toUpperCase()}
+                    </span>
+                  )}
+                  {quote.updatedBy && quote.updatedAt && new Date(quote.updatedAt).getTime() !== new Date(quote.createdAt).getTime() && (
+                    <span>
+                      LAST EDITED: {format(new Date(quote.updatedAt), 'dd MMM yyyy HH:mm').toUpperCase()} BY {quote.updatedBy.name?.toUpperCase()}
+                    </span>
+                  )}
+                </div>
+              </div>
+              {/* Created By - Bottom Right */}
+              <div className="footer-right">
+                {quote.createdBy && (
+                  <p style={{ textTransform: 'uppercase', fontSize: '10px', color: '#52525b' }}>
+                    CREATED BY: {quote.createdBy.name?.toUpperCase()}
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </body>

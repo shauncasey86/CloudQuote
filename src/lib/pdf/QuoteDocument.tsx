@@ -236,7 +236,7 @@ export function QuoteDocument({
 
         {/* Items Table */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quote Items</Text>
+          <Text style={styles.sectionTitle}>Items</Text>
           <View style={styles.table}>
             <View style={styles.tableHeader}>
               <Text style={[styles.tableHeaderText, styles.colProduct]}>

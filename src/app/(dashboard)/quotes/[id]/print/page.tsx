@@ -530,10 +530,10 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           </div>
         )}
 
-        {/* Quote Items */}
+        {/* Items */}
         <div className="items-section">
           <h2 className="section-title" style={{ textTransform: 'uppercase' }}>
-            {isProductionMode ? 'PRODUCTION ITEMS' : 'QUOTE ITEMS'} ({quote.items.length})
+            ITEMS ({quote.items.length})
           </h2>
           <table className="items-table">
             <thead>
