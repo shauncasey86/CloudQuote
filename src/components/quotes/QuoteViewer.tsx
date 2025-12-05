@@ -532,7 +532,7 @@ export function QuoteViewer({
                 <div className="flex-1 min-w-0">
                   <p className="text-xs">
                     <span className="font-medium">CREATED</span>
-                    <span className="text-text-secondary ml-1">
+                    <span className="text-text-secondary ml-1 uppercase">
                       {format(new Date(quote.createdAt), 'dd MMM HH:mm')}
                       {quote.createdBy?.name && ` · ${quote.createdBy.name}`}
                     </span>
@@ -562,7 +562,7 @@ export function QuoteViewer({
                   <div className="flex-1 min-w-0 text-left">
                     <p className="text-xs">
                       <span className="font-medium">EDITED</span>
-                      <span className="text-text-secondary ml-1">
+                      <span className="text-text-secondary ml-1 uppercase">
                         {format(new Date(quote.updatedAt), 'dd MMM HH:mm')}
                         {quote.updatedBy?.name && ` · ${quote.updatedBy.name}`}
                       </span>
