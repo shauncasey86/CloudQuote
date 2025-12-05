@@ -361,20 +361,24 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             border-bottom: none;
           }
 
+          .items-table .col-product {
+            width: 70%;
+          }
+
           .items-table .col-qty,
           .items-table .col-each,
           .items-table .col-total {
-            width: 50px;
+            width: 10%;
             text-align: right;
           }
 
           .items-table .col-check {
-            width: 30px;
+            width: 10%;
             text-align: center;
           }
 
           .items-table .col-notes {
-            width: 120px;
+            width: 20%;
           }
 
           .checkbox-cell {
@@ -679,7 +683,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             <table className="items-table">
               <thead>
                 <tr>
-                  <th style={{ width: isProductionMode ? '40%' : '40%' }}>PRODUCT</th>
+                  <th className="col-product">PRODUCT</th>
                   <th className="col-qty">QTY</th>
                   {!isProductionMode && (
                     <>
@@ -699,7 +703,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                 {/* House Type Allowance Row - Only in quote mode */}
                 {!isProductionMode && quote.houseType && (
                   <tr style={{ backgroundColor: '#f0fdf4' }}>
-                    <td>
+                    <td className="col-product">
                       <span className="product-name" style={{ textTransform: 'uppercase', fontWeight: 600 }}>
                         {quote.houseType.name} KITCHEN ALLOWANCE
                       </span>
@@ -715,7 +719,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                 )}
                 {quote.items.map((item: any) => (
                   <tr key={item.id}>
-                    <td>
+                    <td className="col-product">
                       <span className="product-name" style={{ textTransform: 'uppercase' }}>
                         {item.productName}
                       </span>
