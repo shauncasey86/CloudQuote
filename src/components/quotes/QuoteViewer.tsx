@@ -391,6 +391,19 @@ export function QuoteViewer({
                     House Type: <span className="font-medium text-text-primary">{quote.houseType.name}</span> (Allowance: £{Number(quote.houseType.allowance).toFixed(2)})
                   </div>
                 )}
+                {(quote.frontal || quote.handle || quote.worktop) && (
+                  <div className="col-span-2 flex flex-wrap gap-4 text-xs text-text-secondary">
+                    {quote.frontal && (
+                      <span>Frontal: <span className="font-medium text-text-primary uppercase">{quote.frontal}</span></span>
+                    )}
+                    {quote.handle && (
+                      <span>Handle: <span className="font-medium text-text-primary uppercase">{quote.handle}</span></span>
+                    )}
+                    {quote.worktop && (
+                      <span>Worktop: <span className="font-medium text-text-primary uppercase">{quote.worktop}</span></span>
+                    )}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -531,8 +544,8 @@ export function QuoteViewer({
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs">
-                    <span className="font-medium">Created</span>
-                    <span className="text-text-secondary ml-1">
+                    <span className="font-medium">CREATED</span>
+                    <span className="text-text-secondary ml-1 uppercase">
                       {format(new Date(quote.createdAt), 'dd MMM HH:mm')}
                       {quote.createdBy?.name && ` · ${quote.createdBy.name}`}
                     </span>
@@ -545,9 +558,14 @@ export function QuoteViewer({
                 <button
                   onClick={() => {
                     const lastUpdate = quote.changeHistory?.find((c: ChangeHistoryEntry) => c.action === 'update');
-                    if (lastUpdate) {
-                      handleChangeClick(lastUpdate);
-                    }
+                    // Use change history entry if available, otherwise create a basic one from quote data
+                    const changeEntry: ChangeHistoryEntry = lastUpdate || {
+                      id: 'last-edit',
+                      action: 'update',
+                      changedAt: quote.updatedAt,
+                      user: { id: quote.updatedBy?.id || '', name: quote.updatedBy?.name || 'Unknown' },
+                    };
+                    handleChangeClick(changeEntry);
                   }}
                   className="w-full flex items-center gap-2 p-1.5 bg-bg-glass rounded border border-border-glass hover:bg-bg-elevated transition-colors group"
                 >
@@ -556,8 +574,8 @@ export function QuoteViewer({
                   </div>
                   <div className="flex-1 min-w-0 text-left">
                     <p className="text-xs">
-                      <span className="font-medium">Edited</span>
-                      <span className="text-text-secondary ml-1">
+                      <span className="font-medium">EDITED</span>
+                      <span className="text-text-secondary ml-1 uppercase">
                         {format(new Date(quote.updatedAt), 'dd MMM HH:mm')}
                         {quote.updatedBy?.name && ` · ${quote.updatedBy.name}`}
                       </span>
