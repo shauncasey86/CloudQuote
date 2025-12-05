@@ -70,7 +70,7 @@ export function AdditionalCosts({
               <button
                 type="button"
                 onClick={() => onBespokeUpliftQtyChange(Math.max(0, bespokeUpliftQty - 1))}
-                className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-[#B19334]"
+                className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-gold"
               >
                 <ChevronDown className="w-3.5 h-3.5" />
               </button>
@@ -84,7 +84,7 @@ export function AdditionalCosts({
               <button
                 type="button"
                 onClick={() => onBespokeUpliftQtyChange(bespokeUpliftQty + 1)}
-                className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-[#B19334]"
+                className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-gold"
               >
                 <ChevronUp className="w-3.5 h-3.5" />
               </button>

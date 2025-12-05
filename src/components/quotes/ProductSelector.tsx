@@ -87,7 +87,7 @@ export function ProductSelector({
                 onClick={() => setSelectedCategory(category.id)}
                 className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-lg transition-all whitespace-nowrap ${
                   selectedCategory === category.id
-                    ? 'bg-gradient-to-r from-[#B19334] to-[#BB9E6C] text-[#212533] shadow-md'
+                    ? 'bg-gradient-to-r from-gold to-bronze text-navy shadow-md'
                     : 'bg-bg-elevated text-text-muted hover:text-text-primary hover:bg-bg-glass border border-border-subtle'
                 }`}
               >
@@ -179,7 +179,7 @@ export function ProductSelector({
                             ...prev,
                             [product.id]: Math.max(minQty, (prev[product.id] || 1) - step),
                           }))}
-                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-[#B19334]"
+                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-gold"
                         >
                           <ChevronDown className="w-3.5 h-3.5" />
                         </button>
@@ -203,7 +203,7 @@ export function ProductSelector({
                             ...prev,
                             [product.id]: (prev[product.id] || 1) + step,
                           }))}
-                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-[#B19334]"
+                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-gold"
                         >
                           <ChevronUp className="w-3.5 h-3.5" />
                         </button>

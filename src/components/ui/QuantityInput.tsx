@@ -69,7 +69,7 @@ export function QuantityInput({
           disabled={disabled || value <= min}
           className={cn(
             classes.button,
-            'hover:bg-bg-glass transition-colors text-text-muted hover:text-[#B19334]',
+            'hover:bg-bg-glass transition-colors text-text-muted hover:text-gold',
             'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-text-muted'
           )}
         >
@@ -96,7 +96,7 @@ export function QuantityInput({
           disabled={disabled || (max !== undefined && value >= max)}
           className={cn(
             classes.button,
-            'hover:bg-bg-glass transition-colors text-text-muted hover:text-[#B19334]',
+            'hover:bg-bg-glass transition-colors text-text-muted hover:text-gold',
             'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-text-muted'
           )}
         >

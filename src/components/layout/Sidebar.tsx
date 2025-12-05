@@ -9,12 +9,14 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { cn } from '@/lib/utils';
 import { Role } from '@prisma/client';
+import { useSidebar } from './DashboardLayout';
 import {
   FileText,
   Package,
   Settings,
   Users,
   Home,
+  X,
 } from 'lucide-react';
 
 interface NavItem {
@@ -57,27 +59,60 @@ const navItems: NavItem[] = [
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const { data: session, status } = useSession();
+  const { isOpen, setIsOpen } = useSidebar();
   const isLoading = status === 'loading';
 
   const isAdmin = session?.user?.role === Role.ADMIN;
 
+  // Close sidebar when clicking a link on mobile
+  const handleLinkClick = () => {
+    if (window.innerWidth < 768) {
+      setIsOpen(false);
+    }
+  };
+
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-bg-canvas/95 backdrop-blur-xl border-r border-border-glass flex flex-col z-40">
-      {/* Logo */}
-      <div className="p-6">
-        <Link href="/quotes" className="flex flex-col items-center text-center group">
-          <Image
-            src="/wi-logo.svg"
-            alt="Wilson Interiors"
-            width={160}
-            height={48}
-            className="w-40 h-auto mb-3 group-hover:opacity-90 transition-opacity"
-          />
-          <span className="text-lg font-bold text-gradient leading-tight font-header tracking-wider">
-            CLOUDQUOTE
-          </span>
-        </Link>
-      </div>
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={cn(
+          'fixed left-0 top-0 h-screen w-64 bg-bg-canvas/95 backdrop-blur-xl border-r border-border-glass flex flex-col z-40 transition-transform duration-300',
+          'md:translate-x-0',
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        )}
+      >
+        {/* Mobile close button */}
+        <button
+          onClick={() => setIsOpen(false)}
+          className="absolute top-4 right-4 p-2 rounded-xl bg-bg-elevated hover:bg-bg-surface border border-border-subtle transition-all md:hidden"
+          aria-label="Close menu"
+        >
+          <X className="w-5 h-5 text-text-primary" />
+        </button>
+
+        {/* Logo */}
+        <div className="p-6">
+          <Link href="/quotes" className="flex flex-col items-center text-center group" onClick={handleLinkClick}>
+            <Image
+              src="/wi-logo.svg"
+              alt="Wilson Interiors"
+              width={160}
+              height={48}
+              className="w-40 h-auto mb-3 group-hover:opacity-90 transition-opacity"
+            />
+            <span className="text-lg font-bold text-gradient leading-tight font-header tracking-wider">
+              CLOUDQUOTE
+            </span>
+          </Link>
+        </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4">
@@ -113,6 +148,7 @@ export const Sidebar: React.FC = () => {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={handleLinkClick}
                 className={cn(
                   'nav-item group',
                   isActive && 'active'
@@ -143,6 +179,7 @@ export const Sidebar: React.FC = () => {
           </div>
         </div>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 };

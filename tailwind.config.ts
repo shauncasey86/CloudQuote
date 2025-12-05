@@ -15,26 +15,44 @@ const config: Config = {
           canvas: "var(--bg-canvas)",
           surface: "var(--bg-surface)",
           elevated: "var(--bg-elevated)",
+          glass: "var(--bg-glass)",
         },
         border: {
           subtle: "var(--border-subtle)",
           glass: "var(--border-glass)",
+          hover: "var(--border-hover)",
         },
         text: {
           primary: "var(--text-primary)",
           secondary: "var(--text-secondary)",
+          muted: "var(--text-muted)",
         },
-        // Shared DNA colors
+        // Brand colors - Wilson Interiors
+        gold: {
+          DEFAULT: "var(--color-gold)",
+          light: "var(--color-gold-light)",
+        },
+        bronze: "var(--color-bronze)",
+        navy: {
+          DEFAULT: "var(--color-navy)",
+          light: "var(--color-navy-light)",
+        },
+        // Semantic colors
+        emerald: "var(--color-emerald)",
+        green: "var(--color-green)",
+        amber: "var(--color-amber)",
+        danger: "var(--color-danger)",
+        cyan: "var(--color-cyan)",
+        // Legacy color mappings for compatibility
         violet: "var(--color-violet)",
         hotpink: "var(--color-pink)",
-        cyan: "var(--color-cyan)",
         electricblue: "var(--color-blue)",
         lime: "var(--color-lime)",
-        emerald: "var(--color-emerald)",
-        danger: "var(--color-danger)",
       },
       fontFamily: {
-        sans: ["Plus Jakarta Sans", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        sans: ["var(--font-body)", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        header: ["var(--font-header)", "Georgia", "serif"],
+        mono: ["var(--font-mono)", "Courier New", "monospace"],
       },
       backdropBlur: {
         glass: "20px",

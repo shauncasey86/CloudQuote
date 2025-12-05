@@ -172,7 +172,7 @@ export function ProductsTable({
             onClick={() => onCategoryChange(null)}
             className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-lg transition-all whitespace-nowrap ${
               selectedCategory === null
-                ? 'bg-gradient-to-r from-[#B19334] to-[#BB9E6C] text-[#212533] shadow-md'
+                ? 'bg-gradient-to-r from-gold to-bronze text-navy shadow-md'
                 : 'bg-bg-elevated text-text-muted hover:text-text-primary hover:bg-bg-glass border border-border-subtle'
             }`}
           >
@@ -194,7 +194,7 @@ export function ProductsTable({
                 onClick={() => onCategoryChange(category.id)}
                 className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-lg transition-all whitespace-nowrap ${
                   selectedCategory === category.id
-                    ? 'bg-gradient-to-r from-[#B19334] to-[#BB9E6C] text-[#212533] shadow-md'
+                    ? 'bg-gradient-to-r from-gold to-bronze text-navy shadow-md'
                     : category.active === false
                     ? 'bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20'
                     : 'bg-bg-elevated text-text-muted hover:text-text-primary hover:bg-bg-glass border border-border-subtle'

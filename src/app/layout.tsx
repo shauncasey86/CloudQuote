@@ -1,15 +1,31 @@
 import type { Metadata } from 'next';
-import { Josefin_Slab } from 'next/font/google';
+import { Cormorant_Garamond, Work_Sans, JetBrains_Mono } from 'next/font/google';
 import '@/styles/globals.css';
 import { ReactQueryProvider } from '@/components/providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { Toaster } from 'sonner';
 
-// Header font - Josefin Slab Bold 700 ONLY
-const josefinSlab = Josefin_Slab({
+// Header font - Cormorant Garamond Semi-Bold 600 - elegant, sophisticated serif
+const cormorantGaramond = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: '700',
+  weight: ['400', '500', '600', '700'],
   variable: '--font-header',
+  display: 'swap',
+});
+
+// Body font - Work Sans - clean, professional geometric sans-serif
+const workSans = Work_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-body',
+  display: 'swap',
+});
+
+// Monospace font - JetBrains Mono - for prices and IDs
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-mono',
   display: 'swap',
 });
 
@@ -24,14 +40,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className={josefinSlab.variable}>
-      <head>
-        {/* Sansation font from Google Fonts */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet" />
-      </head>
-      <body style={{ fontFamily: "'Sansation', sans-serif" }}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${cormorantGaramond.variable} ${workSans.variable} ${jetbrainsMono.variable}`}
+    >
+      <body>
         <ThemeProvider>
           <ReactQueryProvider>{children}</ReactQueryProvider>
           <Toaster position="top-right" richColors />
