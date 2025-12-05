@@ -49,7 +49,7 @@ export function QuoteItemsTable({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Quote Items</CardTitle>
+          <CardTitle>Items</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-12 text-text-secondary">
@@ -66,7 +66,7 @@ export function QuoteItemsTable({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Quote Items ({items.length})</CardTitle>
+        <CardTitle>Items ({items.length})</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <Table>

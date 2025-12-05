@@ -4,6 +4,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { Search, Moon, Sun, LogOut, User, Settings, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -13,8 +14,10 @@ export const Header: React.FC = () => {
   const { data: session, status } = useSession();
   const { theme, toggleTheme } = useTheme();
   const [userMenuOpen, setUserMenuOpen] = React.useState(false);
+  const [searchTerm, setSearchTerm] = React.useState('');
   const menuRef = React.useRef<HTMLDivElement>(null);
   const isLoading = status === 'loading';
+  const router = useRouter();
 
   // Close menu when clicking outside
   React.useEffect(() => {
@@ -28,19 +31,35 @@ export const Header: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      router.push(`/quotes?search=${encodeURIComponent(searchTerm.trim())}`);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch(e);
+    }
+  };
+
   return (
     <header className="fixed top-0 left-64 right-0 h-16 bg-bg-base/80 backdrop-blur-xl border-b border-border-glass flex items-center justify-between px-6 z-30">
       {/* Search */}
-      <div className="flex-1 max-w-md">
+      <form onSubmit={handleSearch} className="flex-1 max-w-md">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
           <input
             type="search"
             placeholder="Search quotes, customers..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="w-full pl-10 pr-4 py-2.5 bg-bg-elevated border border-border-subtle rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all placeholder:text-text-muted"
           />
         </div>
-      </div>
+      </form>
 
       {/* Right Actions */}
       <div className="flex items-center gap-3">

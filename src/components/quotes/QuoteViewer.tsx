@@ -21,6 +21,9 @@ import {
   MapPin,
   User,
   Calendar,
+  History,
+  Clock,
+  ChevronRight,
 } from 'lucide-react';
 import { QuoteStatus } from '@prisma/client';
 import { toast } from '@/lib/toast';
@@ -34,6 +37,17 @@ interface QuoteViewerProps {
   isEditMode?: boolean;
 }
 
+interface ChangeHistoryEntry {
+  id: string;
+  action: string;
+  fieldChanged?: string;
+  oldValue?: string;
+  newValue?: string;
+  metadata?: any;
+  changedAt: string;
+  user: { id: string; name: string };
+}
+
 export function QuoteViewer({
   quote,
   products,
@@ -44,10 +58,54 @@ export function QuoteViewer({
   const router = useRouter();
   const [showComingSoon, setShowComingSoon] = React.useState(false);
   const [comingSoonFeature, setComingSoonFeature] = React.useState('');
+  const [showChangeHistory, setShowChangeHistory] = React.useState(false);
+  const [selectedChange, setSelectedChange] = React.useState<ChangeHistoryEntry | null>(null);
 
   const handleComingSoon = (feature: string) => {
     setComingSoonFeature(feature);
     setShowComingSoon(true);
+  };
+
+  const handleChangeClick = (change: ChangeHistoryEntry) => {
+    setSelectedChange(change);
+  };
+
+  const formatChangeDetails = (change: ChangeHistoryEntry) => {
+    const details: { label: string; value: string }[] = [];
+
+    if (change.action === 'create') {
+      details.push({ label: 'Action', value: 'Created new quote' });
+      if (change.metadata?.quoteNumber) {
+        details.push({ label: 'Quote Number', value: change.metadata.quoteNumber });
+      }
+      if (change.metadata?.customerName) {
+        details.push({ label: 'Customer', value: change.metadata.customerName });
+      }
+    } else if (change.action === 'update') {
+      details.push({ label: 'Action', value: 'Updated quote' });
+      if (change.metadata?.updatedFields) {
+        const fields = change.metadata.updatedFields;
+        details.push({ label: 'Fields Changed', value: fields.join(', ') });
+      }
+    } else if (change.action === 'status_change') {
+      details.push({ label: 'Action', value: 'Status changed' });
+      if (change.oldValue) details.push({ label: 'From', value: change.oldValue });
+      if (change.newValue) details.push({ label: 'To', value: change.newValue });
+    } else if (change.action === 'email_sent') {
+      details.push({ label: 'Action', value: 'Email sent to customer' });
+    }
+
+    if (change.fieldChanged) {
+      details.push({ label: 'Field', value: change.fieldChanged });
+    }
+    if (change.oldValue && change.action !== 'status_change') {
+      details.push({ label: 'Previous Value', value: change.oldValue });
+    }
+    if (change.newValue && change.action !== 'status_change') {
+      details.push({ label: 'New Value', value: change.newValue });
+    }
+
+    return details;
   };
 
   // If in edit mode, show the editor
@@ -228,6 +286,64 @@ export function QuoteViewer({
         </div>
       </Modal>
 
+      {/* Change Detail Modal */}
+      <Modal
+        isOpen={!!selectedChange}
+        onClose={() => setSelectedChange(null)}
+        title="Change Details"
+      >
+        {selectedChange && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 pb-4 border-b border-border-glass">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                selectedChange.action === 'create' ? 'bg-green-500/20' :
+                selectedChange.action === 'update' ? 'bg-blue-500/20' :
+                selectedChange.action === 'status_change' ? 'bg-amber-500/20' :
+                'bg-violet-500/20'
+              }`}>
+                {selectedChange.action === 'create' ? <User className="w-5 h-5 text-green-400" /> :
+                 selectedChange.action === 'update' ? <Edit className="w-5 h-5 text-blue-400" /> :
+                 <Clock className="w-5 h-5 text-amber-400" />}
+              </div>
+              <div>
+                <Badge
+                  variant={
+                    selectedChange.action === 'create' ? 'success' :
+                    selectedChange.action === 'update' ? 'info' :
+                    selectedChange.action === 'status_change' ? 'warning' :
+                    'default'
+                  }
+                >
+                  {selectedChange.action.replace('_', ' ').toUpperCase()}
+                </Badge>
+                <p className="text-xs text-text-secondary mt-1">
+                  {format(new Date(selectedChange.changedAt), 'dd MMM yyyy HH:mm')}
+                  {selectedChange.user?.name && ` by ${selectedChange.user.name}`}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {formatChangeDetails(selectedChange).map((detail, index) => (
+                <div key={index} className="flex justify-between items-start p-3 bg-bg-glass rounded-lg">
+                  <span className="text-sm text-text-secondary">{detail.label}</span>
+                  <span className="text-sm font-medium text-right max-w-[60%] break-words">
+                    {detail.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <Button
+              className="w-full mt-4"
+              onClick={() => setSelectedChange(null)}
+            >
+              Close
+            </Button>
+          </div>
+        )}
+      </Modal>
+
       {/* Print Header - Only visible when printing */}
       <div className="hidden print-only print-header">
         <div>
@@ -300,10 +416,10 @@ export function QuoteViewer({
             </CardContent>
           </Card>
 
-          {/* Quote Items */}
+          {/* Items */}
           <Card>
             <CardHeader>
-              <CardTitle>Quote Items ({quote.items.length})</CardTitle>
+              <CardTitle>Items ({quote.items.length})</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -400,6 +516,100 @@ export function QuoteViewer({
               </CardContent>
             </Card>
           )}
+
+          {/* Change History */}
+          <Card className="print-hide">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <History className="w-5 h-5" />
+                Document History
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {/* Creation Info */}
+                <div className="flex items-start gap-3 p-3 bg-bg-glass rounded-lg border border-border-glass">
+                  <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                    <User className="w-4 h-4 text-green-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Created</p>
+                    <p className="text-xs text-text-secondary">
+                      {format(new Date(quote.createdAt), 'dd MMM yyyy HH:mm')}
+                      {quote.createdBy?.name && ` by ${quote.createdBy.name}`}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Last Edit Info */}
+                {quote.updatedBy && quote.updatedAt && new Date(quote.updatedAt).getTime() !== new Date(quote.createdAt).getTime() && (
+                  <div className="flex items-start gap-3 p-3 bg-bg-glass rounded-lg border border-border-glass">
+                    <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                      <Edit className="w-4 h-4 text-blue-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Last Edited</p>
+                      <p className="text-xs text-text-secondary">
+                        {format(new Date(quote.updatedAt), 'dd MMM yyyy HH:mm')}
+                        {quote.updatedBy?.name && ` by ${quote.updatedBy.name}`}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Change History List */}
+                {quote.changeHistory && quote.changeHistory.length > 0 && (
+                  <div className="mt-4">
+                    <button
+                      onClick={() => setShowChangeHistory(!showChangeHistory)}
+                      className="flex items-center gap-2 text-sm text-violet-400 hover:text-violet-300 transition-colors"
+                    >
+                      <ChevronRight className={`w-4 h-4 transition-transform ${showChangeHistory ? 'rotate-90' : ''}`} />
+                      View all changes ({quote.changeHistory.length})
+                    </button>
+
+                    {showChangeHistory && (
+                      <div className="mt-3 space-y-2 pl-6 border-l-2 border-border-glass">
+                        {quote.changeHistory.map((change: ChangeHistoryEntry) => (
+                          <button
+                            key={change.id}
+                            onClick={() => handleChangeClick(change)}
+                            className="w-full text-left p-2 rounded-lg hover:bg-bg-elevated transition-colors group"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <Clock className="w-3 h-3 text-text-muted" />
+                                <span className="text-xs text-text-secondary">
+                                  {format(new Date(change.changedAt), 'dd MMM yyyy HH:mm')}
+                                </span>
+                              </div>
+                              <ChevronRight className="w-3 h-3 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                            <div className="mt-1 flex items-center gap-2">
+                              <Badge
+                                variant={
+                                  change.action === 'create' ? 'success' :
+                                  change.action === 'update' ? 'info' :
+                                  change.action === 'status_change' ? 'warning' :
+                                  'default'
+                                }
+                                className="text-xs"
+                              >
+                                {change.action}
+                              </Badge>
+                              <span className="text-xs text-text-secondary">
+                                by {change.user?.name || 'Unknown'}
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Sidebar - Summary */}
