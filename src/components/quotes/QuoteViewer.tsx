@@ -516,100 +516,6 @@ export function QuoteViewer({
               </CardContent>
             </Card>
           )}
-
-          {/* Change History */}
-          <Card className="print-hide">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <History className="w-5 h-5" />
-                Document History
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {/* Creation Info */}
-                <div className="flex items-start gap-3 p-3 bg-bg-glass rounded-lg border border-border-glass">
-                  <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                    <User className="w-4 h-4 text-green-400" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Created</p>
-                    <p className="text-xs text-text-secondary">
-                      {format(new Date(quote.createdAt), 'dd MMM yyyy HH:mm')}
-                      {quote.createdBy?.name && ` by ${quote.createdBy.name}`}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Last Edit Info */}
-                {quote.updatedBy && quote.updatedAt && new Date(quote.updatedAt).getTime() !== new Date(quote.createdAt).getTime() && (
-                  <div className="flex items-start gap-3 p-3 bg-bg-glass rounded-lg border border-border-glass">
-                    <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                      <Edit className="w-4 h-4 text-blue-400" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Last Edited</p>
-                      <p className="text-xs text-text-secondary">
-                        {format(new Date(quote.updatedAt), 'dd MMM yyyy HH:mm')}
-                        {quote.updatedBy?.name && ` by ${quote.updatedBy.name}`}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Change History List */}
-                {quote.changeHistory && quote.changeHistory.length > 0 && (
-                  <div className="mt-4">
-                    <button
-                      onClick={() => setShowChangeHistory(!showChangeHistory)}
-                      className="flex items-center gap-2 text-sm text-violet-400 hover:text-violet-300 transition-colors"
-                    >
-                      <ChevronRight className={`w-4 h-4 transition-transform ${showChangeHistory ? 'rotate-90' : ''}`} />
-                      View all changes ({quote.changeHistory.length})
-                    </button>
-
-                    {showChangeHistory && (
-                      <div className="mt-3 space-y-2 pl-6 border-l-2 border-border-glass">
-                        {quote.changeHistory.map((change: ChangeHistoryEntry) => (
-                          <button
-                            key={change.id}
-                            onClick={() => handleChangeClick(change)}
-                            className="w-full text-left p-2 rounded-lg hover:bg-bg-elevated transition-colors group"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <Clock className="w-3 h-3 text-text-muted" />
-                                <span className="text-xs text-text-secondary">
-                                  {format(new Date(change.changedAt), 'dd MMM yyyy HH:mm')}
-                                </span>
-                              </div>
-                              <ChevronRight className="w-3 h-3 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </div>
-                            <div className="mt-1 flex items-center gap-2">
-                              <Badge
-                                variant={
-                                  change.action === 'create' ? 'success' :
-                                  change.action === 'update' ? 'info' :
-                                  change.action === 'status_change' ? 'warning' :
-                                  'default'
-                                }
-                                className="text-xs"
-                              >
-                                {change.action}
-                              </Badge>
-                              <span className="text-xs text-text-secondary">
-                                by {change.user?.name || 'Unknown'}
-                              </span>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Sidebar - Summary */}
@@ -646,6 +552,107 @@ export function QuoteViewer({
                       {format(new Date(quote.validUntil), 'dd MMM yyyy')}
                     </span>
                   </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Document History */}
+          <Card className="mt-4 print-hide">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <History className="w-4 h-4" />
+                Document History
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {/* Creation Info */}
+              <div className="flex items-start gap-2 p-2 bg-bg-glass rounded-lg border border-border-glass">
+                <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                  <User className="w-3 h-3 text-green-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium">Created</p>
+                  <p className="text-xs text-text-secondary truncate">
+                    {format(new Date(quote.createdAt), 'dd MMM yyyy HH:mm')}
+                    {quote.createdBy?.name && ` by ${quote.createdBy.name}`}
+                  </p>
+                </div>
+              </div>
+
+              {/* Last Edit Info - Clickable */}
+              {quote.updatedBy && quote.updatedAt && new Date(quote.updatedAt).getTime() !== new Date(quote.createdAt).getTime() && (
+                <button
+                  onClick={() => {
+                    // Find the most recent update in changeHistory
+                    const lastUpdate = quote.changeHistory?.find((c: ChangeHistoryEntry) => c.action === 'update');
+                    if (lastUpdate) {
+                      handleChangeClick(lastUpdate);
+                    }
+                  }}
+                  className="w-full flex items-start gap-2 p-2 bg-bg-glass rounded-lg border border-border-glass hover:bg-bg-elevated transition-colors group"
+                >
+                  <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                    <Edit className="w-3 h-3 text-blue-400" />
+                  </div>
+                  <div className="flex-1 min-w-0 text-left">
+                    <p className="text-xs font-medium flex items-center gap-1">
+                      Last Edited
+                      <ChevronRight className="w-3 h-3 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </p>
+                    <p className="text-xs text-text-secondary truncate">
+                      {format(new Date(quote.updatedAt), 'dd MMM yyyy HH:mm')}
+                      {quote.updatedBy?.name && ` by ${quote.updatedBy.name}`}
+                    </p>
+                  </div>
+                </button>
+              )}
+
+              {/* View All Changes */}
+              {quote.changeHistory && quote.changeHistory.length > 0 && (
+                <div className="pt-2">
+                  <button
+                    onClick={() => setShowChangeHistory(!showChangeHistory)}
+                    className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                  >
+                    <ChevronRight className={`w-3 h-3 transition-transform ${showChangeHistory ? 'rotate-90' : ''}`} />
+                    View all changes ({quote.changeHistory.length})
+                  </button>
+
+                  {showChangeHistory && (
+                    <div className="mt-2 space-y-1 pl-4 border-l-2 border-border-glass">
+                      {quote.changeHistory.map((change: ChangeHistoryEntry) => (
+                        <button
+                          key={change.id}
+                          onClick={() => handleChangeClick(change)}
+                          className="w-full text-left p-1.5 rounded hover:bg-bg-elevated transition-colors group"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-text-secondary">
+                              {format(new Date(change.changedAt), 'dd MMM HH:mm')}
+                            </span>
+                            <ChevronRight className="w-3 h-3 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
+                          <div className="flex items-center gap-1 mt-0.5">
+                            <Badge
+                              variant={
+                                change.action === 'create' ? 'success' :
+                                change.action === 'update' ? 'info' :
+                                change.action === 'status_change' ? 'warning' :
+                                'default'
+                              }
+                              className="text-xs py-0"
+                            >
+                              {change.action}
+                            </Badge>
+                            <span className="text-xs text-text-secondary truncate">
+                              {change.user?.name}
+                            </span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>
