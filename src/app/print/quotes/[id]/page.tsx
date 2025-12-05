@@ -340,7 +340,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .items-table th {
-            text-align: left;
+            text-align: center;
             padding: 4px 4px;
             background: #f9f9f9;
             font-weight: 600;
@@ -349,11 +349,6 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             letter-spacing: 0.03em;
             color: #52525b;
             border-bottom: 1px solid #e0e0e0;
-          }
-
-          .items-table th:last-child,
-          .items-table td:last-child {
-            text-align: right;
           }
 
           .items-table td {
