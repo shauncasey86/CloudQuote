@@ -85,7 +85,7 @@ export function QuoteSummary({
             {houseTypeAllowance > 0 && (
               <div className="flex items-center justify-between">
                 <span className="text-text-secondary">House Type Allowance</span>
-                <span className="font-mono text-[#B19334]">£{houseTypeAllowance.toFixed(2)}</span>
+                <span className="font-mono text-gold">£{houseTypeAllowance.toFixed(2)}</span>
               </div>
             )}
             {itemsSubtotal > 0 && (

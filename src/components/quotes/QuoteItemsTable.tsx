@@ -119,7 +119,7 @@ export function QuoteItemsTable({
                             const newQty = Math.max(step, currentQty - step);
                             onUpdateQuantity(item.id, newQty);
                           }}
-                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-[#B19334]"
+                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-gold"
                         >
                           <ChevronDown className="w-3.5 h-3.5" />
                         </button>
@@ -139,7 +139,7 @@ export function QuoteItemsTable({
                         <button
                           type="button"
                           onClick={() => onUpdateQuantity(item.id, currentQty + step)}
-                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-[#B19334]"
+                          className="px-1.5 py-1 hover:bg-bg-glass transition-colors text-text-muted hover:text-gold"
                         >
                           <ChevronUp className="w-3.5 h-3.5" />
                         </button>
