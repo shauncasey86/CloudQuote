@@ -365,6 +365,10 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             width: 70%;
           }
 
+          .items-table .col-product-prod {
+            width: 60%;
+          }
+
           .items-table .col-qty,
           .items-table .col-each,
           .items-table .col-total {
@@ -372,13 +376,18 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             text-align: right;
           }
 
+          .items-table .col-qty-prod {
+            width: 5%;
+            text-align: right;
+          }
+
           .items-table .col-check {
-            width: 10%;
+            width: 5%;
             text-align: center;
           }
 
           .items-table .col-notes {
-            width: 20%;
+            width: 30%;
           }
 
           .checkbox-cell {
@@ -683,8 +692,8 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             <table className="items-table">
               <thead>
                 <tr>
-                  <th className="col-product">PRODUCT</th>
-                  <th className="col-qty">QTY</th>
+                  <th className={isProductionMode ? "col-product-prod" : "col-product"}>PRODUCT</th>
+                  <th className={isProductionMode ? "col-qty-prod" : "col-qty"}>QTY</th>
                   {!isProductionMode && (
                     <>
                       <th className="col-each">EACH</th>
@@ -719,7 +728,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                 )}
                 {quote.items.map((item: any) => (
                   <tr key={item.id}>
-                    <td className="col-product">
+                    <td className={isProductionMode ? "col-product-prod" : "col-product"}>
                       <span className="product-name" style={{ textTransform: 'uppercase' }}>
                         {item.productName}
                       </span>
@@ -730,7 +739,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                         <div className="product-notes" style={{ textTransform: 'uppercase' }}>{item.notes}</div>
                       )}
                     </td>
-                    <td className="quantity-info col-qty">
+                    <td className={isProductionMode ? "quantity-info col-qty-prod" : "quantity-info col-qty"}>
                       {Number(item.quantity)}{' '}
                       {item.priceUnit === 'LINEAR_METER' ? 'M' :
                        item.priceUnit === 'SQUARE_METER' ? 'M²' : ''}
