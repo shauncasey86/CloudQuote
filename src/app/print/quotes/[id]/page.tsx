@@ -701,6 +701,9 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                     <td>
                       <span className="product-name" style={{ textTransform: 'uppercase' }}>
                         {item.productName}
+                        {!isProductionMode && item.isInAllowance && (
+                          <span className="allowance-badge">ALLOWANCE</span>
+                        )}
                       </span>
                       {item.productSku && (
                         <div className="product-sku">{item.productSku}</div>
