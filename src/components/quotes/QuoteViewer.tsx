@@ -545,9 +545,14 @@ export function QuoteViewer({
                 <button
                   onClick={() => {
                     const lastUpdate = quote.changeHistory?.find((c: ChangeHistoryEntry) => c.action === 'update');
-                    if (lastUpdate) {
-                      handleChangeClick(lastUpdate);
-                    }
+                    // Use change history entry if available, otherwise create a basic one from quote data
+                    const changeEntry: ChangeHistoryEntry = lastUpdate || {
+                      id: 'last-edit',
+                      action: 'update',
+                      changedAt: quote.updatedAt,
+                      user: { id: quote.updatedBy?.id || '', name: quote.updatedBy?.name || 'Unknown' },
+                    };
+                    handleChangeClick(changeEntry);
                   }}
                   className="w-full flex items-center gap-2 p-1.5 bg-bg-glass rounded border border-border-glass hover:bg-bg-elevated transition-colors group"
                 >
