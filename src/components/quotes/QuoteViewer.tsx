@@ -205,58 +205,58 @@ export function QuoteViewer({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-start justify-between print-hide">
-        <div className="flex items-start gap-4">
+      <div className="flex items-center justify-between print-hide">
+        <div className="flex items-center gap-3">
           <Link href="/quotes">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="h-8 w-8">
               <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
           <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-display font-bold text-gradient">
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-display font-bold text-gradient">
                 Quote {quote.quoteNumber}
               </h1>
-              <Badge variant={statusVariants[quote.status as QuoteStatus]}>
+              <Badge variant={statusVariants[quote.status as QuoteStatus]} className="text-xs">
                 {quote.status}
               </Badge>
             </div>
-            <p className="text-text-secondary text-xs mt-1">
-              CREATED {format(new Date(quote.createdAt), 'dd MMM yyyy').toUpperCase()}
-              {quote.createdBy?.name && <span className="ml-1">BY {quote.createdBy.name.toUpperCase()}</span>}
+            <p className="text-text-secondary text-xs">
+              Created {format(new Date(quote.createdAt), 'dd MMM yyyy')}
+              {quote.createdBy?.name && ` by ${quote.createdBy.name}`}
             </p>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {quote.status === 'DRAFT' && (
             <Link href={`/quotes/${quote.id}?edit=true`}>
-              <Button>
-                <Edit className="w-4 h-4 mr-2" />
+              <Button size="sm">
+                <Edit className="w-3.5 h-3.5 mr-1.5" />
                 Edit
               </Button>
             </Link>
           )}
-          <Button onClick={() => window.open(`/print/quotes/${quote.id}`, '_blank')}>
-            <Printer className="w-4 h-4 mr-2" />
+          <Button size="sm" onClick={() => window.open(`/print/quotes/${quote.id}`, '_blank')}>
+            <Printer className="w-3.5 h-3.5 mr-1.5" />
             Print
           </Button>
-          <Button variant="secondary" onClick={() => handleComingSoon('Download PDF')}>
-            <Download className="w-4 h-4 mr-2" />
-            Download PDF
+          <Button size="sm" variant="secondary" onClick={() => handleComingSoon('Download PDF')}>
+            <Download className="w-3.5 h-3.5 mr-1.5" />
+            PDF
           </Button>
           {(quote.status === 'FINALIZED' || quote.status === 'SENT') && (
-            <Button variant="ghost" onClick={() => handleComingSoon('Email Quote')}>
-              <Send className="w-4 h-4 mr-2" />
-              {quote.status === 'SENT' ? 'Resend Email' : 'Send Email'}
+            <Button size="sm" variant="ghost" onClick={() => handleComingSoon('Email Quote')}>
+              <Send className="w-3.5 h-3.5 mr-1.5" />
+              {quote.status === 'SENT' ? 'Resend' : 'Email'}
             </Button>
           )}
-          <Button variant="ghost" onClick={handleDuplicate}>
-            <Copy className="w-4 h-4 mr-2" />
-            Duplicate
+          <Button size="sm" variant="ghost" onClick={handleDuplicate}>
+            <Copy className="w-3.5 h-3.5 mr-1.5" />
+            Copy
           </Button>
         </div>
       </div>
@@ -356,100 +356,73 @@ export function QuoteViewer({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Customer Information */}
+        <div className="lg:col-span-2 space-y-4">
+          {/* Customer Information - Compact */}
           <Card>
-            <CardHeader>
-              <CardTitle>Customer Information</CardTitle>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Customer Information</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-start gap-3">
-                <User className="w-5 h-5 text-text-secondary mt-0.5" />
-                <div>
-                  <p className="text-sm text-text-secondary">Customer Name</p>
-                  <p className="font-medium">{quote.customerName}</p>
+            <CardContent className="pt-0">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-text-secondary flex-shrink-0" />
+                  <span className="font-medium truncate">{quote.customerName}</span>
                 </div>
+                {quote.customerEmail && (
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-text-secondary flex-shrink-0" />
+                    <span className="truncate">{quote.customerEmail}</span>
+                  </div>
+                )}
+                {quote.customerPhone && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-text-secondary flex-shrink-0" />
+                    <span>{quote.customerPhone}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2 col-span-2">
+                  <MapPin className="w-4 h-4 text-text-secondary flex-shrink-0" />
+                  <span className="truncate">{quote.address}</span>
+                </div>
+                {quote.houseType && (
+                  <div className="col-span-2 pt-2 mt-1 border-t border-border-glass text-xs text-text-secondary">
+                    House Type: <span className="font-medium text-text-primary">{quote.houseType.name}</span> (Allowance: £{Number(quote.houseType.allowance).toFixed(2)})
+                  </div>
+                )}
               </div>
-
-              {quote.customerEmail && (
-                <div className="flex items-start gap-3">
-                  <Mail className="w-5 h-5 text-text-secondary mt-0.5" />
-                  <div>
-                    <p className="text-sm text-text-secondary">Email</p>
-                    <p className="font-medium">{quote.customerEmail}</p>
-                  </div>
-                </div>
-              )}
-
-              {quote.customerPhone && (
-                <div className="flex items-start gap-3">
-                  <Phone className="w-5 h-5 text-text-secondary mt-0.5" />
-                  <div>
-                    <p className="text-sm text-text-secondary">Phone</p>
-                    <p className="font-medium">{quote.customerPhone}</p>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-text-secondary mt-0.5" />
-                <div>
-                  <p className="text-sm text-text-secondary">Address</p>
-                  <p className="font-medium whitespace-pre-line">
-                    {quote.address}
-                  </p>
-                </div>
-              </div>
-
-              {quote.houseType && (
-                <div className="flex items-start gap-3 pt-2 border-t border-border-glass">
-                  <div>
-                    <p className="text-sm text-text-secondary">House Type</p>
-                    <p className="font-medium">
-                      {quote.houseType.name} (Allowance: £{Number(quote.houseType.allowance).toFixed(2)})
-                    </p>
-                  </div>
-                </div>
-              )}
             </CardContent>
           </Card>
 
           {/* Items */}
           <Card>
-            <CardHeader>
-              <CardTitle>Items ({quote.items.length})</CardTitle>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Items ({quote.items.length})</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
+            <CardContent className="pt-0">
+              <div className="space-y-1.5">
                 {quote.items.map((item: any) => (
                   <div
                     key={item.id}
-                    className="flex items-start justify-between p-4 bg-bg-glass rounded-lg border border-border-glass"
+                    className="flex items-center justify-between py-2 px-3 bg-bg-glass rounded border border-border-glass text-sm"
                   >
-                    <div className="flex-1">
-                      <p className="font-medium">{item.productName}</p>
+                    <div className="flex-1 min-w-0">
+                      <span className="font-medium">{item.productName}</span>
                       {item.productSku && (
-                        <p className="text-xs text-text-secondary font-mono mt-1">
-                          {item.productSku}
-                        </p>
+                        <span className="text-xs text-text-muted font-mono ml-2">{item.productSku}</span>
                       )}
                       {item.notes && (
-                        <p className="text-sm text-text-secondary mt-1 italic">
-                          {item.notes}
-                        </p>
+                        <span className="text-xs text-text-secondary italic ml-2">({item.notes})</span>
                       )}
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm text-text-secondary">
-                        {Number(item.quantity)}{' '}
-                        {item.priceUnit === 'LINEAR_METER' ? 'm' : 'unit'}(s) ×
-                        £{Number(item.unitPrice).toFixed(2)}
-                      </p>
-                      <p className="font-mono font-bold mt-1">
+                    <div className="text-right flex items-center gap-3 flex-shrink-0">
+                      <span className="text-xs text-text-secondary">
+                        {Number(item.quantity)} × £{Number(item.unitPrice).toFixed(2)}
+                      </span>
+                      <span className="font-mono font-semibold w-20 text-right">
                         £{Number(item.lineTotal).toFixed(2)}
-                      </p>
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -460,27 +433,23 @@ export function QuoteViewer({
           {/* Additional Costs */}
           {quote.additionalCosts.length > 0 && (
             <Card>
-              <CardHeader>
-                <CardTitle>Additional Costs</CardTitle>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Additional Costs</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
+              <CardContent className="pt-0">
+                <div className="space-y-1">
                   {quote.additionalCosts.map((cost: any) => (
                     <div
                       key={cost.id}
-                      className="flex items-center justify-between p-3 bg-bg-glass rounded-lg"
+                      className="flex items-center justify-between py-1.5 px-3 bg-bg-glass rounded text-sm"
                     >
                       <div className="flex items-center gap-2">
-                        <p className="font-medium">{cost.description}</p>
+                        <span className="font-medium">{cost.description}</span>
                         {cost.taxable && (
-                          <Badge variant="info" className="text-xs">
-                            +VAT
-                          </Badge>
+                          <Badge variant="info" className="text-xs py-0">+VAT</Badge>
                         )}
                       </div>
-                      <p className="font-mono font-medium">
-                        £{Number(cost.amount).toFixed(2)}
-                      </p>
+                      <span className="font-mono font-medium">£{Number(cost.amount).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
@@ -491,161 +460,153 @@ export function QuoteViewer({
           {/* Notes */}
           {quote.notes && (
             <Card>
-              <CardHeader>
-                <CardTitle>Notes</CardTitle>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Notes</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-text-secondary whitespace-pre-line">
-                  {quote.notes}
-                </p>
+              <CardContent className="pt-0">
+                <p className="text-sm text-text-secondary whitespace-pre-line">{quote.notes}</p>
               </CardContent>
             </Card>
           )}
 
           {quote.internalNotes && (
             <Card className="bg-amber-500/5 border-amber-500/20 print-hide">
-              <CardHeader>
-                <CardTitle className="text-amber-400">
-                  Internal Notes
-                </CardTitle>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base text-amber-400">Internal Notes</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-text-secondary whitespace-pre-line">
-                  {quote.internalNotes}
-                </p>
+              <CardContent className="pt-0">
+                <p className="text-sm text-text-secondary whitespace-pre-line">{quote.internalNotes}</p>
               </CardContent>
             </Card>
           )}
-
-          {/* Change History */}
-          <Card className="print-hide">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <History className="w-5 h-5" />
-                Document History
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {/* Creation Info */}
-                <div className="flex items-start gap-3 p-3 bg-bg-glass rounded-lg border border-border-glass">
-                  <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                    <User className="w-4 h-4 text-green-400" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Created</p>
-                    <p className="text-xs text-text-secondary">
-                      {format(new Date(quote.createdAt), 'dd MMM yyyy HH:mm')}
-                      {quote.createdBy?.name && ` by ${quote.createdBy.name}`}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Last Edit Info */}
-                {quote.updatedBy && quote.updatedAt && new Date(quote.updatedAt).getTime() !== new Date(quote.createdAt).getTime() && (
-                  <div className="flex items-start gap-3 p-3 bg-bg-glass rounded-lg border border-border-glass">
-                    <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                      <Edit className="w-4 h-4 text-blue-400" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Last Edited</p>
-                      <p className="text-xs text-text-secondary">
-                        {format(new Date(quote.updatedAt), 'dd MMM yyyy HH:mm')}
-                        {quote.updatedBy?.name && ` by ${quote.updatedBy.name}`}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Change History List */}
-                {quote.changeHistory && quote.changeHistory.length > 0 && (
-                  <div className="mt-4">
-                    <button
-                      onClick={() => setShowChangeHistory(!showChangeHistory)}
-                      className="flex items-center gap-2 text-sm text-violet-400 hover:text-violet-300 transition-colors"
-                    >
-                      <ChevronRight className={`w-4 h-4 transition-transform ${showChangeHistory ? 'rotate-90' : ''}`} />
-                      View all changes ({quote.changeHistory.length})
-                    </button>
-
-                    {showChangeHistory && (
-                      <div className="mt-3 space-y-2 pl-6 border-l-2 border-border-glass">
-                        {quote.changeHistory.map((change: ChangeHistoryEntry) => (
-                          <button
-                            key={change.id}
-                            onClick={() => handleChangeClick(change)}
-                            className="w-full text-left p-2 rounded-lg hover:bg-bg-elevated transition-colors group"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <Clock className="w-3 h-3 text-text-muted" />
-                                <span className="text-xs text-text-secondary">
-                                  {format(new Date(change.changedAt), 'dd MMM yyyy HH:mm')}
-                                </span>
-                              </div>
-                              <ChevronRight className="w-3 h-3 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </div>
-                            <div className="mt-1 flex items-center gap-2">
-                              <Badge
-                                variant={
-                                  change.action === 'create' ? 'success' :
-                                  change.action === 'update' ? 'info' :
-                                  change.action === 'status_change' ? 'warning' :
-                                  'default'
-                                }
-                                className="text-xs"
-                              >
-                                {change.action}
-                              </Badge>
-                              <span className="text-xs text-text-secondary">
-                                by {change.user?.name || 'Unknown'}
-                              </span>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Sidebar - Summary */}
         <div className="lg:col-span-1">
           <Card className="sticky top-6">
-            <CardHeader>
-              <CardTitle>Summary</CardTitle>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Summary</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="pt-0 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-lg font-semibold">Total (VAT Inclusive)</span>
-                <span className="text-2xl font-bold font-mono text-gradient">
+                <span className="text-sm font-medium">Total (VAT Inc.)</span>
+                <span className="text-xl font-bold font-mono text-gradient">
                   £{Number(quote.subtotal).toFixed(2)}
                 </span>
               </div>
 
               {quote.sentAt && (
-                <div className="pt-4 border-t border-border-glass text-xs text-text-secondary">
-                  <div className="flex items-center gap-2">
+                <div className="pt-2 border-t border-border-glass text-xs text-text-secondary">
+                  <div className="flex items-center gap-1.5">
                     <Send className="w-3 h-3" />
-                    <span>
-                      Sent {format(new Date(quote.sentAt), 'dd MMM yyyy HH:mm')}
-                    </span>
+                    <span>Sent {format(new Date(quote.sentAt), 'dd MMM yyyy HH:mm')}</span>
                   </div>
                 </div>
               )}
 
               {quote.validUntil && (
                 <div className="text-xs text-text-secondary">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <Calendar className="w-3 h-3" />
-                    <span>
-                      Valid until{' '}
-                      {format(new Date(quote.validUntil), 'dd MMM yyyy')}
-                    </span>
+                    <span>Valid until {format(new Date(quote.validUntil), 'dd MMM yyyy')}</span>
                   </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Document History */}
+          <Card className="mt-3 print-hide">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-1.5 text-sm">
+                <History className="w-3.5 h-3.5" />
+                Document History
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0 space-y-1.5">
+              {/* Creation Info */}
+              <div className="flex items-center gap-2 p-1.5 bg-bg-glass rounded border border-border-glass">
+                <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                  <User className="w-2.5 h-2.5 text-green-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs">
+                    <span className="font-medium">Created</span>
+                    <span className="text-text-secondary ml-1">
+                      {format(new Date(quote.createdAt), 'dd MMM HH:mm')}
+                      {quote.createdBy?.name && ` · ${quote.createdBy.name}`}
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              {/* Last Edit Info - Clickable */}
+              {quote.updatedBy && quote.updatedAt && new Date(quote.updatedAt).getTime() !== new Date(quote.createdAt).getTime() && (
+                <button
+                  onClick={() => {
+                    const lastUpdate = quote.changeHistory?.find((c: ChangeHistoryEntry) => c.action === 'update');
+                    if (lastUpdate) {
+                      handleChangeClick(lastUpdate);
+                    }
+                  }}
+                  className="w-full flex items-center gap-2 p-1.5 bg-bg-glass rounded border border-border-glass hover:bg-bg-elevated transition-colors group"
+                >
+                  <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                    <Edit className="w-2.5 h-2.5 text-blue-400" />
+                  </div>
+                  <div className="flex-1 min-w-0 text-left">
+                    <p className="text-xs">
+                      <span className="font-medium">Edited</span>
+                      <span className="text-text-secondary ml-1">
+                        {format(new Date(quote.updatedAt), 'dd MMM HH:mm')}
+                        {quote.updatedBy?.name && ` · ${quote.updatedBy.name}`}
+                      </span>
+                      <ChevronRight className="w-3 h-3 text-text-muted inline ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </p>
+                  </div>
+                </button>
+              )}
+
+              {/* View All Changes */}
+              {quote.changeHistory && quote.changeHistory.length > 0 && (
+                <div className="pt-1">
+                  <button
+                    onClick={() => setShowChangeHistory(!showChangeHistory)}
+                    className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                  >
+                    <ChevronRight className={`w-3 h-3 transition-transform ${showChangeHistory ? 'rotate-90' : ''}`} />
+                    View all ({quote.changeHistory.length})
+                  </button>
+
+                  {showChangeHistory && (
+                    <div className="mt-1.5 space-y-0.5 pl-3 border-l-2 border-border-glass">
+                      {quote.changeHistory.map((change: ChangeHistoryEntry) => (
+                        <button
+                          key={change.id}
+                          onClick={() => handleChangeClick(change)}
+                          className="w-full text-left p-1 rounded hover:bg-bg-elevated transition-colors group flex items-center justify-between"
+                        >
+                          <div className="flex items-center gap-1">
+                            <Badge
+                              variant={
+                                change.action === 'create' ? 'success' :
+                                change.action === 'update' ? 'info' :
+                                change.action === 'status_change' ? 'warning' :
+                                'default'
+                              }
+                              className="text-[10px] py-0 px-1"
+                            >
+                              {change.action}
+                            </Badge>
+                            <span className="text-xs text-text-secondary">
+                              {format(new Date(change.changedAt), 'dd/MM HH:mm')}
+                            </span>
+                          </div>
+                          <ChevronRight className="w-3 h-3 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>

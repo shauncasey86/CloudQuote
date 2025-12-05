@@ -340,7 +340,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .items-table th {
-            text-align: left;
+            text-align: center;
             padding: 4px 4px;
             background: #f9f9f9;
             font-weight: 600;
@@ -349,11 +349,6 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             letter-spacing: 0.03em;
             color: #52525b;
             border-bottom: 1px solid #e0e0e0;
-          }
-
-          .items-table th:last-child,
-          .items-table td:last-child {
-            text-align: right;
           }
 
           .items-table td {
@@ -591,11 +586,6 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           .change-history-list span {
             display: block;
           }
-
-          .footer-right {
-            text-align: right;
-            flex-shrink: 0;
-          }
         `}</style>
       </head>
       <body>
@@ -711,6 +701,9 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                     <td>
                       <span className="product-name" style={{ textTransform: 'uppercase' }}>
                         {item.productName}
+                        {!isProductionMode && item.isInAllowance && (
+                          <span className="allowance-badge">ALLOWANCE</span>
+                        )}
                       </span>
                       {item.productSku && (
                         <div className="product-sku">{item.productSku}</div>
@@ -820,14 +813,6 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                     </span>
                   )}
                 </div>
-              </div>
-              {/* Created By - Bottom Right */}
-              <div className="footer-right">
-                {quote.createdBy && (
-                  <p style={{ textTransform: 'uppercase', fontSize: '10px', color: '#52525b' }}>
-                    CREATED BY: {quote.createdBy.name?.toUpperCase()}
-                  </p>
-                )}
               </div>
             </div>
           </div>
