@@ -80,12 +80,17 @@ export function QuoteViewer({
               customerEmail: quote.customerEmail || '',
               customerPhone: quote.customerPhone || '',
               address: quote.address,
+              postcode: quote.postcode || '',
               houseTypeId: quote.houseTypeId || '',
+              frontal: quote.frontal || '',
+              handle: quote.handle || '',
+              worktop: quote.worktop || '',
               notes: quote.notes || '',
               internalNotes: quote.internalNotes || '',
             },
             items: quote.items,
             additionalCosts: quote.additionalCosts,
+            bespokeUpliftQty: quote.bespokeUpliftQty ?? 0,
             status: quote.status,
           }}
           products={products}
