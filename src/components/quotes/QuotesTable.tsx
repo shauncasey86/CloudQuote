@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useQueryClient } from '@tanstack/react-query';
+import { QUOTE_STATUS_VARIANTS } from '@/lib/constants';
 
 interface Quote {
   id: string;
@@ -47,15 +48,6 @@ interface QuotesTableProps {
   quotes: Quote[];
   isLoading?: boolean;
 }
-
-const statusVariants: Record<QuoteStatus, 'default' | 'warning' | 'info' | 'success' | 'danger'> = {
-  DRAFT: 'default',
-  FINALIZED: 'warning',
-  PRINTED: 'info',
-  SENT: 'success',
-  SAVED: 'info',
-  ARCHIVED: 'danger',
-};
 
 function ActionsDropdown({ quote }: { quote: Quote }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -260,7 +252,7 @@ export function QuotesTable({ quotes, isLoading }: QuotesTableProps) {
               {quote.address}
             </TableCell>
             <TableCell>
-              <Badge variant={statusVariants[quote.status]}>
+              <Badge variant={QUOTE_STATUS_VARIANTS[quote.status]}>
                 {quote.status}
               </Badge>
             </TableCell>
