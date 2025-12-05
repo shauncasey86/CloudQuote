@@ -235,27 +235,27 @@ export function QuoteViewer({
           {quote.status === 'DRAFT' && (
             <Link href={`/quotes/${quote.id}?edit=true`}>
               <Button size="sm">
-                <Edit className="w-3.5 h-3.5 mr-1.5" />
+                <Edit className="w-4 h-4 mr-2" />
                 Edit
               </Button>
             </Link>
           )}
-          <Button size="sm" onClick={() => window.open(`/print/quotes/${quote.id}`, '_blank')}>
-            <Printer className="w-3.5 h-3.5 mr-1.5" />
+          <Button size="sm" variant="secondary" onClick={() => window.open(`/print/quotes/${quote.id}`, '_blank')}>
+            <Printer className="w-4 h-4 mr-2" />
             Print
           </Button>
-          <Button size="sm" variant="secondary" onClick={() => handleComingSoon('Download PDF')}>
-            <Download className="w-3.5 h-3.5 mr-1.5" />
+          <Button size="sm" variant="ghost" onClick={() => handleComingSoon('Download PDF')}>
+            <Download className="w-4 h-4 mr-2" />
             PDF
           </Button>
           {(quote.status === 'FINALIZED' || quote.status === 'SENT') && (
             <Button size="sm" variant="ghost" onClick={() => handleComingSoon('Email Quote')}>
-              <Send className="w-3.5 h-3.5 mr-1.5" />
+              <Send className="w-4 h-4 mr-2" />
               {quote.status === 'SENT' ? 'Resend' : 'Email'}
             </Button>
           )}
           <Button size="sm" variant="ghost" onClick={handleDuplicate}>
-            <Copy className="w-3.5 h-3.5 mr-1.5" />
+            <Copy className="w-4 h-4 mr-2" />
             Copy
           </Button>
         </div>
