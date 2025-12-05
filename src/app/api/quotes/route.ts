@@ -62,6 +62,8 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search');
     const status = searchParams.get('status');
 
+    console.log('[Quotes API] GET request:', { page, limit, search, status });
+
     // Build status filter
     let statusFilter: Prisma.QuoteWhereInput['status'];
     if (status === 'all') {
@@ -86,6 +88,8 @@ export async function GET(request: NextRequest) {
       }),
     };
 
+    console.log('[Quotes API] Query where clause:', JSON.stringify(where, null, 2));
+
     const [quotes, total] = await Promise.all([
       prisma.quote.findMany({
         where,
@@ -101,6 +105,8 @@ export async function GET(request: NextRequest) {
       prisma.quote.count({ where }),
     ]);
 
+    console.log('[Quotes API] Results:', { found: quotes.length, total, page, limit });
+
     return NextResponse.json({
       data: quotes,
       meta: {
@@ -111,7 +117,11 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('GET /api/quotes error:', error);
+    console.error('[Quotes API] GET error:', error);
+    console.error('[Quotes API] Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -32,6 +32,8 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search');
     const activeOnly = searchParams.get('active') !== 'false';
 
+    console.log('[Products API] GET request:', { categoryId, search, activeOnly });
+
     const where: Prisma.ProductWhereInput = {
       ...(activeOnly && { active: true }),
       ...(categoryId && { categoryId }),
@@ -54,9 +56,15 @@ export async function GET(request: NextRequest) {
       orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
     });
 
+    console.log('[Products API] Results:', { found: products.length });
+
     return NextResponse.json({ data: products });
   } catch (error) {
-    console.error('GET /api/products error:', error);
+    console.error('[Products API] GET error:', error);
+    console.error('[Products API] Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
