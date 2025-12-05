@@ -45,7 +45,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           @media print {
             @page {
               size: A4;
-              margin: 15mm;
+              margin: 10mm;
             }
 
             *, *::before, *::after {
@@ -53,15 +53,11 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
               background-color: transparent !important;
             }
 
-            html {
-              background: white !important;
-              background-color: white !important;
-            }
-
-            body {
+            html, body {
               background: white !important;
               background-color: white !important;
               min-height: auto !important;
+              font-size: 11px !important;
             }
 
             .print-controls {
@@ -87,7 +83,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
               print-color-adjust: exact !important;
             }
 
-            .summary-section, .customer-section, .notes-section, .selections-grid {
+            .summary-section, .info-bar, .notes-section {
               background: #fafafa !important;
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
@@ -109,6 +105,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           body {
             font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #f5f5f5;
+            font-size: 12px;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
@@ -116,7 +113,7 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           .print-page {
             max-width: 210mm;
             margin: 20px auto;
-            padding: 20px;
+            padding: 16px;
             background: white;
             color: #18181b;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
@@ -132,14 +129,14 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .print-btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             background: #B19334;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             text-decoration: none;
@@ -151,14 +148,14 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .mode-btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             background: #18181b;
             color: #B19334;
             border: 2px solid #B19334;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             text-decoration: none;
@@ -171,14 +168,14 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .back-btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             background: #e4e4e7;
             color: #18181b;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             text-decoration: none;
@@ -193,13 +190,13 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            padding-bottom: 20px;
-            border-bottom: 3px solid #B19334;
-            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #B19334;
+            margin-bottom: 12px;
           }
 
           .logo-section h1 {
-            font-size: 32px;
+            font-size: 24px;
             font-weight: 700;
             color: #B19334;
             margin: 0;
@@ -208,9 +205,9 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .logo-section p {
-            font-size: 12px;
+            font-size: 10px;
             color: #71717a;
-            margin: 4px 0 0 0;
+            margin: 2px 0 0 0;
           }
 
           .quote-number-section {
@@ -218,26 +215,26 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .quote-number {
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 700;
             color: #18181b;
             margin: 0;
           }
 
           .quote-date {
-            font-size: 12px;
+            font-size: 10px;
             color: #71717a;
-            margin: 4px 0 0 0;
+            margin: 2px 0 0 0;
           }
 
           .status-badge {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 2px 8px;
             border-radius: 9999px;
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 600;
             text-transform: uppercase;
-            margin-top: 8px;
+            margin-top: 4px;
           }
 
           .status-DRAFT { background: #e4e4e7; color: #52525b; }
@@ -246,54 +243,64 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           .status-SAVED { background: #dbeafe; color: #1e40af; }
           .status-ARCHIVED { background: #fee2e2; color: #991b1b; }
 
-          .customer-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-            padding: 16px;
+          .info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 12px;
+            padding: 10px 12px;
             background: #fafafa;
-            border-radius: 8px;
+            border-radius: 6px;
+            font-size: 11px;
           }
 
-          .customer-info h3, .address-info h3 {
-            font-size: 11px;
+          .info-block {
+            flex: 1;
+          }
+
+          .info-block.address-block {
+            flex: 1.5;
+          }
+
+          .info-label {
+            font-size: 9px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: #71717a;
-            margin: 0 0 8px 0;
+            margin-bottom: 2px;
           }
 
-          .customer-info p, .address-info p {
-            margin: 4px 0;
-            font-size: 14px;
+          .info-value {
             color: #18181b;
+            font-weight: 500;
+            line-height: 1.3;
           }
 
-          .customer-info strong, .address-info strong {
-            font-size: 16px;
+          .info-value.name {
+            font-size: 13px;
+            font-weight: 600;
           }
 
-          .selections-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-            padding: 12px;
+          .selections-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            padding: 8px 12px;
             background: #f9f9f9;
-            border-radius: 6px;
+            border-radius: 4px;
+            font-size: 11px;
           }
 
           .selection-item {
-            text-align: center;
+            display: flex;
+            gap: 6px;
           }
 
           .selection-label {
-            font-size: 10px;
+            font-size: 9px;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
             color: #71717a;
-            margin-bottom: 4px;
           }
 
           .selection-value {
@@ -303,32 +310,33 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .items-section {
-            margin-bottom: 24px;
+            margin-bottom: 12px;
           }
 
           .section-title {
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 600;
             color: #18181b;
-            margin: 0 0 12px 0;
-            padding-bottom: 8px;
+            margin: 0 0 6px 0;
+            padding-bottom: 4px;
             border-bottom: 1px solid #e4e4e7;
+            text-transform: uppercase;
           }
 
           .items-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 11px;
           }
 
           .items-table th {
             text-align: left;
-            padding: 6px 8px;
+            padding: 4px 6px;
             background: #f4f4f5;
             font-weight: 600;
-            font-size: 11px;
+            font-size: 9px;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.03em;
             color: #52525b;
           }
 
@@ -338,8 +346,8 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .items-table td {
-            padding: 6px 8px;
-            border-bottom: 1px solid #e4e4e7;
+            padding: 4px 6px;
+            border-bottom: 1px solid #f4f4f5;
             vertical-align: top;
           }
 
@@ -353,16 +361,16 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .product-sku {
-            font-size: 11px;
-            color: #71717a;
+            font-size: 9px;
+            color: #a1a1aa;
             font-family: 'JetBrains Mono', monospace;
           }
 
           .product-notes {
-            font-size: 12px;
+            font-size: 10px;
             color: #71717a;
             font-style: italic;
-            margin-top: 4px;
+            margin-top: 2px;
           }
 
           .quantity-info {
@@ -374,15 +382,25 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             font-weight: 600;
           }
 
+          .allowance-badge {
+            font-size: 8px;
+            padding: 1px 4px;
+            background: #d1fae5;
+            color: #065f46;
+            border-radius: 3px;
+            margin-left: 4px;
+          }
+
           .additional-costs {
-            margin-bottom: 24px;
+            margin-bottom: 12px;
           }
 
           .cost-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 8px;
-            border-bottom: 1px solid #e4e4e7;
+            padding: 4px 6px;
+            border-bottom: 1px solid #f4f4f5;
+            font-size: 11px;
           }
 
           .cost-row:last-child {
@@ -392,15 +410,15 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           .cost-description {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
           }
 
           .vat-tag {
-            font-size: 10px;
-            padding: 2px 6px;
+            font-size: 8px;
+            padding: 1px 4px;
             background: #dbeafe;
             color: #1e40af;
-            border-radius: 4px;
+            border-radius: 3px;
           }
 
           .cost-amount {
@@ -409,23 +427,24 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .summary-section {
-            margin-top: 24px;
-            padding: 16px;
+            margin-top: 12px;
+            padding: 10px 12px;
             background: #fafafa;
-            border-radius: 8px;
+            border-radius: 6px;
           }
 
           .summary-row {
             display: flex;
             justify-content: space-between;
-            padding: 6px 0;
+            padding: 3px 0;
+            font-size: 11px;
           }
 
           .summary-row.total {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 700;
-            padding-top: 12px;
-            margin-top: 8px;
+            padding-top: 8px;
+            margin-top: 6px;
             border-top: 2px solid #B19334;
           }
 
@@ -444,60 +463,61 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           }
 
           .notes-section {
-            margin-top: 24px;
-            padding: 16px;
+            margin-top: 12px;
+            padding: 8px 12px;
             background: #fafafa;
-            border-radius: 8px;
+            border-radius: 6px;
           }
 
           .notes-section h3 {
-            font-size: 12px;
+            font-size: 9px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: #71717a;
-            margin: 0 0 8px 0;
+            margin: 0 0 4px 0;
           }
 
           .notes-section p {
-            font-size: 13px;
+            font-size: 11px;
             color: #18181b;
             margin: 0;
             white-space: pre-line;
           }
 
           .footer {
-            margin-top: 32px;
-            padding-top: 16px;
+            margin-top: 16px;
+            padding-top: 10px;
             border-top: 1px solid #e4e4e7;
             text-align: center;
           }
 
           .footer p {
-            font-size: 11px;
+            font-size: 9px;
             color: #71717a;
-            margin: 4px 0;
+            margin: 2px 0;
           }
 
           .validity {
             display: inline-block;
-            padding: 8px 16px;
+            padding: 4px 10px;
             background: #fef3c7;
-            border-radius: 6px;
-            font-size: 12px;
+            border-radius: 4px;
+            font-size: 10px;
             color: #92400e;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
           }
 
           .production-header {
             background: #18181b;
             color: #B19334;
-            padding: 8px 16px;
-            border-radius: 6px;
+            padding: 6px 12px;
+            border-radius: 4px;
             text-align: center;
             font-weight: 700;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
           }
         `}</style>
       </head>
@@ -533,71 +553,78 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           <div className="header">
             <div className="logo-section">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/wi-logo.svg" alt="WI Logo" style={{ height: '60px', marginBottom: '8px' }} />
+              <img src="/wi-logo.svg" alt="WI Logo" style={{ height: '48px', marginBottom: '4px' }} />
               <p style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 {isProductionMode ? 'PRODUCTION SPECIFICATION' : 'KITCHEN INSTALLATION QUOTATION'}
               </p>
             </div>
             <div className="quote-number-section">
               <p className="quote-number" style={{ textTransform: 'uppercase' }}>#{quote.quoteNumber}</p>
-              <p className="quote-date" style={{ textTransform: 'uppercase' }}>{format(new Date(quote.createdAt), 'dd MMMM yyyy').toUpperCase()}</p>
+              <p className="quote-date" style={{ textTransform: 'uppercase' }}>{format(new Date(quote.createdAt), 'dd MMM yyyy').toUpperCase()}</p>
               <span className={`status-badge status-${quote.status}`}>
                 {quote.status}
               </span>
             </div>
           </div>
 
-          {/* Customer Information */}
-          <div className="customer-section">
-            <div className="customer-info">
-              <h3>CUSTOMER DETAILS</h3>
-              <p><strong style={{ textTransform: 'uppercase' }}>{quote.customerName}</strong></p>
-              {quote.customerEmail && <p>📧 {quote.customerEmail}</p>}
-              {quote.customerPhone && <p>📞 {quote.customerPhone}</p>}
+          {/* Compact Customer & Address Info Bar */}
+          <div className="info-bar">
+            <div className="info-block">
+              <div className="info-label">CUSTOMER</div>
+              <div className="info-value name" style={{ textTransform: 'uppercase' }}>{quote.customerName}</div>
+              {quote.customerPhone && <div className="info-value">📞 {quote.customerPhone}</div>}
+              {quote.customerEmail && <div className="info-value" style={{ fontSize: '10px' }}>📧 {quote.customerEmail}</div>}
             </div>
-            <div className="address-info">
-              <h3>INSTALLATION ADDRESS</h3>
-              <p style={{ whiteSpace: 'pre-line', textTransform: 'uppercase' }}>{quote.address}</p>
-              {quote.houseType && (
-                <p style={{ marginTop: '8px', fontSize: '12px', color: '#71717a', textTransform: 'uppercase' }}>
-                  HOUSE TYPE: {quote.houseType.name.toUpperCase()}
-                  {!isProductionMode && ` (ALLOWANCE: £${Number(quote.houseType.allowance).toFixed(2)})`}
-                </p>
+            <div className="info-block address-block">
+              <div className="info-label">INSTALLATION ADDRESS</div>
+              <div className="info-value" style={{ textTransform: 'uppercase' }}>
+                {quote.address}{quote.postcode ? `, ${quote.postcode}` : ''}
+              </div>
+            </div>
+            <div className="info-block">
+              <div className="info-label">HOUSE TYPE</div>
+              <div className="info-value" style={{ textTransform: 'uppercase' }}>
+                {quote.houseType ? quote.houseType.name.toUpperCase() : 'NOT SET'}
+              </div>
+              {!isProductionMode && quote.houseType && (
+                <div className="info-value" style={{ fontSize: '10px', color: '#B19334' }}>
+                  ALLOWANCE: £{Number(quote.houseType.allowance).toFixed(2)}
+                </div>
               )}
             </div>
           </div>
 
-          {/* Selections - Frontal, Handle, Worktop */}
+          {/* Compact Selections Row */}
           {((quote as any).frontal || (quote as any).handle || (quote as any).worktop) && (
-            <div className="selections-grid">
+            <div className="selections-row">
               <div className="selection-item">
-                <div className="selection-label">FRONTAL</div>
-                <div className="selection-value">{(quote as any).frontal || 'NOT SELECTED'}</div>
+                <span className="selection-label">FRONTAL:</span>
+                <span className="selection-value">{(quote as any).frontal || '—'}</span>
               </div>
               <div className="selection-item">
-                <div className="selection-label">HANDLE</div>
-                <div className="selection-value">{(quote as any).handle || 'NOT SELECTED'}</div>
+                <span className="selection-label">HANDLE:</span>
+                <span className="selection-value">{(quote as any).handle || '—'}</span>
               </div>
               <div className="selection-item">
-                <div className="selection-label">WORKTOP</div>
-                <div className="selection-value">{(quote as any).worktop || 'NOT SELECTED'}</div>
+                <span className="selection-label">WORKTOP:</span>
+                <span className="selection-value">{(quote as any).worktop || '—'}</span>
               </div>
             </div>
           )}
 
           {/* Quote Items */}
           <div className="items-section">
-            <h2 className="section-title" style={{ textTransform: 'uppercase' }}>
+            <h2 className="section-title">
               {isProductionMode ? 'PRODUCTION ITEMS' : 'QUOTE ITEMS'} ({quote.items.length})
             </h2>
             <table className="items-table">
               <thead>
                 <tr>
-                  <th style={{ width: isProductionMode ? '60%' : '45%' }}>PRODUCT</th>
-                  <th style={{ width: isProductionMode ? '40%' : '20%' }}>QUANTITY</th>
+                  <th style={{ width: isProductionMode ? '55%' : '40%' }}>PRODUCT</th>
+                  <th style={{ width: isProductionMode ? '45%' : '20%' }}>QTY</th>
                   {!isProductionMode && (
                     <>
-                      <th style={{ width: '15%' }}>UNIT PRICE</th>
+                      <th style={{ width: '20%' }}>UNIT</th>
                       <th style={{ width: '20%' }}>TOTAL</th>
                     </>
                   )}
@@ -607,7 +634,12 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                 {quote.items.map((item: any) => (
                   <tr key={item.id}>
                     <td>
-                      <div className="product-name" style={{ textTransform: 'uppercase' }}>{item.productName}</div>
+                      <span className="product-name" style={{ textTransform: 'uppercase' }}>
+                        {item.productName}
+                      </span>
+                      {item.isInAllowance && !isProductionMode && (
+                        <span className="allowance-badge">IN ALLOWANCE</span>
+                      )}
                       {item.productSku && (
                         <div className="product-sku">{item.productSku}</div>
                       )}
@@ -617,16 +649,16 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                     </td>
                     <td className="quantity-info">
                       {Number(item.quantity)}{' '}
-                      {item.priceUnit === 'LINEAR_METER' ? 'METER(S)' :
-                       item.priceUnit === 'SQUARE_METER' ? 'M²' : 'UNIT(S)'}
+                      {item.priceUnit === 'LINEAR_METER' ? 'M' :
+                       item.priceUnit === 'SQUARE_METER' ? 'M²' : 'UNIT'}
                     </td>
                     {!isProductionMode && (
                       <>
                         <td style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                          £{Number(item.unitPrice).toFixed(2)}
+                          {item.isInAllowance ? '£0.00' : `£${Number(item.unitPrice).toFixed(2)}`}
                         </td>
                         <td className="line-total">
-                          £{Number(item.lineTotal).toFixed(2)}
+                          {item.isInAllowance ? '£0.00' : `£${Number(item.lineTotal).toFixed(2)}`}
                         </td>
                       </>
                     )}
@@ -636,10 +668,10 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
             </table>
           </div>
 
-          {/* Additional Costs - Only show in quote mode */}
-          {!isProductionMode && quote.additionalCosts.length > 0 && (
+          {/* Additional Costs & Bespoke Uplift - Only show in quote mode */}
+          {!isProductionMode && (quote.additionalCosts.length > 0 || (quote.bespokeUpliftQty > 0)) && (
             <div className="additional-costs">
-              <h2 className="section-title" style={{ textTransform: 'uppercase' }}>ADDITIONAL COSTS</h2>
+              <h2 className="section-title">ADDITIONAL COSTS</h2>
               {quote.additionalCosts.map((cost: any) => (
                 <div key={cost.id} className="cost-row">
                   <div className="cost-description">
@@ -649,6 +681,14 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                   <span className="cost-amount">£{Number(cost.amount).toFixed(2)}</span>
                 </div>
               ))}
+              {quote.bespokeUpliftQty > 0 && (
+                <div className="cost-row">
+                  <div className="cost-description">
+                    <span style={{ textTransform: 'uppercase' }}>BESPOKE UPLIFT COST × {quote.bespokeUpliftQty}</span>
+                  </div>
+                  <span className="cost-amount">£{(quote.bespokeUpliftQty * 30).toFixed(2)}</span>
+                </div>
+              )}
             </div>
           )}
 
