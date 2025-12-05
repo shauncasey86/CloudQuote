@@ -591,11 +591,6 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
           .change-history-list span {
             display: block;
           }
-
-          .footer-right {
-            text-align: right;
-            flex-shrink: 0;
-          }
         `}</style>
       </head>
       <body>
@@ -820,14 +815,6 @@ export default async function QuotePrintPage({ params, searchParams }: Props) {
                     </span>
                   )}
                 </div>
-              </div>
-              {/* Created By - Bottom Right */}
-              <div className="footer-right">
-                {quote.createdBy && (
-                  <p style={{ textTransform: 'uppercase', fontSize: '10px', color: '#52525b' }}>
-                    CREATED BY: {quote.createdBy.name?.toUpperCase()}
-                  </p>
-                )}
               </div>
             </div>
           </div>
