@@ -391,6 +391,19 @@ export function QuoteViewer({
                     House Type: <span className="font-medium text-text-primary">{quote.houseType.name}</span> (Allowance: £{Number(quote.houseType.allowance).toFixed(2)})
                   </div>
                 )}
+                {(quote.frontal || quote.handle || quote.worktop) && (
+                  <div className="col-span-2 flex flex-wrap gap-4 text-xs text-text-secondary">
+                    {quote.frontal && (
+                      <span>Frontal: <span className="font-medium text-text-primary uppercase">{quote.frontal}</span></span>
+                    )}
+                    {quote.handle && (
+                      <span>Handle: <span className="font-medium text-text-primary uppercase">{quote.handle}</span></span>
+                    )}
+                    {quote.worktop && (
+                      <span>Worktop: <span className="font-medium text-text-primary uppercase">{quote.worktop}</span></span>
+                    )}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
