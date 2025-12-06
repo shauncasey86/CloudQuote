@@ -548,6 +548,12 @@
   .text-gold { color: var(--color-accent); }
   .text-gold-light { color: var(--color-accent); }
 
+  /* Semantic text colors */
+  .text-success { color: var(--color-success); }
+  .text-danger { color: var(--color-danger); }
+  .text-warning { color: var(--color-warning); }
+  .text-info { color: var(--color-info); }
+
   /* Border colors */
   .border-border-subtle { border-color: var(--border-subtle); }
   .border-border-default { border-color: var(--border-default); }

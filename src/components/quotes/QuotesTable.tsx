@@ -113,12 +113,20 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
     setIsOpen(false);
   };
 
+  const [deleteConfirmStep, setDeleteConfirmStep] = useState(0);
+
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!confirm('Are you sure you want to delete this quote? This cannot be undone.')) {
-      setIsOpen(false);
+
+    // First click - show warning
+    if (deleteConfirmStep === 0) {
+      setDeleteConfirmStep(1);
+      // Reset after 3 seconds if not confirmed
+      setTimeout(() => setDeleteConfirmStep(0), 3000);
       return;
     }
+
+    // Second click - confirm delete
     try {
       const res = await fetch(`/api/quotes/${quote.id}`, { method: 'DELETE' });
       if (!res.ok) {
@@ -126,6 +134,7 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
         const message = data.error || 'Failed to delete quote';
         alert(message);
         setIsOpen(false);
+        setDeleteConfirmStep(0);
         return;
       }
       queryClient.invalidateQueries({ queryKey: ['quotes'] });
@@ -135,6 +144,7 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
       alert('Failed to delete quote. Please try again.');
     }
     setIsOpen(false);
+    setDeleteConfirmStep(0);
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -178,11 +188,15 @@ function ActionsDropdown({ quote }: { quote: Quote }) {
         )}
         <button
           type="button"
-          className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2 transition-colors uppercase"
+          className={`w-full px-4 py-2 text-left text-sm flex items-center gap-2 transition-all uppercase ${
+            deleteConfirmStep === 1
+              ? 'bg-red-600 text-white font-bold'
+              : 'text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20'
+          }`}
           onClick={handleDelete}
         >
           <Trash2 className="w-4 h-4" />
-          DELETE
+          {deleteConfirmStep === 1 ? 'CLICK AGAIN TO CONFIRM' : 'DELETE'}
         </button>
       </div>
     </>,

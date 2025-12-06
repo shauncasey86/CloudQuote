@@ -12,6 +12,7 @@ import { useAutosave } from '@/hooks/useAutosave';
 import { calculateQuoteTotal } from '@/lib/pricing';
 import { Product, ProductCategory, HouseType, QuoteStatus } from '@prisma/client';
 import { toast } from '@/lib/toast';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface QuoteEditorProps {
   quoteId?: string;
@@ -396,10 +397,80 @@ export function QuoteEditor({
     window.open(`/print/quotes/${quoteId}`, '_blank');
   };
 
+  // Status border class mapping
+  const statusBorderClass = {
+    [QuoteStatus.DRAFT]: 'border-t-4 border-t-zinc-400',
+    [QuoteStatus.FINALIZED]: 'border-t-4 border-t-blue-500',
+    [QuoteStatus.SENT]: 'border-t-4 border-t-emerald-600',
+    [QuoteStatus.SAVED]: 'border-t-4 border-t-zinc-900 dark:border-t-zinc-100',
+    [QuoteStatus.ARCHIVED]: 'border-t-4 border-t-zinc-300',
+  }[quoteState.status] || 'border-t-4 border-t-zinc-400';
+
+  // State for customer info collapse
+  const [customerInfoExpanded, setCustomerInfoExpanded] = React.useState(true);
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Main Content */}
-      <div className="lg:col-span-2 space-y-6">
+    <div className={`${statusBorderClass} bg-bg-surface rounded-lg`}>
+      {/* Persistent Sticky Header - Quote #, Customer, Running Total */}
+      <div className="sticky top-14 z-20 bg-bg-surface border-b border-border-default px-4 py-3">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-6">
+            <div>
+              <span className="text-xs text-text-muted uppercase tracking-wide">Quote</span>
+              <p className="font-mono font-bold text-lg text-text-primary">
+                {quoteState.customerInfo.quoteNumber || '—'}
+              </p>
+            </div>
+            <div className="border-l border-border-subtle pl-6">
+              <span className="text-xs text-text-muted uppercase tracking-wide">Customer</span>
+              <p className="font-semibold text-text-primary truncate max-w-[200px]">
+                {quoteState.customerInfo.customerName || '—'}
+              </p>
+            </div>
+          </div>
+          <div className="text-right">
+            <span className="text-xs text-text-muted uppercase tracking-wide">Total</span>
+            <p className="font-mono font-bold text-xl text-money">
+              £{totals.total.toFixed(2)}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Customer Info - Collapsible Header Section */}
+      <div className="border-b border-border-subtle">
+        <button
+          type="button"
+          onClick={() => setCustomerInfoExpanded(!customerInfoExpanded)}
+          className="w-full px-4 py-3 flex items-center justify-between hover:bg-bg-canvas transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-text-primary">Customer Details</span>
+            {!customerInfoExpanded && quoteState.customerInfo.address && (
+              <span className="text-sm text-text-muted ml-2">
+                {quoteState.customerInfo.address.split('\n')[0]}
+              </span>
+            )}
+          </div>
+          {customerInfoExpanded ? (
+            <ChevronUp className="w-5 h-5 text-text-muted" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-text-muted" />
+          )}
+        </button>
+        {customerInfoExpanded && (
+          <div className="px-4 pb-4">
+            <CustomerInfoSection
+              defaultValues={quoteState.customerInfo}
+              houseTypes={houseTypes}
+              onSubmit={handleCustomerInfoSubmit}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Main Content Area */}
+      <div className="p-4 space-y-6">
         <ProductSelector
           products={products}
           categories={categories}
@@ -409,6 +480,7 @@ export function QuoteEditor({
         <QuoteItemsTable
           items={quoteState.items}
           onUpdateQuantity={handleUpdateQuantity}
+          onUpdateAllowance={handleUpdateAllowance}
           onRemoveItem={handleRemoveItem}
         />
 
@@ -422,15 +494,8 @@ export function QuoteEditor({
         />
       </div>
 
-      {/* Sidebar */}
-      <div className="lg:col-span-1 space-y-4">
-        <CustomerInfoSection
-          defaultValues={quoteState.customerInfo}
-          houseTypes={houseTypes}
-          onSubmit={handleCustomerInfoSubmit}
-          compact
-        />
-
+      {/* Summary Footer - Fixed at bottom of editor */}
+      <div className="border-t border-border-default p-4">
         <QuoteSummary
           subtotal={totals.subtotal}
           vatRate={20}
