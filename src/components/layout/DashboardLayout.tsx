@@ -40,12 +40,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   return (
     <SessionProvider>
       <SidebarContext.Provider value={sidebarContextValue}>
-        <div className="min-h-screen bg-bg-base relative">
+        <div className="min-h-screen bg-bg-base">
           <Sidebar />
           <Header />
-          {/* Account for floating sidebar: left-4 + w-64 + gap = 272px + 16px = 288px */}
-          <main className="ml-0 md:ml-[288px] pt-16 min-h-screen">
-            <div className="p-4 md:p-8">
+          {/* Sidebar width: w-56 = 224px (14rem) */}
+          <main className="ml-0 md:ml-56 pt-14 min-h-screen">
+            <div className="p-4 md:p-6">
               {children}
             </div>
           </main>
