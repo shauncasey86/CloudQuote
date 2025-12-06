@@ -1,14 +1,19 @@
+/* Load Sansation from Google Fonts (not yet available in next/font/google) */
+@import url('https://fonts.googleapis.com/css2?family=Sansation:wght@300;400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Fonts:
-   Headers: Outfit Bold/ExtraBold - geometric, modern, architectural
-   Body: Sansation Regular - humanist sans-serif with futuristic feel
-   Mono: JetBrains Mono - for prices and IDs
-
-   Loaded via next/font in layout.tsx
+   Headers: Outfit Bold/ExtraBold - geometric, modern, architectural (via next/font)
+   Body: Sansation Regular - humanist sans-serif with futuristic feel (via @import)
+   Mono: JetBrains Mono - for prices and IDs (via next/font)
 */
+
+:root {
+  --font-body: 'Sansation', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
 
 @layer base {
   /* Light Theme (Default) - Architectural Matte */

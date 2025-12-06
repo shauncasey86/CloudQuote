@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Outfit, Sansation, JetBrains_Mono } from 'next/font/google';
+import { Outfit, JetBrains_Mono } from 'next/font/google';
 import '@/styles/globals.css';
 import { ReactQueryProvider } from '@/components/providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
@@ -13,14 +13,6 @@ const outfit = Outfit({
   display: 'swap',
 });
 
-// Body font - Sansation - humanist sans-serif with futuristic feel
-const sansation = Sansation({
-  subsets: ['latin'],
-  weight: ['300', '400', '700'],
-  variable: '--font-body',
-  display: 'swap',
-});
-
 // Monospace font - JetBrains Mono - for prices and IDs
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -28,6 +20,9 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-mono',
   display: 'swap',
 });
+
+// Note: Sansation is loaded via CSS @import in globals.css
+// because it's not yet available in next/font/google
 
 export const metadata: Metadata = {
   title: 'CloudQuote - Kitchen Quoting System',
@@ -43,7 +38,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${outfit.variable} ${sansation.variable} ${jetbrainsMono.variable}`}
+      className={`${outfit.variable} ${jetbrainsMono.variable}`}
     >
       <body>
         <ThemeProvider>
