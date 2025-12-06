@@ -401,6 +401,7 @@ export function QuoteEditor({
   const statusBorderClass = {
     [QuoteStatus.DRAFT]: 'border-t-4 border-t-zinc-400',
     [QuoteStatus.FINALIZED]: 'border-t-4 border-t-blue-500',
+    [QuoteStatus.PRINTED]: 'border-t-4 border-t-violet-500',
     [QuoteStatus.SENT]: 'border-t-4 border-t-emerald-600',
     [QuoteStatus.SAVED]: 'border-t-4 border-t-zinc-900 dark:border-t-zinc-100',
     [QuoteStatus.ARCHIVED]: 'border-t-4 border-t-zinc-300',
