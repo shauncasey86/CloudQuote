@@ -1,22 +1,22 @@
 import type { Metadata } from 'next';
-import { Cormorant_Garamond, Work_Sans, JetBrains_Mono } from 'next/font/google';
+import { Outfit, Sansation, JetBrains_Mono } from 'next/font/google';
 import '@/styles/globals.css';
 import { ReactQueryProvider } from '@/components/providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { Toaster } from 'sonner';
 
-// Header font - Cormorant Garamond Semi-Bold 600 - elegant, sophisticated serif
-const cormorantGaramond = Cormorant_Garamond({
+// Header font - Outfit Bold - geometric, modern, architectural
+const outfit = Outfit({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '500', '600', '700', '800'],
   variable: '--font-header',
   display: 'swap',
 });
 
-// Body font - Work Sans - clean, professional geometric sans-serif
-const workSans = Work_Sans({
+// Body font - Sansation - humanist sans-serif with futuristic feel
+const sansation = Sansation({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['300', '400', '700'],
   variable: '--font-body',
   display: 'swap',
 });
@@ -43,7 +43,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${cormorantGaramond.variable} ${workSans.variable} ${jetbrainsMono.variable}`}
+      className={`${outfit.variable} ${sansation.variable} ${jetbrainsMono.variable}`}
     >
       <body>
         <ThemeProvider>

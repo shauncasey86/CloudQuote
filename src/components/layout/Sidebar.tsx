@@ -76,109 +76,108 @@ export const Sidebar: React.FC = () => {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 md:hidden"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
       )}
 
+      {/* Floating Dock Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-0 h-screen w-64 bg-bg-canvas/95 backdrop-blur-xl border-r border-border-glass flex flex-col z-40 transition-transform duration-300',
+          'fixed left-4 top-4 bottom-4 w-64 bg-bg-surface border border-border-subtle rounded-2xl flex flex-col z-40 transition-all duration-300',
+          'shadow-float',
           'md:translate-x-0',
-          isOpen ? 'translate-x-0' : '-translate-x-full'
+          isOpen ? 'translate-x-0' : '-translate-x-[calc(100%+2rem)]'
         )}
       >
         {/* Mobile close button */}
         <button
           onClick={() => setIsOpen(false)}
-          className="absolute top-4 right-4 p-2 rounded-xl bg-bg-elevated hover:bg-bg-surface border border-border-subtle transition-all md:hidden"
+          className="absolute top-4 right-4 p-2 rounded-xl bg-bg-canvas hover:bg-bg-elevated border border-border-subtle transition-all md:hidden"
           aria-label="Close menu"
         >
           <X className="w-5 h-5 text-text-primary" />
         </button>
 
         {/* Logo */}
-        <div className="p-6">
+        <div className="p-6 pb-4">
           <Link href="/quotes" className="flex flex-col items-center text-center group" onClick={handleLinkClick}>
             <Image
               src="/wi-logo.svg"
               alt="Wilson Interiors"
-              width={160}
-              height={48}
-              className="w-40 h-auto mb-3 group-hover:opacity-90 transition-opacity"
+              width={140}
+              height={42}
+              className="w-36 h-auto mb-3 group-hover:opacity-80 transition-opacity"
             />
-            <span className="text-lg font-bold text-gradient leading-tight font-header tracking-wider">
-              CLOUDQUOTE
+            <span className="text-lg font-semibold text-gradient leading-tight font-header tracking-tight">
+              CloudQuote
             </span>
           </Link>
         </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-4">
-        <div className="text-xs font-header text-text-muted tracking-wider px-4 mb-3">
-          MENU
-        </div>
-        <div className="space-y-1">
-          {navItems.map((item) => {
-            // During loading, show all items (including admin items with loading state)
-            // After loading, hide admin-only items from non-admins
-            if (item.adminOnly && !isLoading && !isAdmin) {
-              return null;
-            }
+        {/* Navigation */}
+        <nav className="flex-1 px-3 py-2">
+          <div className="text-xs font-semibold text-text-muted tracking-wide px-4 mb-3 uppercase">
+            Menu
+          </div>
+          <div className="space-y-1">
+            {navItems.map((item) => {
+              // During loading, show all items (including admin items with loading state)
+              // After loading, hide admin-only items from non-admins
+              if (item.adminOnly && !isLoading && !isAdmin) {
+                return null;
+              }
 
-            const Icon = item.icon;
-            const isActive = pathname === item.href ||
-              (item.href !== '/settings' && pathname.startsWith(item.href));
+              const Icon = item.icon;
+              const isActive = pathname === item.href ||
+                (item.href !== '/settings' && pathname.startsWith(item.href));
 
-            // Show loading skeleton for admin items while session is loading
-            if (item.adminOnly && isLoading) {
+              // Show loading skeleton for admin items while session is loading
+              if (item.adminOnly && isLoading) {
+                return (
+                  <div
+                    key={item.href}
+                    className="nav-item group opacity-50"
+                  >
+                    <Icon className="w-5 h-5 text-text-muted" />
+                    <span className="text-sm font-medium">{item.label}</span>
+                  </div>
+                );
+              }
+
               return (
-                <div
+                <Link
                   key={item.href}
-                  className="nav-item group opacity-50"
+                  href={item.href}
+                  onClick={handleLinkClick}
+                  className={cn(
+                    'nav-item group',
+                    isActive && 'active'
+                  )}
                 >
-                  <Icon className="w-5 h-5 text-text-muted" />
-                  <span className="font-header text-sm tracking-wide">{item.label.toUpperCase()}</span>
-                </div>
+                  <Icon className={cn(
+                    "w-5 h-5 transition-colors",
+                    isActive ? "text-white" : "text-text-muted group-hover:text-primary"
+                  )} />
+                  <span className="text-sm font-medium">{item.label}</span>
+                </Link>
               );
-            }
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={handleLinkClick}
-                className={cn(
-                  'nav-item group',
-                  isActive && 'active'
-                )}
-              >
-                <Icon className={cn(
-                  "w-5 h-5 transition-colors",
-                  isActive ? "text-[#212533]" : "text-text-muted group-hover:text-gold"
-                )} />
-                <span className="font-header text-sm tracking-wide">{item.label.toUpperCase()}</span>
-                {isActive && (
-                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#212533]/80" />
-                )}
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
-
-      {/* Footer */}
-      <div className="p-4 mx-3 mb-3 rounded-xl bg-gradient-to-br from-[#B19334]/10 to-[#BB9E6C]/10 border border-[#B19334]/20">
-        <div className="flex items-center justify-between">
-          <div className="text-xs text-text-muted">
-            Created by Shaun Casey
+            })}
           </div>
-          <div className="text-xs text-text-muted">
-            v1.0.0
+        </nav>
+
+        {/* Footer */}
+        <div className="p-4 mx-3 mb-3 rounded-xl bg-bg-canvas border border-border-subtle">
+          <div className="flex items-center justify-between">
+            <div className="text-xs text-text-muted">
+              Created by Shaun Casey
+            </div>
+            <div className="text-xs text-text-muted">
+              v1.0.0
+            </div>
           </div>
         </div>
-      </div>
       </aside>
     </>
   );
