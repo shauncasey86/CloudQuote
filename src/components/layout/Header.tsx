@@ -93,11 +93,11 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 md:left-64 right-0 h-16 bg-bg-base/80 backdrop-blur-xl border-b border-border-glass flex items-center justify-between px-4 md:px-6 z-30">
+    <header className="fixed top-0 left-0 md:left-[288px] right-0 h-16 bg-bg-base border-b border-border-subtle flex items-center justify-between px-4 md:px-6 z-30">
       {/* Mobile Menu Button */}
       <button
         onClick={toggleSidebar}
-        className="md:hidden p-2 rounded-xl bg-bg-elevated hover:bg-bg-surface border border-border-subtle transition-all mr-3"
+        className="md:hidden p-2 rounded-xl bg-bg-canvas hover:bg-bg-surface border border-border-subtle transition-all mr-3"
         aria-label="Toggle menu"
       >
         <Menu className="w-5 h-5 text-text-primary" />
@@ -114,7 +114,7 @@ export const Header: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
             aria-label="Search quotes and customers"
-            className="w-full pl-10 pr-4 py-2.5 bg-bg-elevated border border-border-subtle rounded-xl text-sm focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-all placeholder:text-text-muted"
+            className="w-full pl-10 pr-4 py-2.5 bg-bg-input border-2 border-transparent rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-text-muted"
           />
         </div>
       </form>
@@ -124,28 +124,28 @@ export const Header: React.FC = () => {
         {/* Theme Toggle */}
         <button
           onClick={toggleTheme}
-          className="p-2.5 rounded-xl bg-bg-elevated hover:bg-bg-surface border border-border-subtle transition-all"
+          className="p-2.5 rounded-xl bg-bg-canvas hover:bg-bg-surface border border-border-subtle transition-all"
           aria-label="Toggle theme"
         >
-          {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-violet-400" />}
+          {theme === 'dark' ? <Sun className="w-5 h-5 text-warning" /> : <Moon className="w-5 h-5 text-primary" />}
         </button>
 
         {/* User Menu */}
-        <div className="relative pl-3 ml-3 border-l border-border-glass" ref={menuRef}>
+        <div className="relative pl-3 ml-3 border-l border-border-subtle" ref={menuRef}>
           {isLoading ? (
             /* Loading skeleton */
             <div className="flex items-center gap-3 p-1.5 pr-3">
-              <div className="w-9 h-9 rounded-xl bg-bg-elevated animate-pulse" />
+              <div className="w-9 h-9 rounded-xl bg-bg-canvas animate-pulse" />
               <div className="hidden sm:block space-y-1.5">
-                <div className="w-20 h-3 bg-bg-elevated rounded animate-pulse" />
-                <div className="w-12 h-2.5 bg-bg-elevated rounded animate-pulse" />
+                <div className="w-20 h-3 bg-bg-canvas rounded animate-pulse" />
+                <div className="w-12 h-2.5 bg-bg-canvas rounded animate-pulse" />
               </div>
             </div>
           ) : session ? (
             <>
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-3 p-1.5 pr-3 rounded-xl hover:bg-bg-elevated transition-all focus:outline-none focus:ring-2 focus:ring-gold/50"
+                className="flex items-center gap-3 p-1.5 pr-3 rounded-xl hover:bg-bg-canvas transition-all focus:outline-none focus:ring-2 focus:ring-primary/50"
                 aria-expanded={userMenuOpen}
                 aria-haspopup="true"
                 aria-label="User menu"
@@ -172,14 +172,14 @@ export const Header: React.FC = () => {
                   aria-orientation="vertical"
                   aria-labelledby="user-menu-button"
                 >
-                  <div className="p-3 border-b border-border-glass">
+                  <div className="p-3 border-b border-border-subtle">
                     <div className="text-sm font-semibold text-text-primary">{session.user.name}</div>
                     <div className="text-xs text-text-muted truncate">{session.user.email}</div>
                   </div>
                   <div className="py-1" role="none">
                     <Link
                       href="/settings"
-                      className="dropdown-item focus:bg-bg-glass-light focus:outline-none"
+                      className="dropdown-item focus:bg-bg-canvas focus:outline-none"
                       onClick={() => setUserMenuOpen(false)}
                       role="menuitem"
                       tabIndex={focusedIndex === 0 ? 0 : -1}
@@ -193,7 +193,7 @@ export const Header: React.FC = () => {
                         setUserMenuOpen(false);
                         signOut();
                       }}
-                      className="w-full dropdown-item text-red-400 hover:text-red-300 focus:bg-bg-glass-light focus:outline-none"
+                      className="w-full dropdown-item text-danger hover:text-danger focus:bg-bg-canvas focus:outline-none"
                       role="menuitem"
                       tabIndex={focusedIndex === 1 ? 0 : -1}
                       ref={(el) => { menuItems.current[1] = el; }}

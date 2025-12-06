@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { Sparkles } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -43,8 +43,8 @@ export default function LoginPage() {
     <Card className="w-full max-w-md animate-slideUp" hover={false}>
       <CardHeader className="text-center pb-6">
         <div className="mb-6 flex justify-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-lg shadow-violet-500/30">
-            <Sparkles className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-lg">
+            <LogIn className="w-8 h-8 text-white" />
           </div>
         </div>
         <CardTitle className="text-2xl font-bold text-text-primary">Welcome back</CardTitle>
@@ -55,7 +55,7 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-5">
           {error && (
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+            <div className="p-3 rounded-xl bg-danger/10 border border-danger/20 text-danger text-sm">
               {error}
             </div>
           )}
@@ -72,7 +72,7 @@ export default function LoginPage() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
+            placeholder="Enter your password"
             required
           />
         </CardContent>
