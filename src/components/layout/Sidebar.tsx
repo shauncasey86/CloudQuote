@@ -76,52 +76,51 @@ export const Sidebar: React.FC = () => {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 md:hidden"
+          className="fixed inset-0 bg-black/20 z-30 md:hidden"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
       )}
 
-      {/* Floating Dock Sidebar */}
+      {/* Docked Sidebar - Full height, no margins (Fitts's Law) */}
       <aside
         className={cn(
-          'fixed left-4 top-4 bottom-4 w-64 bg-bg-surface border border-border-subtle rounded-2xl flex flex-col z-40 transition-all duration-300',
-          'shadow-float',
+          'fixed left-0 top-0 bottom-0 w-56 bg-bg-surface border-r border-border-subtle flex flex-col z-40 transition-transform duration-200',
           'md:translate-x-0',
-          isOpen ? 'translate-x-0' : '-translate-x-[calc(100%+2rem)]'
+          isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         {/* Mobile close button */}
         <button
           onClick={() => setIsOpen(false)}
-          className="absolute top-4 right-4 p-2 rounded-xl bg-bg-canvas hover:bg-bg-elevated border border-border-subtle transition-all md:hidden"
+          className="absolute top-3 right-3 p-1.5 rounded-md hover:bg-bg-canvas transition-colors md:hidden"
           aria-label="Close menu"
         >
           <X className="w-5 h-5 text-text-primary" />
         </button>
 
         {/* Logo */}
-        <div className="p-6 pb-4">
+        <div className="p-4 border-b border-border-subtle">
           <Link href="/quotes" className="flex flex-col items-center text-center group" onClick={handleLinkClick}>
             <Image
               src="/wi-logo.svg"
               alt="Wilson Interiors"
-              width={140}
-              height={42}
-              className="w-36 h-auto mb-3 group-hover:opacity-80 transition-opacity"
+              width={120}
+              height={36}
+              className="w-28 h-auto mb-2 group-hover:opacity-80 transition-opacity"
             />
-            <span className="text-lg font-semibold text-gradient leading-tight font-header tracking-tight">
+            <span className="text-sm font-semibold text-text-primary font-header">
               CloudQuote
             </span>
           </Link>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-2">
-          <div className="text-xs font-semibold text-text-muted tracking-wide px-4 mb-3 uppercase">
+        <nav className="flex-1 p-2 overflow-y-auto">
+          <div className="text-[10px] font-semibold text-text-muted tracking-wider px-3 py-2 uppercase">
             Menu
           </div>
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {navItems.map((item) => {
               // During loading, show all items (including admin items with loading state)
               // After loading, hide admin-only items from non-admins
@@ -138,10 +137,10 @@ export const Sidebar: React.FC = () => {
                 return (
                   <div
                     key={item.href}
-                    className="nav-item group opacity-50"
+                    className="nav-item opacity-50"
                   >
-                    <Icon className="w-5 h-5 text-text-muted" />
-                    <span className="text-sm font-medium">{item.label}</span>
+                    <Icon className="w-4 h-4 text-text-muted" />
+                    <span className="text-sm">{item.label}</span>
                   </div>
                 );
               }
@@ -152,15 +151,15 @@ export const Sidebar: React.FC = () => {
                   href={item.href}
                   onClick={handleLinkClick}
                   className={cn(
-                    'nav-item group',
+                    'nav-item',
                     isActive && 'active'
                   )}
                 >
                   <Icon className={cn(
-                    "w-5 h-5 transition-colors",
-                    isActive ? "text-white" : "text-text-muted group-hover:text-primary"
+                    "w-4 h-4 transition-colors",
+                    isActive ? "text-current" : "text-text-muted"
                   )} />
-                  <span className="text-sm font-medium">{item.label}</span>
+                  <span className="text-sm">{item.label}</span>
                 </Link>
               );
             })}
@@ -168,14 +167,10 @@ export const Sidebar: React.FC = () => {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 mx-3 mb-3 rounded-xl bg-bg-canvas border border-border-subtle">
-          <div className="flex items-center justify-between">
-            <div className="text-xs text-text-muted">
-              Created by Shaun Casey
-            </div>
-            <div className="text-xs text-text-muted">
-              v1.0.0
-            </div>
+        <div className="p-3 border-t border-border-subtle">
+          <div className="flex items-center justify-between text-[10px] text-text-muted">
+            <span>Shaun Casey</span>
+            <span>v1.0.0</span>
           </div>
         </div>
       </aside>

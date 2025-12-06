@@ -28,25 +28,23 @@ const config: Config = {
           secondary: "var(--text-secondary)",
           muted: "var(--text-muted)",
         },
-        // Brand colors - Modern palette
-        primary: {
-          DEFAULT: "var(--color-primary)",
-          hover: "#4F46E5",
-        },
+        // Brand colors
+        primary: "var(--color-primary)",
         secondary: "var(--color-secondary)",
         accent: {
           DEFAULT: "var(--color-accent)",
-          hover: "#EA580C",
+          hover: "var(--color-accent-hover)",
         },
         // Semantic colors
         success: "var(--color-success)",
         warning: "var(--color-warning)",
         danger: "var(--color-danger)",
         info: "var(--color-info)",
-        // Legacy color mappings for compatibility
+        money: "var(--color-money)",
+        // Legacy mappings
         gold: {
-          DEFAULT: "var(--color-primary)",
-          light: "#818CF8",
+          DEFAULT: "var(--color-accent)",
+          light: "var(--color-accent)",
         },
         emerald: "var(--color-success)",
         green: "var(--color-success)",
@@ -64,16 +62,10 @@ const config: Config = {
         md: "var(--shadow-md)",
         lg: "var(--shadow-lg)",
         xl: "var(--shadow-xl)",
-        card: "var(--shadow-card)",
-        float: "var(--shadow-float)",
       },
       borderRadius: {
-        card: "1rem",
-        button: "9999px",
-        tag: "0.5rem",
-      },
-      transitionDuration: {
-        "200": "200ms",
+        card: "0.5rem",
+        button: "0.375rem",
       },
     },
   },

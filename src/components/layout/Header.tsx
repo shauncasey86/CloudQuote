@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { Search, Moon, Sun, LogOut, User, Settings, ChevronDown, Menu } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
 import { useTheme } from '@/components/providers/ThemeProvider';
 import { useSidebar } from './DashboardLayout';
 
@@ -57,7 +56,6 @@ export const Header: React.FC = () => {
           });
           break;
         case 'Tab':
-          // Close menu on tab out
           setUserMenuOpen(false);
           setFocusedIndex(-1);
           break;
@@ -72,7 +70,6 @@ export const Header: React.FC = () => {
     };
   }, [userMenuOpen]);
 
-  // Reset focus index when menu closes
   React.useEffect(() => {
     if (!userMenuOpen) {
       setFocusedIndex(-1);
@@ -93,11 +90,11 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 md:left-[288px] right-0 h-16 bg-bg-base border-b border-border-subtle flex items-center justify-between px-4 md:px-6 z-30">
+    <header className="fixed top-0 left-0 md:left-56 right-0 h-14 bg-bg-surface border-b border-border-subtle flex items-center justify-between px-4 z-30">
       {/* Mobile Menu Button */}
       <button
         onClick={toggleSidebar}
-        className="md:hidden p-2 rounded-xl bg-bg-canvas hover:bg-bg-surface border border-border-subtle transition-all mr-3"
+        className="md:hidden p-2 rounded-md hover:bg-bg-canvas transition-colors mr-2"
         aria-label="Toggle menu"
       >
         <Menu className="w-5 h-5 text-text-primary" />
@@ -109,71 +106,63 @@ export const Header: React.FC = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" aria-hidden="true" />
           <input
             type="search"
-            placeholder="Search quotes, customers..."
+            placeholder="Search quotes..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
-            aria-label="Search quotes and customers"
-            className="w-full pl-10 pr-4 py-2.5 bg-bg-input border-2 border-transparent rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-text-muted"
+            aria-label="Search quotes"
+            className="w-full pl-9 pr-3 py-1.5 bg-bg-input border border-border-subtle rounded-md text-sm focus:outline-none focus:border-text-primary transition-colors placeholder:text-text-muted"
           />
         </div>
       </form>
 
       {/* Right Actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         {/* Theme Toggle */}
         <button
           onClick={toggleTheme}
-          className="p-2.5 rounded-xl bg-bg-canvas hover:bg-bg-surface border border-border-subtle transition-all"
+          className="p-2 rounded-md hover:bg-bg-canvas transition-colors"
           aria-label="Toggle theme"
         >
-          {theme === 'dark' ? <Sun className="w-5 h-5 text-warning" /> : <Moon className="w-5 h-5 text-primary" />}
+          {theme === 'dark' ? <Sun className="w-4 h-4 text-warning" /> : <Moon className="w-4 h-4 text-text-secondary" />}
         </button>
 
         {/* User Menu */}
-        <div className="relative pl-3 ml-3 border-l border-border-subtle" ref={menuRef}>
+        <div className="relative pl-2 ml-2 border-l border-border-subtle" ref={menuRef}>
           {isLoading ? (
-            /* Loading skeleton */
-            <div className="flex items-center gap-3 p-1.5 pr-3">
-              <div className="w-9 h-9 rounded-xl bg-bg-canvas animate-pulse" />
-              <div className="hidden sm:block space-y-1.5">
-                <div className="w-20 h-3 bg-bg-canvas rounded animate-pulse" />
-                <div className="w-12 h-2.5 bg-bg-canvas rounded animate-pulse" />
-              </div>
+            <div className="flex items-center gap-2 p-1">
+              <div className="w-8 h-8 rounded-md bg-bg-canvas animate-pulse" />
+              <div className="hidden sm:block w-16 h-4 bg-bg-canvas rounded animate-pulse" />
             </div>
           ) : session ? (
             <>
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-3 p-1.5 pr-3 rounded-xl hover:bg-bg-canvas transition-all focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="flex items-center gap-2 p-1 pr-2 rounded-md hover:bg-bg-canvas transition-colors focus:outline-none focus:ring-2 focus:ring-text-primary/20"
                 aria-expanded={userMenuOpen}
                 aria-haspopup="true"
                 aria-label="User menu"
               >
-                <div className="w-9 h-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-md">
-                  <User className="w-4 h-4 text-white" aria-hidden="true" />
+                <div className="w-8 h-8 rounded-md bg-bg-canvas flex items-center justify-center">
+                  <User className="w-4 h-4 text-text-secondary" aria-hidden="true" />
                 </div>
                 <div className="text-left hidden sm:block">
                   <div className="text-sm font-medium text-text-primary leading-tight">
                     {session.user.name}
                   </div>
-                  <div className="text-xs text-text-muted">
-                    {session.user.role}
-                  </div>
                 </div>
-                <ChevronDown className={`w-4 h-4 text-text-muted transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+                <ChevronDown className={`w-4 h-4 text-text-muted transition-transform duration-150 ${userMenuOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
               </button>
 
               {/* Dropdown Menu */}
               {userMenuOpen && (
                 <div
-                  className="absolute right-0 top-full mt-2 w-56 dropdown-menu animate-slideUp"
+                  className="absolute right-0 top-full mt-1 w-48 dropdown-menu animate-fadeIn"
                   role="menu"
                   aria-orientation="vertical"
-                  aria-labelledby="user-menu-button"
                 >
-                  <div className="p-3 border-b border-border-subtle">
-                    <div className="text-sm font-semibold text-text-primary">{session.user.name}</div>
+                  <div className="p-2 border-b border-border-subtle">
+                    <div className="text-sm font-medium text-text-primary">{session.user.name}</div>
                     <div className="text-xs text-text-muted truncate">{session.user.email}</div>
                   </div>
                   <div className="py-1" role="none">
@@ -193,7 +182,7 @@ export const Header: React.FC = () => {
                         setUserMenuOpen(false);
                         signOut();
                       }}
-                      className="w-full dropdown-item text-danger hover:text-danger focus:bg-bg-canvas focus:outline-none"
+                      className="w-full dropdown-item text-danger hover:bg-bg-canvas focus:bg-bg-canvas focus:outline-none"
                       role="menuitem"
                       tabIndex={focusedIndex === 1 ? 0 : -1}
                       ref={(el) => { menuItems.current[1] = el; }}

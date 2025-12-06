@@ -3,7 +3,6 @@
 import React from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { LogIn } from 'lucide-react';
@@ -40,58 +39,55 @@ export default function LoginPage() {
   };
 
   return (
-    <Card className="w-full max-w-md animate-slideUp" hover={false}>
-      <CardHeader className="text-center pb-6">
-        <div className="mb-6 flex justify-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-lg">
-            <LogIn className="w-8 h-8 text-white" />
-          </div>
+    <div className="card animate-fadeUp">
+      <div className="text-center mb-6">
+        <div className="w-12 h-12 rounded-md bg-bg-canvas flex items-center justify-center mx-auto mb-4">
+          <LogIn className="w-6 h-6 text-text-secondary" />
         </div>
-        <CardTitle className="text-2xl font-bold text-text-primary">Welcome back</CardTitle>
-        <CardDescription className="text-text-muted mt-2">
-          Sign in to your CloudQuote account
-        </CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-5">
-          {error && (
-            <div className="p-3 rounded-xl bg-danger/10 border border-danger/20 text-danger text-sm">
-              {error}
-            </div>
-          )}
-          <Input
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="admin@yourcompany.com"
-            required
-          />
-          <Input
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
-            required
-          />
-        </CardContent>
-        <CardFooter className="pt-2">
-          <Button
-            type="submit"
-            className="w-full"
-            isLoading={isLoading}
-            disabled={isLoading}
-          >
-            Sign in
-          </Button>
-        </CardFooter>
-      </form>
-      <div className="px-6 pb-6 text-center">
-        <p className="text-xs text-text-muted">
-          Default: admin@yourcompany.com / changeme123
+        <h1 className="text-xl font-bold text-text-primary">Welcome back</h1>
+        <p className="text-sm text-text-muted mt-1">
+          Sign in to CloudQuote
         </p>
       </div>
-    </Card>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {error && (
+          <div className="p-3 rounded-md bg-danger/10 border border-danger/20 text-danger text-sm">
+            {error}
+          </div>
+        )}
+
+        <Input
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="admin@yourcompany.com"
+          required
+        />
+
+        <Input
+          label="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter your password"
+          required
+        />
+
+        <Button
+          type="submit"
+          className="w-full"
+          isLoading={isLoading}
+          disabled={isLoading}
+        >
+          Sign in
+        </Button>
+      </form>
+
+      <p className="text-xs text-text-muted text-center mt-4">
+        Default: admin@yourcompany.com / changeme123
+      </p>
+    </div>
   );
 }
