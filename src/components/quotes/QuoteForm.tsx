@@ -40,7 +40,6 @@ export function CustomerInfoSection({
   defaultValues,
   houseTypes,
   onSubmit,
-  isLoading,
 }: CustomerInfoSectionProps) {
   const {
     register,

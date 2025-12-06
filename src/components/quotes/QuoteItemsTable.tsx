@@ -43,7 +43,6 @@ export function QuoteItemsTable({
   onUpdateQuantity,
   onUpdateAllowance,
   onRemoveItem,
-  isLoading,
 }: QuoteItemsTableProps) {
   // Refs for keyboard navigation
   const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
